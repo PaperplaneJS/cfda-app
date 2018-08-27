@@ -43,11 +43,20 @@
       <el-row>
         <el-col :span="10">
           <el-form-item label="检查类别:">
-            <el-select placeholder="请选择">
+            <el-select v-model="currentPlan.kind" placeholder="请选择">
               <el-option label="日常检查" value="daily"></el-option>
+              <el-option label="专项检查" value="special"></el-option>
               <el-option label="全项检查(风险评级)" value="risk"></el-option>
               <el-option label="其他" value="other"></el-option>
             </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row v-if="currentPlan.kind==='special'">
+        <el-col :span="12">
+          <el-form-item label="专项通知:">
+            <el-input :rows="4" type="textarea" placeholder="专项检查通知"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -109,13 +118,18 @@ export default {
         { key: 3, label: "餐饮服务日常监督检查要点表" },
         { key: 4, label: "保健食品生产日常监督检查要点表" },
         { key: 5, label: "食品小作坊现场检查记录表" }
-      ]
+      ],
+      currentPlan: null
     };
   },
   beforeMount() {
     let planid = this.$route.params.planid;
 
     if (planid.trim() === "new") {
+      this.currentPlan = {
+        kind: null
+      };
+
       this.title = "制定新的计划";
     } else {
     }

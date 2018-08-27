@@ -1,16 +1,16 @@
 <template>
-  <div id="daily_singleplan">
+  <div id="special_singleplan">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/post">日常检查</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/post">计划分配</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special/post">专项检查</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special/post">计划分配</el-breadcrumb-item>
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
     <el-row class="title">{{title}}</el-row>
 
     <el-collapse style="margin:20px auto;" v-model="collapse">
-      <el-collapse-item title="检查计划简介" name="1">
+      <el-collapse-item title="专项检查简介" name="1">
         <el-form label-position="left" style="margin-top:20px;" label-width="100px">
           <el-row>
             <el-col :span="12">
@@ -123,7 +123,7 @@
 
 <script>
 export default {
-  name: "daily_singleplan",
+  name: "sepcial_singleplan",
   data() {
     return {
       collapse: 1,

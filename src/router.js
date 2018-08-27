@@ -32,6 +32,15 @@ import DailySingleMonitor from '@/views/daily/singlemonitor';
 import DailySingleReport from '@/views/daily/singlereport';
 import DailyReportList from '@/views/daily/reportlist';
 
+import SpecialPost from '@/views/special/post';
+import SpecialMonitor from '@/views/special/monitor';
+import SpecialReport from '@/views/special/report';
+import SpecialSinglePost from '@/views/special/singlepost';
+import SpecialSingleMonitor from '@/views/special/singlemonitor';
+import SpecialSingleReport from '@/views/special/singlereport';
+import SpecialReportList from '@/views/special/reportlist';
+import SpecialNotice from '@/views/special/notice';
+
 Vue.use(Router);
 
 let routes = [{
@@ -105,11 +114,35 @@ let routes = [{
     path: '/daily/post/:postid',
     component: DailySinglePost
   }, {
-    path: 'daily/monitor/:monitorid',
+    path: '/daily/monitor/:monitorid',
     component: DailySingleMonitor
   }, {
-    path: 'daily/report/:planid/:reportid',
+    path: '/daily/report/:planid/:reportid',
     component: DailySingleReport
+  }, {
+    path: '/special/post',
+    component: SpecialPost
+  }, {
+    path: '/special/post/:postid',
+    component: SpecialSinglePost
+  }, {
+    path: '/special/monitor',
+    component: SpecialMonitor
+  }, {
+    path: '/special/monitor/:monitorid',
+    component: SpecialSingleMonitor
+  }, {
+    path: '/special/report',
+    component: SpecialReport
+  }, {
+    path: '/special/report/:planid',
+    component: SpecialReportList
+  }, {
+    path: '/special/report/:planid/:reportid',
+    component: SpecialSingleReport
+  }, {
+    path: '/special/notice',
+    component: SpecialNotice
   }]
 }];
 

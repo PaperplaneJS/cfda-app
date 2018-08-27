@@ -1,16 +1,16 @@
 <template>
-  <div id="special_post">
+  <div id="special_report">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/special/post">专项检查</el-breadcrumb-item>
-      <el-breadcrumb-item>计划分配</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special/report">专项检查</el-breadcrumb-item>
+      <el-breadcrumb-item>检查报告</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">专项检查计划分配</el-row>
+    <el-row class="title">专项检查报告</el-row>
 
     <el-row :gutter="15">
       <el-col :span="6">
-        <el-input clearable placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
+        <el-input clearable placeholder="搜索计划标题/制定单位/指定人等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
       <el-col :span="10">
@@ -26,16 +26,15 @@
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="plandata" size="medium" stripe style="width: 100%" border>
+        <el-table :data="reportdata" size="medium" stripe style="width: 100%" border>
           <el-table-column prop="title" label="标题" sortable></el-table-column>
           <el-table-column prop="staff" label="制定人员" sortable width="140"></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
           <el-table-column prop="limit" label="执行期限"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable width="120"></el-table-column>
-          <el-table-column label="操作" width="220">
+          <el-table-column prop="state" label="状态" sortable width="160"></el-table-column>
+          <el-table-column label="操作" width="120">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">分配该计划</el-button>
-              <el-button size="mini">查看</el-button>
+              <el-button @click.native="$router.push('report/'+scope.row.id)" type="primary" size="mini">进入查看</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -46,22 +45,23 @@
       <el-pagination background layout="prev, pager, next" :total="100">
       </el-pagination>
     </el-row>
+
   </div>
 </template>
 
 <script>
 export default {
-  name: "special_post",
+  name: "special_report",
   data() {
     return {
-      plandata: [
+      reportdata: [
         {
           id: 1,
           title: "虞山分局2018年下半年巡检计划",
           staff: "张小明",
           department: "常熟市市局",
           limit: "2018-06-01 ~ 2018-12-01",
-          state: "待分配"
+          state: "进行中 70/150"
         }
       ]
     };
