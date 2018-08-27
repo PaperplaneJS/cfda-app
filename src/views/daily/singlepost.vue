@@ -76,12 +76,12 @@
           <el-form-item label="检查单位:">
             <el-table @selection-change="handleSelectionChange" :data="bizs" size="medium" style="width: 100%;margin-bottom:20px;" border>
               <el-table-column type="selection" width="40"></el-table-column>
-              <el-table-column prop="name" label="单位名称" sortable width="260"></el-table-column>
+              <el-table-column prop="name" label="单位名称" sortable min-width="260"></el-table-column>
               <el-table-column prop="type" label="类型" sortable></el-table-column>
               <el-table-column prop="grid" label="网格区域" sortable></el-table-column>
               <el-table-column prop="code" label="许可证编号"></el-table-column>
-              <el-table-column prop="state" label="状态" width="80"></el-table-column>
-              <el-table-column prop="action" label="操作" width="220" sortable>
+              <el-table-column prop="state" label="状态" min-width="80"></el-table-column>
+              <el-table-column prop="action" label="操作" min-width="220" sortable>
                 <template slot-scope="scope">
                   <el-select @change="selectChanged(scope)" v-model="scope.row.staff" size="small" clearable placeholder="选择检查人员">
                     <el-option v-for="item of staffs" :key="item.value" :label="item.name" :value="item.value"></el-option>
@@ -101,7 +101,7 @@
         <el-col :span="24">
           <el-form-item label="分配一览:">
             <el-table :data="allots" size="small" style="width: 100%;margin-bottom:20px;" border>
-              <el-table-column prop="staff" label="人员姓名" width="120" sortable></el-table-column>
+              <el-table-column prop="staff" label="人员姓名" min-width="120" sortable></el-table-column>
               <el-table-column prop="content" label="巡查企业"></el-table-column>
             </el-table>
           </el-form-item>

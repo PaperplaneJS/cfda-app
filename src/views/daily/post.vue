@@ -28,10 +28,10 @@
       <el-col :span="24">
         <el-table :data="plandata" size="medium" stripe style="width: 100%" border>
           <el-table-column prop="title" label="标题" sortable></el-table-column>
-          <el-table-column prop="staff" label="制定人员" sortable width="140"></el-table-column>
+          <el-table-column prop="staff" label="制定人员" sortable min-width="140"></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
           <el-table-column prop="limit" label="执行期限"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable width="120"></el-table-column>
+          <el-table-column prop="state" label="状态" sortable min-width="120"></el-table-column>
           <el-table-column label="操作" width="220">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">分配该计划</el-button>

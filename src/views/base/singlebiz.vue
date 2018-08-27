@@ -191,7 +191,7 @@
               <el-table-column prop="name" label="单位名称" sortable></el-table-column>
               <el-table-column prop="num" label="许可证编号"></el-table-column>
               <el-table-column prop="grid" label="所属区域"></el-table-column>
-              <el-table-column prop="officer" label="执法人员" width="80"></el-table-column>
+              <el-table-column prop="officer" label="执法人员" min-width="80"></el-table-column>
               <el-table-column prop="kind" label="监督检查类别" sortable></el-table-column>
               <el-table-column prop="checkresult" label="检查结果" sortable></el-table-column>
               <el-table-column prop="handleresult" label="处理结果" sortable></el-table-column>
@@ -209,16 +209,16 @@
         <el-row>
           <el-col :span="24">
             <el-table :data="currentBizInfo.risk" size="medium" stripe style="width: 100%;margin-bottom:25px;" border>
-              <el-table-column prop="year" label="评级年" width="100" sortable></el-table-column>
+              <el-table-column prop="year" label="评级年" min-width="100" sortable></el-table-column>
               <el-table-column prop="name" label="单位名称" sortable></el-table-column>
               <el-table-column prop="num" label="许可证编号"></el-table-column>
               <el-table-column prop="grid" label="所属区域"></el-table-column>
-              <el-table-column prop="riskresult" label="评定等级" width="110" sortable></el-table-column>
-              <el-table-column prop="riskpoint" label="量化评分" width="110" sortable></el-table-column>
-              <el-table-column prop="officer" label="评定人员" width="80"></el-table-column>
-              <el-table-column prop="department" label="评定单位" width="80"></el-table-column>
+              <el-table-column prop="riskresult" label="评定等级" min-width="110" sortable></el-table-column>
+              <el-table-column prop="riskpoint" label="量化评分" min-width="110" sortable></el-table-column>
+              <el-table-column prop="officer" label="评定人员" min-width="80"></el-table-column>
+              <el-table-column prop="department" label="评定单位" min-width="80"></el-table-column>
               <el-table-column prop="last" label="最后评定于" sortable></el-table-column>
-              <el-table-column prop="action" label="操作" width="80">
+              <el-table-column prop="action" label="操作" min-width="80">
                 <template slot-scope="scope">
                   <el-button size="mini">查看</el-button>
                 </template>
@@ -234,15 +234,15 @@
             <el-table :data="currentBizInfo.refity" size="medium" stripe style="width: 100%;margin-bottom:25px;" border>
               <el-table-column prop="name" label="单位名称" sortable></el-table-column>
               <el-table-column prop="num" label="许可证编号"></el-table-column>
-              <el-table-column prop="officer" label="执法人员" width="80"></el-table-column>
-              <el-table-column prop="department" label="执法单位" width="80"></el-table-column>
+              <el-table-column prop="officer" label="执法人员" min-width="80"></el-table-column>
+              <el-table-column prop="department" label="执法单位" min-width="80"></el-table-column>
               <el-table-column prop="kind" label="监督检查类别"></el-table-column>
-              <el-table-column prop="isrefity" label="是否整改" width="80"></el-table-column>
-              <el-table-column prop="isrecheck" label="是否复查" width="80"></el-table-column>
-              <el-table-column prop="state" label="状态" width="100"></el-table-column>
+              <el-table-column prop="isrefity" label="是否整改" min-width="80"></el-table-column>
+              <el-table-column prop="isrecheck" label="是否复查" min-width="80"></el-table-column>
+              <el-table-column prop="state" label="状态" min-width="100"></el-table-column>
               <el-table-column prop="update" label="更新时间"></el-table-column>
-              <el-table-column prop="result" label="检查结果" width="100"></el-table-column>
-              <el-table-column prop="action" label="操作" width="80">
+              <el-table-column prop="result" label="检查结果" min-width="100"></el-table-column>
+              <el-table-column prop="action" label="操作" min-width="80">
                 <template slot-scope="scope">
                   <el-button size="mini">查看</el-button>
                 </template>

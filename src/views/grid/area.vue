@@ -32,11 +32,11 @@
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="areadata" size="medium" stripe style="width: 100%" border>
-          <el-table-column prop="num" label="主体代码" sortable width="120"></el-table-column>
+        <el-table :data="areadata" size="medium" style="width: 100%" border>
+          <el-table-column prop="num" label="主体代码" sortable min-width="120"></el-table-column>
           <el-table-column prop="name" label="网格化主体名称" sortable></el-table-column>
-          <el-table-column prop="state" label="状态" sortable width="120"></el-table-column>
-          <el-table-column prop="action" label="操作" width="220">
+          <el-table-column prop="state" label="状态" sortable min-width="120"></el-table-column>
+          <el-table-column prop="action" label="操作" min-width="220">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看</el-button>
               <el-button size="mini">编辑</el-button>

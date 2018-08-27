@@ -44,15 +44,15 @@
     <el-row>
       <el-col :span="24">
         <el-table :data="table" size="medium" stripe style="width: 100%" border>
-          <el-table-column prop="name" label="企业名称" sortable width="260"></el-table-column>
+          <el-table-column prop="name" label="企业名称" sortable min-width="260"></el-table-column>
           <el-table-column prop="type" label="类型" sortable></el-table-column>
-          <el-table-column prop="legal" label="法人" sortable width="80"></el-table-column>
+          <el-table-column prop="legal" label="法人" sortable min-width="80"></el-table-column>
           <el-table-column prop="grid" label="网格区域" sortable></el-table-column>
-          <el-table-column prop="contant" label="联系人" sortable width="90"></el-table-column>
+          <el-table-column prop="contant" label="联系人" sortable min-width="90"></el-table-column>
           <el-table-column prop="tel" label="联系电话"></el-table-column>
           <el-table-column prop="code" label="许可证编号"></el-table-column>
-          <el-table-column prop="state" label="状态" width="80"></el-table-column>
-          <el-table-column prop="action" label="操作" width="220">
+          <el-table-column prop="state" label="状态" min-width="80"></el-table-column>
+          <el-table-column prop="action" label="操作" min-width="220">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看</el-button>
               <el-button size="mini">编辑</el-button>

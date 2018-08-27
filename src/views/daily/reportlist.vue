@@ -20,7 +20,7 @@
       <el-col :span="24">
         <el-table :data="reportdata" size="medium" stripe style="width: 100%;margin-bottom:20px;" border>
           <el-table-column prop="date" label="检查时间" sortable></el-table-column>
-          <el-table-column prop="bizname" label="单位名称" width="260" sortable></el-table-column>
+          <el-table-column prop="bizname" label="单位名称" min-width="260" sortable></el-table-column>
           <el-table-column prop="staff" label="执法人员" sortable></el-table-column>
           <el-table-column prop="kind" label="检查类别"></el-table-column>
           <el-table-column prop="rectify" label="是否整改"></el-table-column>
@@ -28,7 +28,7 @@
           <el-table-column prop="state" label="记录状态"></el-table-column>
           <el-table-column prop="reviewdate" label="检查时间"></el-table-column>
           <el-table-column prop="result" label="检查结果"></el-table-column>
-          <el-table-column prop="action" label="操作" width="240">
+          <el-table-column prop="action" label="操作" min-width="240">
             <template slot-scope="scope">
               <el-button @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看/编辑</el-button>
               <el-button size="mini" type="primary">打印</el-button>

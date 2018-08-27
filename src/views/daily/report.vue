@@ -28,11 +28,11 @@
       <el-col :span="24">
         <el-table :data="reportdata" size="medium" stripe style="width: 100%" border>
           <el-table-column prop="title" label="标题" sortable></el-table-column>
-          <el-table-column prop="staff" label="制定人员" sortable width="140"></el-table-column>
+          <el-table-column prop="staff" label="制定人员" sortable min-width="140"></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
           <el-table-column prop="limit" label="执行期限"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable width="160"></el-table-column>
-          <el-table-column label="操作" width="120">
+          <el-table-column prop="state" label="状态" sortable min-width="160"></el-table-column>
+          <el-table-column label="操作" min-width="120">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('report/'+scope.row.id)" type="primary" size="mini">进入查看</el-button>
             </template>

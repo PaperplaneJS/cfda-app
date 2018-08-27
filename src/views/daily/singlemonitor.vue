@@ -108,10 +108,10 @@
         <el-row>
           <el-col :span="24">
             <el-table :data="checkDetail" :span-method="tableSpan" size="medium" style="width: 100%;margin-bottom:20px;" border>
-              <el-table-column prop="item" label="检查内容" width="160"></el-table-column>
+              <el-table-column prop="item" label="检查内容" min-width="160"></el-table-column>
               <el-table-column prop="detail" label="检查项目"></el-table-column>
-              <el-table-column prop="result" label="结果" width="100"></el-table-column>
-              <el-table-column prop="point" label="得分" width="80"></el-table-column>
+              <el-table-column prop="result" label="结果" min-width="100"></el-table-column>
+              <el-table-column prop="point" label="得分" min-width="80"></el-table-column>
             </el-table>
           </el-col>
         </el-row>

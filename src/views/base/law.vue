@@ -36,9 +36,9 @@
           <el-table-column prop="num" label="法令法规编号" sortable></el-table-column>
           <el-table-column prop="name" label="法令法规名称" sortable></el-table-column>
           <el-table-column prop="master" label="编制主体" sortable></el-table-column>
-          <el-table-column prop="date" label="创建日期" sortable width="160"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable width="80"></el-table-column>
-          <el-table-column prop="action" label="操作" width="220">
+          <el-table-column prop="date" label="创建日期" sortable min-width="160"></el-table-column>
+          <el-table-column prop="state" label="状态" sortable min-width="80"></el-table-column>
+          <el-table-column prop="action" label="操作" min-width="220">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看</el-button>
               <el-button size="mini">编辑</el-button>

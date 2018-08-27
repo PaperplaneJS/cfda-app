@@ -41,6 +41,8 @@ import SpecialSingleReport from '@/views/special/singlereport';
 import SpecialReportList from '@/views/special/reportlist';
 import SpecialNotice from '@/views/special/notice';
 
+import RiskRisk from '@/views/risk/risk';
+
 Vue.use(Router);
 
 let routes = [{
@@ -143,6 +145,9 @@ let routes = [{
   }, {
     path: '/special/notice',
     component: SpecialNotice
+  }, {
+    path: '/risk',
+    component: RiskRisk
   }]
 }];
 
