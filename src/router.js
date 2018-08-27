@@ -28,7 +28,9 @@ import DailyPost from '@/views/daily/post';
 import DailyMonitor from '@/views/daily/monitor';
 import DailyReport from '@/views/daily/report';
 import DailySinglePost from '@/views/daily/singlepost';
-
+import DailySingleMonitor from '@/views/daily/singlemonitor';
+import DailySingleReport from '@/views/daily/singlereport';
+import DailyReportList from '@/views/daily/reportlist';
 
 Vue.use(Router);
 
@@ -97,8 +99,17 @@ let routes = [{
     path: '/daily/report',
     component: DailyReport
   }, {
+    path: '/daily/report/:planid',
+    component: DailyReportList
+  }, {
     path: '/daily/post/:postid',
     component: DailySinglePost
+  }, {
+    path: 'daily/monitor/:monitorid',
+    component: DailySingleMonitor
+  }, {
+    path: 'daily/report/:planid/:reportid',
+    component: DailySingleReport
   }]
 }];
 

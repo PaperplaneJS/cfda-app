@@ -97,6 +97,14 @@
           </el-form-item>
         </el-row>
         <el-row>
+          <el-form-item label="重点项:">
+            <el-radio-group v-model="popupInput.isimportant">
+              <el-radio :label="true">是</el-radio>
+              <el-radio :label="false">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-row>
+        <el-row>
           <el-form-item label="可选项:">
             <el-checkbox-group v-model="popupInput.activeItem">
               <el-checkbox-button label="符合" name="type">符合</el-checkbox-button>
@@ -184,6 +192,7 @@ export default {
         id: checkItem.id,
         content: "",
         isrequired: true,
+        isimportant: false,
         activeItem: [],
         selectItem: { ["符合"]: 0, ["基本符合"]: 0, ["不符合"]: 0 }
       };

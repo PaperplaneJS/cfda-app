@@ -58,7 +58,7 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="检查单位:">
-            <el-table @selection-change="handleSelectionChange" :data="bizs" size="medium" stripe style="width: 100%;margin-bottom:20px;" border>
+            <el-table @selection-change="handleSelectionChange" :data="bizs" size="medium" style="width: 100%;margin-bottom:20px;" border>
               <el-table-column type="selection" width="40"></el-table-column>
               <el-table-column prop="name" label="单位名称" sortable width="260"></el-table-column>
               <el-table-column prop="type" label="类型" sortable></el-table-column>
@@ -84,7 +84,7 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="分配一览:">
-            <el-table :data="allots" size="small" stripe style="width: 100%;margin-bottom:20px;" border>
+            <el-table :data="allots" size="small" style="width: 100%;margin-bottom:20px;" border>
               <el-table-column prop="staff" label="人员姓名" width="120" sortable></el-table-column>
               <el-table-column prop="content" label="巡查企业"></el-table-column>
             </el-table>
@@ -113,32 +113,6 @@ export default {
       collapse: null,
       title: null,
       currentPlan: null,
-      gridtree: [
-        {
-          label: "常熟市",
-          children: [
-            {
-              id: 2,
-              label: "虞山镇",
-              children: [
-                { label: "虞山分局" },
-                { label: "检察大队" },
-                { label: "食药监分局" }
-              ]
-            },
-            {
-              id: 3,
-              label: "梅里",
-              children: []
-            },
-            {
-              id: 4,
-              label: "赵市",
-              children: []
-            }
-          ]
-        }
-      ],
       staffs: [
         { name: "吴建明", value: "wjm" },
         { name: "郑健", value: "zj" },

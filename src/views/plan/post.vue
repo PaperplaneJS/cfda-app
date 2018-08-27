@@ -13,12 +13,9 @@
         <el-input clearable placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
-      <el-col :span="5">
-        <el-date-picker type="date" placeholder="按最早日期筛选" v-model="startDate"></el-date-picker>
-      </el-col>
-
-      <el-col :span="5">
-        <el-date-picker type="date" placeholder="最晚日期" v-model="endDate"></el-date-picker>
+      <el-col :span="10">
+        <el-date-picker type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
+        </el-date-picker>
       </el-col>
 
       <el-col :span="8" :lg="6">
@@ -58,8 +55,6 @@ export default {
   name: "plan_post",
   data() {
     return {
-      startDate: null,
-      endDate: null,
       plandata: [
         {
           id: 1,

@@ -124,19 +124,19 @@
 </template>
 
 <script>
-import '@/components/public.scss';
+import "@/components/public.scss";
 export default {
   name: "app"
 };
 </script>
 
 <style scoped lang="scss">
-.is-active{
-  background-color: #409EFF !important;
-  color:#FFF !important;
+.is-active {
+  background-color: #409eff !important;
+  color: #fff !important;
 }
 
-.aside{
+.aside {
   background: #383838;
   border: none;
   min-height: 100vh;
