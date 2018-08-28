@@ -6,7 +6,7 @@
       <el-breadcrumb-item>计划分配</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">专项检查计划分配</el-row>
+    <el-row class="title">检查计划分配</el-row>
 
     <el-row :gutter="15">
       <el-col :span="6">
@@ -28,14 +28,13 @@
       <el-col :span="24">
         <el-table :data="plandata" size="medium" stripe style="width: 100%" border>
           <el-table-column prop="title" label="标题" sortable></el-table-column>
-          <el-table-column prop="staff" label="制定人员" sortable width="140"></el-table-column>
+          <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
           <el-table-column prop="limit" label="执行期限"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable width="120"></el-table-column>
-          <el-table-column label="操作" width="220">
+          <el-table-column prop="state" label="状态" sortable></el-table-column>
+          <el-table-column label="操作" min-width="60px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">分配该计划</el-button>
-              <el-button size="mini">查看</el-button>
+              <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">查看 / 分派该计划</el-button>
             </template>
           </el-table-column>
         </el-table>

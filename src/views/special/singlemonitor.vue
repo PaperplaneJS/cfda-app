@@ -11,8 +11,8 @@
     <el-row class="title">{{title}}</el-row>
     <el-tabs style="margin-top:30px;" v-model="tab">
       <el-tab-pane label="检查记录信息" name="info">
+        <el-row style="font-size:18px;margin-bottom:15px;" class="section">监管计划</el-row>
         <el-form label-position="left" style="margin-top:20px;" label-width="100px">
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">监管计划</el-row>
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="检查计划:">

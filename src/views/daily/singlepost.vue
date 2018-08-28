@@ -45,14 +45,6 @@
 
           <el-row>
             <el-col :span="12">
-              <el-form-item label="检查内容:">
-                <el-checkbox style="margin-bottom:10px;" v-for="item in currentPlan.content" :key="item" disabled checked :label="item" border></el-checkbox>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="12">
               <el-form-item label="内容描述:">
                 <el-input v-model="currentPlan.desc" resize="none" :rows="4" type="textarea" readonly></el-input>
               </el-form-item>
@@ -63,6 +55,17 @@
             <el-col :span="12">
               <el-form-item label="备注:">
                 <el-input v-model="currentPlan.tip" :rows="4" type="textarea" resize="none" readonly></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="选择模板:">
+                <el-select placeholder="请选择">
+                  <el-option v-for="item in templates" :key="item.id" :label="item.title" :value="item.id">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -142,6 +145,13 @@ export default {
       title: null,
       tab: "plan",
       currentPlan: null,
+      templates: [
+        { id: 1, title: "食品生产日常监督检查要点表" },
+        { id: 2, title: "食品销售日常监督检查要点表" },
+        { id: 3, title: "餐饮服务日常监督检查要点表" },
+        { id: 4, title: "保健食品生产日常监督检查要点表" },
+        { id: 5, title: "食品小作坊现场检查记录表" }
+      ],
       staffs: [
         { name: "吴建明", value: "wjm" },
         { name: "郑健", value: "zj" },
