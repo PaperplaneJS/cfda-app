@@ -29,15 +29,15 @@
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="memberdata" size="medium" stripe style="width: 100%" border>
-          <el-table-column type="index" label="序号" min-width="80"></el-table-column>
-          <el-table-column prop="nme" label="人员姓名" sortable></el-table-column>
-          <el-table-column prop="sex" label="性别" sortable min-width="80"></el-table-column>
+        <el-table :data="memberdata" size="medium" style="width: 100%" border>
+          <el-table-column type="index" label="序号"></el-table-column>
+          <el-table-column prop="name" label="人员姓名" sortable></el-table-column>
+          <el-table-column prop="sex" label="性别" sortable></el-table-column>
           <el-table-column prop="department" label="网格类型" sortable></el-table-column>
           <el-table-column prop="kind" label="网格类型" sortable></el-table-column>
           <el-table-column prop="role" label="岗位类别" sortable></el-table-column>
           <el-table-column prop="job" label="职务" sortable></el-table-column>
-          <el-table-column prop="action" label="操作" min-width="220">
+          <el-table-column prop="action" label="操作" min-width="100">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看</el-button>
               <el-button size="mini">编辑</el-button>

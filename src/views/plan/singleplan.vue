@@ -47,7 +47,6 @@
               <el-option label="日常检查" value="daily"></el-option>
               <el-option label="专项检查" value="special"></el-option>
               <el-option label="全项检查(风险评级)" value="risk"></el-option>
-              <el-option label="其他" value="other"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -57,14 +56,6 @@
         <el-col :span="12">
           <el-form-item label="专项通知:">
             <el-input :rows="4" type="textarea" placeholder="专项检查通知"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-col :span="24">
-          <el-form-item label="检查项目:">
-            <el-transfer id="select" :titles="['待选项', '已选项']" :button-texts="['移除', '添加']" :data="templateData"></el-transfer>
           </el-form-item>
         </el-col>
       </el-row>

@@ -13,7 +13,7 @@
         <el-input clearable placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
-      <el-col :span="10">
+      <el-col :span="8">
         <el-date-picker type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
         </el-date-picker>
       </el-col>
@@ -30,13 +30,16 @@
           <el-table-column prop="title" label="标题" sortable></el-table-column>
           <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
-          <el-table-column prop="date" label="制定时间" width="120"></el-table-column>
-          <el-table-column prop="limit" label="执行期限" width="120"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable width="120"></el-table-column>
-          <el-table-column label="操作" width="220">
+          <el-table-column prop="date" label="制定时间"></el-table-column>
+          <el-table-column prop="limit" label="执行期限"></el-table-column>
+          <el-table-column label="状态" sortable>
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">分发计划</el-button>
-              <el-button size="mini">查看</el-button>
+              <el-tag :type="getType(scope.row.state)">{{scope.row.state}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">查看 / 分发计划</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -67,6 +70,12 @@ export default {
         }
       ]
     };
+  },
+
+  methods: {
+    getType(text) {
+      return { ["待分发"]: "warning" }[text];
+    }
   }
 };
 </script>

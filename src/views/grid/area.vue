@@ -33,10 +33,14 @@
     <el-row>
       <el-col :span="24">
         <el-table :data="areadata" size="medium" style="width: 100%" border>
-          <el-table-column prop="num" label="主体代码" sortable min-width="120"></el-table-column>
+          <el-table-column prop="num" label="主体代码" sortable></el-table-column>
           <el-table-column prop="name" label="网格化主体名称" sortable></el-table-column>
-          <el-table-column prop="state" label="状态" sortable min-width="120"></el-table-column>
-          <el-table-column prop="action" label="操作" min-width="220">
+          <el-table-column label="状态" sortabl>
+            <template slot-scope="scope">
+              <el-tag :type="getType(scope.row.state)">{{scope.row.state}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="action" label="操作" min-width="100">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看</el-button>
               <el-button size="mini">编辑</el-button>
@@ -68,6 +72,17 @@ export default {
       ],
       state: null
     };
+  },
+
+  methods:{
+    getType(text) {
+      switch (text) {
+        case "正常":
+          return "success";
+        default:
+          return "danger";
+      }
+    }
   }
 };
 </script>

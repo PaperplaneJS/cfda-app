@@ -40,8 +40,12 @@
                 <el-table-column prop="name" label="模板名称" sortable></el-table-column>
                 <el-table-column prop="department" label="类型" sortable></el-table-column>
                 <el-table-column prop="date" label="创建日期" sortable></el-table-column>
-                <el-table-column prop="state" label="状态"></el-table-column>
-                <el-table-column prop="action" label="操作" min-width="220">
+                <el-table-column label="状态">
+                  <template slot-scope="scope">
+                    <el-tag :type="getType(scope.row.state)">{{scope.row.state}}</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="action" label="操作">
                   <template slot-scope="scope">
                     <el-button size="mini" type="primary">查看</el-button>
                     <el-button size="mini">编辑</el-button>
@@ -67,7 +71,7 @@ export default {
   name: "base_template",
   data() {
     return {
-      state:null,
+      state: null,
       templatedata: [
         {
           name: "食品生产日常监督检查要点表",
@@ -77,6 +81,17 @@ export default {
         }
       ]
     };
+  },
+
+  methods: {
+    getType(text) {
+      switch (text) {
+        case "激活":
+          return "success";
+        default:
+          return "danger";
+      }
+    }
   }
 };
 </script>

@@ -186,7 +186,7 @@
       <el-tab-pane label="检查记录" name="record">
         <el-row>
           <el-col :span="24">
-            <el-table :data="currentBizInfo.record" size="medium" stripe style="width: 100%;margin-bottom:25px;" border>
+            <el-table :data="currentBizInfo.record" size="medium" style="width: 100%;margin-bottom:25px;" border>
               <el-table-column prop="date" label="检查时间" sortable></el-table-column>
               <el-table-column prop="name" label="单位名称" sortable></el-table-column>
               <el-table-column prop="num" label="许可证编号"></el-table-column>
@@ -208,7 +208,7 @@
       <el-tab-pane label="风险评级" name="risk">
         <el-row>
           <el-col :span="24">
-            <el-table :data="currentBizInfo.risk" size="medium" stripe style="width: 100%;margin-bottom:25px;" border>
+            <el-table :data="currentBizInfo.risk" size="medium" style="width: 100%;margin-bottom:25px;" border>
               <el-table-column prop="year" label="评级年" min-width="100" sortable></el-table-column>
               <el-table-column prop="name" label="单位名称" sortable></el-table-column>
               <el-table-column prop="num" label="许可证编号"></el-table-column>
@@ -231,7 +231,7 @@
       <el-tab-pane label="整改记录" name="refity">
         <el-row>
           <el-col :span="24">
-            <el-table :data="currentBizInfo.refity" size="medium" stripe style="width: 100%;margin-bottom:25px;" border>
+            <el-table :data="currentBizInfo.refity" size="medium" style="width: 100%;margin-bottom:25px;" border>
               <el-table-column prop="name" label="单位名称" sortable></el-table-column>
               <el-table-column prop="num" label="许可证编号"></el-table-column>
               <el-table-column prop="officer" label="执法人员" min-width="80"></el-table-column>

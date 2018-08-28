@@ -32,13 +32,17 @@
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="lawdata" size="medium" stripe style="width: 100%" border>
+        <el-table :data="lawdata" size="medium" style="width: 100%" border>
           <el-table-column prop="num" label="法令法规编号" sortable></el-table-column>
-          <el-table-column prop="name" label="法令法规名称" sortable></el-table-column>
+          <el-table-column prop="name" label="法令法规名称" min-width="200px" sortable></el-table-column>
           <el-table-column prop="master" label="编制主体" sortable></el-table-column>
-          <el-table-column prop="date" label="创建日期" sortable min-width="160"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable min-width="80"></el-table-column>
-          <el-table-column prop="action" label="操作" min-width="220">
+          <el-table-column prop="date" label="创建日期" sortable></el-table-column>
+          <el-table-column label="状态" sortable>
+            <template slot-scope="scope">
+              <el-tag :type="getType(scope.row.state)">{{scope.row.state}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="action" label="操作" min-width="100px">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看</el-button>
               <el-button size="mini">编辑</el-button>
@@ -52,7 +56,7 @@
     <el-row>
       <el-pagination background layout="prev, pager, next" :total="100">
       </el-pagination>
-    </el-row> 
+    </el-row>
 
   </div>
 </template>
@@ -73,6 +77,17 @@ export default {
         }
       ]
     };
+  },
+
+  methods: {
+    getType(text) {
+      switch (text) {
+        case "激活":
+          return "success";
+        default:
+          return "danger";
+      }
+    }
   }
 };
 </script>

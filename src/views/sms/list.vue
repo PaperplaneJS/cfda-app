@@ -25,9 +25,13 @@
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="smsdata" size="medium" stripe style="width: 100%" border>
-          <el-table-column prop="num" label="序号" width="120"></el-table-column>
-          <el-table-column prop="title" label="标题" sortable></el-table-column>
+        <el-table :row-class-name="tableRowClassName" :data="smsdata" size="medium" style="width: 100%" border>
+          <el-table-column type="index" label="序号" width="120"></el-table-column>
+          <el-table-column label="标题" sortable>
+            <template slot-scope="scope">
+              <el-tag size="small" style="margin-right:10px;" :type="getType(scope.row.read)">{{scope.row.read?"已读":"未读"}}</el-tag>{{scope.row.title}}
+            </template>
+          </el-table-column>
           <el-table-column prop="origin" label="来源" sortable width="200"></el-table-column>
           <el-table-column prop="date" label="时间" width="120">
             <template slot-scope="scope">
@@ -52,13 +56,47 @@ export default {
     return {
       smsdata: [
         {
-          num: 1,
+          id: 1,
           title: "关于餐饮行业加强检查工作的通知",
           origin: "虞山分局",
-          date: "2016-08-01"
+          date: "2016-08-01",
+          read: false
+        },
+        {
+          id: 2,
+          title: "关于新的法律法规下发工作的通知",
+          origin: "虞山分局",
+          date: "2016-08-01",
+          read: true
         }
       ]
     };
+  },
+
+  methods: {
+    tableRowClassName({ row, rowIndex }) {
+      if (!row.read) {
+        return "noread";
+      }
+      return "";
+    },
+    getType(isread) {
+      switch (isread) {
+        case true:
+          return "info";
+        case false:
+          return "warning";
+      }
+    }
   }
 };
 </script>
+
+<style lang="scss">
+#sms_list {
+  .noread {
+    background: #f0f9eb !important;
+  }
+}
+</style>
+

@@ -28,11 +28,20 @@
       <el-col :span="24">
         <el-table :data="reportdata" size="medium" stripe style="width: 100%" border>
           <el-table-column prop="title" label="标题" sortable></el-table-column>
-          <el-table-column prop="staff" label="制定人员" sortable min-width="140"></el-table-column>
+          <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
           <el-table-column prop="limit" label="执行期限"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable min-width="160"></el-table-column>
-          <el-table-column label="操作" min-width="120">
+          <el-table-column label="状态与进度">
+            <template slot-scope="scope">
+              <div class="progresstip">
+                <el-tag size="small">
+                  {{scope.row.state}}
+                </el-tag>
+              </div>
+              <el-progress :text-inside="true" :stroke-width="18" :percentage="scope.row.progress*100"></el-progress>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" min-width="40px">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('report/'+scope.row.id)" type="primary" size="mini">进入查看</el-button>
             </template>
@@ -61,10 +70,17 @@ export default {
           staff: "张小明",
           department: "常熟市市局",
           limit: "2018-06-01 ~ 2018-12-01",
-          state: "进行中 70/150"
+          state: "进行中 : 80/150",
+          progress: 0.53
         }
       ]
     };
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.progresstip {
+  margin: 5px 0;
+}
+</style>

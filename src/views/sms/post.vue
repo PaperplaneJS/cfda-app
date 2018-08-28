@@ -31,7 +31,15 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="接收主体:">
-            <el-tree :check-strictly="true" style="margin-bottom:20px;" node-key="id" :default-expanded-keys="[2,3,4]" :data="gridtree" show-checkbox>
+            <el-tree :expand-on-click-node="false" ref="tree" :check-strictly="true" style="margin-bottom:20px;" node-key="id" :default-expanded-keys="[2,3,4]" :data="gridtree" show-checkbox>
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span>{{ node.label }}</span>
+                <span>
+                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="treeSelectChild(node,data)">
+                    下级全选
+                  </el-button>
+                </span>
+              </span>
             </el-tree>
           </el-form-item>
         </el-col>
@@ -82,6 +90,19 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    treeSelectChild(node, data) {
+      console.log(node);
+      this.setChildrenChecked(node);
+    },
+
+    setChildrenChecked(node) {
+      node.checked = true;
+      if (node.childNodes) {
+        node.childNodes.forEach(t => this.setChildrenChecked(t));
+      }
+    }
   }
 };
 </script>
@@ -89,5 +110,14 @@ export default {
 <style lang="scss" scoped>
 .el-row {
   margin-bottom: 0;
+}
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
 }
 </style>

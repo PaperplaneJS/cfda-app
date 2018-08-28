@@ -9,24 +9,21 @@
     <el-row class="title">计划列表</el-row>
 
     <el-row :gutter="15">
-      <el-col :span="12">
+      <el-col :span="4">
         <router-link to="list/new">
           <el-button type="primary" icon="el-icon-plus">制定新的计划</el-button>
         </router-link>
       </el-col>
-    </el-row>
-
-    <el-row :gutter="15">
       <el-col :span="6">
         <el-input clearable placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
-      <el-col :span="10">
+      <el-col :span="8">
         <el-date-picker type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
         </el-date-picker>
       </el-col>
 
-      <el-col :span="8" :lg="6">
+      <el-col :span="6" :lg="6">
         <el-button icon="el-icon-search" type="primary" round>查找...</el-button>
         <el-button round>重置</el-button>
       </el-col>
@@ -38,9 +35,13 @@
           <el-table-column prop="title" label="标题" sortable></el-table-column>
           <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
-          <el-table-column prop="date" label="制定时间" width="120"></el-table-column>
-          <el-table-column prop="limit" label="执行期限" width="120"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable width="120"></el-table-column>
+          <el-table-column prop="date" label="制定时间"></el-table-column>
+          <el-table-column prop="limit" label="执行期限"></el-table-column>
+          <el-table-column label="状态" sortable>
+            <template slot-scope="scope">
+              <el-tag :type="getType(scope.row.state)">{{scope.row.state}}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="220">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看</el-button>
@@ -77,6 +78,11 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    getType(text) {
+      return { ["待分发"]: "warning",["已分发"]: "success",["执行中"]: "success" }[text];
+    }
   }
 };
 </script>

@@ -220,7 +220,7 @@ export default {
     },
 
     detailDesc(detail) {
-      let str = `${detail.isrequired ? "必填" : "非必填"} / `;
+      let str = `${detail.isrequired ? "必填" : "非必填"} / ${detail.isimportant ? "重点" : "普通"} / `;
       detail.activeItem.forEach(t => {
         str += `${t}=${detail.selectItem[t]}; `;
       });

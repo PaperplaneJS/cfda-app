@@ -12,12 +12,17 @@
       <el-col :span="24">
         <el-table :data="plandata" size="medium" stripe style="width: 100%" border>
           <el-table-column prop="title" label="标题" sortable></el-table-column>
-          <el-table-column prop="staff" label="制定人员" width="120" sortable></el-table-column>
+          <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
-          <el-table-column prop="date" label="制定时间" width="120"></el-table-column>
-          <el-table-column prop="limit" label="执行期限" width="120"></el-table-column>
-          <el-table-column prop="state" label="状态与进度"></el-table-column>
-          <el-table-column label="操作" width="240">
+          <el-table-column prop="date" label="制定时间"></el-table-column>
+          <el-table-column prop="limit" label="执行期限"></el-table-column>
+          <el-table-column label="状态与进度">
+            <template slot-scope="scope">
+              {{scope.row.state}}
+              <el-progress :text-inside="true" :stroke-width="18" :percentage="scope.row.progress*100"></el-progress>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" min-width="120">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">归档</el-button>
               <el-button size="mini">检查记录</el-button>
@@ -49,7 +54,8 @@ export default {
           department: "常熟市市局",
           date: "2018-06-01",
           limit: "2018-06-01 ~ 2018-12-01",
-          state: "进行中:80/150"
+          state: "进行中:80/150",
+          progress: 0.53
         }
       ]
     };
