@@ -12,6 +12,13 @@
       </el-select>
     </el-row>
 
+    <el-row style="margin-bottom:20px;" :gutter="15">
+      <el-col :span="14">
+        <el-alert title="风险评级每年一评，全量检查按最后一次结果为准。需要以年度为单位来查看" type="info" :closable="false" show-icon>
+        </el-alert>
+      </el-col>
+    </el-row>
+
     <el-row :gutter="15">
       <el-col :span="6">
         <el-input clearable placeholder="搜索单位名称/区域/分值/评定单位人员等" prefix-icon="el-icon-search"></el-input>
@@ -35,9 +42,14 @@
           <el-table-column prop="bizname" label="单位名称" sortable></el-table-column>
           <el-table-column prop="kind" label="单位类型" sortable></el-table-column>
           <el-table-column prop="area" label="所属区域" sortable></el-table-column>
-          <el-table-column prop="static" label="静态风险分值" sortable></el-table-column>
-          <el-table-column prop="active" label="动态风险分值" sortable></el-table-column>
-          <el-table-column prop="point" label="风险评分" sortable></el-table-column>
+          <el-table-column label="评级结果" min-width="120px;" sortable>
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.result.lv">{{scope.row.result.lv}}</el-tag>
+              <el-popover style="padding-left:10px;" placement="top-start" title="分值详情" width="200" trigger="hover" :content="`静态: ${scope.row.result.static}  / 动态: ${scope.row.result.active}`">
+                <el-button size="small" slot="reference">风险分值: {{scope.row.result.total}}</el-button>
+              </el-popover>
+            </template>
+          </el-table-column>
           <el-table-column prop="staff" label="评定人" sortable></el-table-column>
           <el-table-column prop="department" label="评定单位" sortable></el-table-column>
           <el-table-column prop="date" label="检查时间" sortable></el-table-column>
@@ -77,12 +89,15 @@ export default {
             bizname: "东南大道麦当劳DT餐厅",
             kind: "食品生产",
             area: "虞山镇",
-            static: "40",
-            active: "80",
-            point: "75",
             staff: "张小明",
             department: "虞山食药监分局",
-            date: "2018-08-01 12:00"
+            date: "2018-08-01 12:00",
+            result: {
+              static: 13.5,
+              active: 20,
+              total: 33.5,
+              lv: "B"
+            }
           }
         ]
       }

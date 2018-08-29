@@ -39,9 +39,9 @@
             <el-collapse-item v-for="item of currentTemplate.checkitem" :key="item.id" :name="item.id">
               <template slot="title">
                 <span>{{item.name}}</span>
-                <el-tag size="mini" style="margin:0 10px;">{{item.items.length}}项</el-tag>
-                <el-button @click.native.stop="addCheckDetail(item)" type="text">添加项目</el-button>
-                <el-button @click.native.stop="deleteCheckItem(item)" type="text">删除本检查内容</el-button>
+                <el-tag size="mini" style="margin:0 10px;">{{item.items.length}}子项</el-tag>
+                <el-button @click.native.stop="addCheckDetail(item)" type="text">添加子项</el-button>
+                <el-button @click.native.stop="deleteCheckItem(item)" type="text">删除本项</el-button>
               </template>
               <el-alert style="margin-top:8px;" @close="deleteDetail(item,detail)" :title="detail.content" v-for="detail of item.items" :key="detail.id" type="info" :description="detailDesc(detail)">
               </el-alert>
@@ -54,11 +54,11 @@
       <el-row :gutter="15">
         <el-col :span="8">
           <el-form-item label="设置检查内容:">
-            <el-input size="medium" v-model="inputCheckItemName" placeholder="请输入检查内容,然后点击右边的添加"></el-input>
+            <el-input size="medium" v-model="inputCheckItemName" placeholder="输入检查内容(无需编号)，然后点击添加"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-button size="medium" @keypress.enter="addCheckItem" @click.native="addCheckItem" type="primary" round>添加该内容</el-button>
+          <el-button size="medium" @keypress.enter="addCheckItem" @click.native="addCheckItem" type="primary" round>添加一项</el-button>
         </el-col>
       </el-row>
 
@@ -115,7 +115,7 @@
     <el-row>
       <el-col :span="24">
         <el-button type="primary">提交</el-button>
-        <el-button icon="el-icon-view">预览</el-button>
+        <el-button type="primary" icon="el-icon-view">预览</el-button>
         <router-link to="/base/template">
           <el-button style="margin-left:20px;">返回模板管理</el-button>
         </router-link>

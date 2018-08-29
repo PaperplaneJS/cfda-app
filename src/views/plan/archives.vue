@@ -32,17 +32,15 @@
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
           <el-table-column prop="date" label="制定时间"></el-table-column>
           <el-table-column prop="limit" label="执行期限"></el-table-column>
-          <el-table-column label="状态与进度">
+          <el-table-column label="状态">
             <template slot-scope="scope">
-              {{scope.row.state}}
-              <el-progress :text-inside="true" :stroke-width="18" :percentage="scope.row.progress*100"></el-progress>
+              <el-tag>{{scope.row.state}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="120">
+          <el-table-column label="操作" min-width="100px">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">归档</el-button>
-              <el-button size="mini">检查记录</el-button>
-              <el-button size="mini">查看</el-button>
+              <el-button size="mini" type="primary">检查记录</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -70,7 +68,7 @@ export default {
           department: "常熟市市局",
           date: "2018-06-01",
           limit: "2018-06-01 ~ 2018-12-01",
-          state: "进行中:80/150",
+          state: "未完成,无需归档",
           progress: 0.53
         }
       ]

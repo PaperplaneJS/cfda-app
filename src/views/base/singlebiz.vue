@@ -12,7 +12,7 @@
     <el-tabs style="margin-top:30px;" v-model="tab">
       <el-tab-pane label="基本信息" name="base">
 
-        <el-form label-position="left"  :model="currentBizInfo.base" style="margin-top:20px;" label-width="90px">
+        <el-form label-position="left" :model="currentBizInfo.base" style="margin-top:20px;" label-width="90px">
           <el-row>
             <el-col :span="12">
               <el-form-item label="企业名称:">
@@ -183,7 +183,7 @@
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane label="检查记录" name="record">
+      <el-tab-pane v-if="!isnew" label="检查记录" name="record">
         <el-row>
           <el-col :span="24">
             <el-table :data="currentBizInfo.record" size="medium" style="width: 100%;margin-bottom:25px;" border>
@@ -205,7 +205,7 @@
         </el-row>
       </el-tab-pane>
 
-      <el-tab-pane label="风险评级" name="risk">
+      <el-tab-pane v-if="!isnew" label="风险评级" name="risk">
         <el-row>
           <el-col :span="24">
             <el-table :data="currentBizInfo.risk" size="medium" style="width: 100%;margin-bottom:25px;" border>
@@ -228,7 +228,7 @@
         </el-row>
       </el-tab-pane>
 
-      <el-tab-pane label="整改记录" name="refity">
+      <el-tab-pane v-if="!isnew" label="整改记录" name="refity">
         <el-row>
           <el-col :span="24">
             <el-table :data="currentBizInfo.refity" size="medium" style="width: 100%;margin-bottom:25px;" border>
@@ -271,6 +271,7 @@ export default {
   data() {
     return {
       tab: "base",
+      isnew: null,
       currentBizInfo: null,
       title: "",
       gridData: [
@@ -298,74 +299,108 @@ export default {
     let bizid = this.$route.params.bizid;
 
     if (bizid.trim() === "new") {
-      let biz = {};
-      biz.base = {
-        name: "",
-        active: true,
-        type: null,
-        area: "",
-        grid: null,
-        contactname: "",
-        contacttel: "",
-        address: ""
+      this.currentBizInfo = {
+        base: {
+          name: "",
+          active: true,
+          type: null,
+          area: "",
+          grid: null,
+          contactname: "",
+          contacttel: "",
+          address: ""
+        },
+        licence: {
+          producer: "",
+          num: "",
+          code: "",
+          supervise: "",
+          superviser: "",
+          responsible: "",
+          address: "",
+          productaddr: "",
+          foodkind: "",
+          issue: "",
+          licenceissue: "",
+          licenceuntil: ""
+        },
+        record: [],
+        risk: [],
+        refity: []
       };
-      biz.licence = {
-        producer: "",
-        num: "",
-        code: "",
-        supervise: "",
-        superviser: "",
-        responsible: "",
-        address: "",
-        productaddr: "",
-        foodkind: "",
-        issue: "",
-        licenceissue: "",
-        licenceuntil: ""
-      };
-      biz.record = [
-        {
-          date: "2018-08-24",
-          name: "常吉面馆环城北路店",
-          num: "CS-012-12087450",
-          grid: "虞山分局",
-          officer: "张强",
-          kind: "食品生产日常监督检查",
-          checkresult: "符合",
-          handleresult: "通过"
-        }
-      ];
-      biz.risk = [
-        {
-          year: "2017",
-          name: "常吉面馆环城北路店",
-          num: "CS-012-12087450",
-          grid: "虞山分局",
-          riskresult: "优秀",
-          riskpoint: "90",
-          officer: "张强",
-          department: "虞山分局",
-          last: "2017-12-12 12:00"
-        }
-      ];
-      biz.refity = [
-        {
-          name: "常吉面馆环城北路店",
-          num: "CS-012-12087450",
-          officer: "王小明",
-          department: "虞山分局",
-          kind: "食品生产日常监督检查",
-          isrefity: "是",
-          isrecheck: "是",
-          state: "整改完成",
-          update: "2018年1月2日 12:00",
-          result: "责令整改"
-        }
-      ];
-      this.currentBizInfo = biz;
       this.title = "新增企业";
-    } else {
+      this.isnew=true;
+
+
+    } else if (bizid === "1") {
+      this.currentBizInfo = {
+        base: {
+          name: "常吉面馆环城北路店",
+          active: true,
+          type: "食品生产",
+          area: "虞山镇",
+          grid: ["常熟市","虞山镇","食药监分局"],
+          contactname: "王小明",
+          contacttel: "13872663110",
+          address: "环城北路"
+        },
+        licence: {
+          producer: "常吉面馆环城北路店",
+          num: "CS-012-3827388",
+          code: "3281238923218",
+          supervise: "虞山镇食药监分局",
+          superviser: "张强",
+          responsible: "王小明",
+          address: "环城北路",
+          productaddr: "环城北路",
+          foodkind: "粮食加工品 小麦粉",
+          issue: "虞山镇食药监分局",
+          licenceissue: "2017-11-10",
+          licenceuntil: "2019-11-10"
+        },
+        record: [
+          {
+            date: "2018-08-24",
+            name: "常吉面馆环城北路店",
+            num: "CS-012-12087450",
+            grid: "虞山分局",
+            officer: "张强",
+            kind: "食品生产日常监督检查",
+            checkresult: "符合",
+            handleresult: "通过"
+          }
+        ],
+        risk: [
+          {
+            year: "2017",
+            name: "常吉面馆环城北路店",
+            num: "CS-012-12087450",
+            grid: "虞山分局",
+            riskresult: "优秀",
+            riskpoint: "90",
+            officer: "张强",
+            department: "虞山分局",
+            last: "2017-12-12 12:00"
+          }
+        ],
+        refity: [
+          {
+            name: "常吉面馆环城北路店",
+            num: "CS-012-12087450",
+            officer: "王小明",
+            department: "虞山分局",
+            kind: "食品生产日常监督检查",
+            isrefity: "是",
+            isrecheck: "是",
+            state: "整改完成",
+            update: "2018年1月2日 12:00",
+            result: "责令整改"
+          }
+        ]
+      };
+
       this.title = this.currentBizInfo.base.name;
+      this.isnew=false;
     }
   }
 };

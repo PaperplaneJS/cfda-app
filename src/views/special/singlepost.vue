@@ -211,22 +211,22 @@
             <el-collapse v-model="alreadytask" accordion>
               <el-collapse-item name="1">
                 <template slot="title">
-                  食品生产场所检查任务
-                  <el-tag size="mini" style="margin:0 10px;">执行中...</el-tag>
+                  {{alreadytask.title}}
+                  <el-tag size="mini" style="margin:0 10px;">{{alreadytask.state}}</el-tag>
                 </template>
 
                 <el-row :gutter="15">
-                  <el-col :span="8">分派日期: 2018-07-01</el-col>
-                  <el-col :span="8">检查企业: 25</el-col>
+                  <el-col :span="8">分派日期: {{alreadytask.date}}</el-col>
+                  <el-col :span="8">检查企业: {{alreadytask.total}}</el-col>
                 </el-row>
 
                 <el-row :gutter="15">
-                  <el-col :span="8">执行情况: 23/25</el-col>
-                  <el-col :span="8">期限: 2018-07-01 ~ 2018-07-31</el-col>
+                  <el-col :span="8">执行情况: {{alreadytask.current}}/{{alreadytask.total}}</el-col>
+                  <el-col :span="8">期限: {{alreadytask.limit[0]}} ~ {{alreadytask.limit[1]}}</el-col>
                 </el-row>
 
                 <el-row :gutter="15">
-                  <el-col :span="16">模板: 食品生产专项监督检查要点表</el-col>
+                  <el-col :span="16">模板: {{alreadytask.template}}</el-col>
                 </el-row>
               </el-collapse-item>
             </el-collapse>
@@ -419,6 +419,19 @@ export default {
         desc: "",
         tip: ""
       };
+
+      this.alreadytask = [
+        {
+          id: 1,
+          title: "食品生产场所检查任务",
+          state: "执行中...",
+          date: "2018-07-01",
+          total: 25,
+          current: 19,
+          limit: ["2018-07-01", "2018-07-31"],
+          template: "食品生产专项监督检查要点表"
+        }
+      ];
 
       this.title = this.originPlan.title;
     }

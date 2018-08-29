@@ -48,7 +48,11 @@ import RiskRisk from '@/views/risk/risk';
 import RiskSingleRisk from '@/views/risk/singlerisk';
 
 import RectifyRectify from '@/views/rectify/rectify';
+import RectifySingleRectify from '@/views/rectify/singlerectify';
 
+import TraceTrace from '@/views/trace/trace';
+
+import CountCount from '@/views/count/count';
 
 Vue.use(Router);
 
@@ -198,9 +202,30 @@ let routes = [{
       }, {
         path: '/risk/:riskid',
         component: RiskSingleRisk
-      }, {
+      },
+
+      //整改管理
+
+      {
         path: '/rectify',
         component: RectifyRectify
+      }, {
+        path: '/rectify/:rectifyid',
+        component: RectifySingleRectify
+      },
+
+      //跟踪监督
+
+      {
+        path: '/trace',
+        component: TraceTrace
+      },
+
+      //统计分析
+
+      {
+        path: '/count',
+        component: CountCount
       }
     ]
   }

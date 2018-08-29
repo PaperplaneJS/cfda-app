@@ -249,7 +249,7 @@ export default {
 
 <style lang="scss" scoped>
 #main {
-  width: 800px;
+  width: 700px;
   margin-top: 20px;
 
   .title {
@@ -283,7 +283,7 @@ export default {
     }
 
     .label {
-      width: 100px;
+      width: 90px;
     }
 
     .content {

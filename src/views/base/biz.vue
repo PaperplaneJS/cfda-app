@@ -58,8 +58,7 @@
           </el-table-column>
           <el-table-column prop="action" label="操作" min-width="130px">
             <template slot-scope="scope">
-              <el-button size="mini" type="primary">查看</el-button>
-              <el-button size="mini">编辑</el-button>
+              <el-button @click.native="$router.push('biz/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
@@ -84,6 +83,7 @@ export default {
       state: null,
       table: [
         {
+          id: 1,
           name: "常吉面馆环城北路店",
           type: "食品生产",
           legal: "王小明",

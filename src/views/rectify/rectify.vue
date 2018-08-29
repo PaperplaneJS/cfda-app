@@ -8,11 +8,6 @@
     <el-row class="title">整改管理</el-row>
 
     <el-row :gutter="15">
-      <el-col :span="3">
-        <router-link to="rectify/new">
-          <el-button icon="el-icon-plus">新增整改记录</el-button>
-        </router-link>
-      </el-col>
       <el-col :span="6">
         <el-input clearable placeholder="搜索单位名称/区域/分值/评定单位人员等" prefix-icon="el-icon-search"></el-input>
       </el-col>
@@ -31,19 +26,34 @@
     <el-row>
       <el-col :span="24">
         <el-table :data="rectifydata" size="medium" stripe style="width: 100%;margin-bottom:20px;" border>
+          <el-table-column prop="bizname" label="单位名称" sortable></el-table-column>
           <el-table-column prop="date" label="检查时间" sortable></el-table-column>
-          <el-table-column prop="bizname" label="单位名称" min-width="300" sortable></el-table-column>
           <el-table-column prop="staff" label="执法人员" sortable></el-table-column>
           <el-table-column prop="kind" label="监督检查类别"></el-table-column>
-          <el-table-column prop="rectify" label="是否整改"></el-table-column>
-          <el-table-column prop="review" label="是否复查"></el-table-column>
-          <el-table-column prop="state" label="记录状态"></el-table-column>
-          <el-table-column prop="reviewdate" label="检查时间"></el-table-column>
-          <el-table-column prop="result" label="检查结果"></el-table-column>
-          <el-table-column prop="action" label="操作" min-width="160">
+          <el-table-column label="检查结果">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push(scope.row.type+'/'+scope.row.id)" size="mini" type="primary">查看</el-button>
-              <el-button size="mini" type="danger">删除</el-button>
+              <el-tag>{{scope.row.result}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="当前状态">
+            <template slot-scope="scope">
+              <el-tag>{{scope.row.state}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="是否复查">
+            <template slot-scope="scope">
+              <el-tag>{{scope.row.review?"是":"否"}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="复查结果">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.reviewresult">{{scope.row.reviewresult}}</el-tag>
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="action" label="操作" min-width="70px">
+            <template slot-scope="scope">
+              <el-button @click.native="$router.push('rectify/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -70,10 +80,10 @@ export default {
           bizname: "东南大道麦当劳DT餐厅",
           staff: "张小明",
           kind: "日常检查",
-          rectify: "是",
-          review: "否",
+          rectify: true,
+          review: false,
+          reviewresult: null,
           state: "已通知整改",
-          reviewdate: "未复查",
           result: "责令整改"
         }
       ]

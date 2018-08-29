@@ -9,7 +9,11 @@
     <el-row class="title">{{title}}</el-row>
 
     <el-form label-position="left" style="margin-top:20px;" label-width="100px">
-      <el-row style="font-size:18px;margin-bottom:15px;" class="section">基本信息</el-row>
+      <el-row style="font-size:18px;margin-bottom:15px;" class="section">基本信息
+        <router-link :to="`/base/biz/${currentRisk.biz.id}`">
+          <el-button type="text" size="mini">前往查看</el-button>
+        </router-link>
+      </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="单位名:">
@@ -32,101 +36,88 @@
         </el-col>
       </el-row>
 
-      <el-row :gutter="20">
-        <el-col :span="6">
-          <el-form-item label="负责人:">
-            <el-input v-model="currentRisk.biz.legal" readonly></el-input>
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="6">
-          <el-form-item label="联系电话:">
-            <el-input v-model="currentRisk.biz.tel" readonly></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="单位地址:">
-            <el-input v-model="currentRisk.biz.address" resize="none" readonly type="textarea"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row style="font-size:18px;margin-bottom:15px;" class="section">评级结果</el-row>
+      <el-row style="font-size:18px;margin-bottom:15px;" class="section">风险检查</el-row>
       <el-row :gutter="15">
         <el-col :span="12">
           <router-link to="">
-            <el-button size="small" type="primary" icon="el-icon-plus">新增风险检查</el-button>
+            <el-button size="small" type="primary" icon="el-icon-plus">新增检查</el-button>
           </router-link>
         </el-col>
       </el-row>
 
-      <el-collapse style="margin-top:20px;" v-model="collapse">
+      <el-row :gutter="20">
+        <el-col :span="16">
+          <el-collapse style="margin-top:20px;" v-model="collapse">
 
-        <el-collapse-item v-for="item of currentRisk.riskinfo" :key="`${item.year}-${item.times}`" :name="`${item.year}-${item.times}`">
-          <template slot="title">
-            <span>{{item.year}}年第{{item.times}}次</span>
-            <el-tag size="mini" style="margin-left:10px;">风险分:{{item.finalpoint}} 等级:{{item.lv}}</el-tag>
-          </template>
+            <el-collapse-item class="collapse-item" v-for="item of currentRisk.riskinfo" :key="`${item.year}-${item.times}`" :name="`${item.year}-${item.times}`">
+              <template slot="title">
+                <span>{{item.year}}年第{{item.times}}次</span>
+                <el-tag size="mini" style="margin-left:10px;">风险分:{{item.finalpoint}} 等级:{{item.lv}}</el-tag>
+              </template>
 
-          <el-row :gutter="20">
-            <el-col :span="6">
-              <el-form-item label="检查科室:">
-                <el-input v-model="item.department" :readonly="isreadonly"></el-input>
-              </el-form-item>
-            </el-col>
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  检查科室： {{item.department}}
+                </el-col>
 
-            <el-col :span="6">
-              <el-form-item label="执法人员:">
-                <el-input v-model="item.staff" :readonly="isreadonly"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
+                <el-col :span="8">
+                  执法人员： {{item.staff}}
+                </el-col>
+              </el-row>
 
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="检查时间:">
-                <el-date-picker :readonly="isreadonly" v-model="item.date" type="datetime">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
+              <el-row :gutter="20">
+                <el-col :span="16">
+                  检查时间： {{item.date}}
+                </el-col>
+              </el-row>
 
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-popover placement="top-start" title="静态风险分值" width="400" trigger="hover" :content="`${item.staticdetail.kind}:${item.staticdetail.name} [编号 : ${item.staticdetail.code} 级别 : ${item.staticdetail.level}]`">
-                <el-button style="margin-right:20px;" size="small" slot="reference">静态风险分值: {{item.staticpoint}}</el-button>
-              </el-popover>
+              <el-row :gutter="20">
+                <el-col :span="12">
+                  静态风险分值：
+                  <el-tag size="small">{{item.staticpoint}}</el-tag>
+                </el-col>
+              </el-row>
 
-              <el-button @click.native="showPopup(item)" size="small" type="primary">查看动态风险</el-button>
-            </el-col>
-          </el-row>
-        </el-collapse-item>
-      </el-collapse>
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  静态风险类别： {{item.staticdetail.kind}}
+                </el-col>
 
+                <el-col :span="8">
+                  品种和代码： {{item.staticdetail.name}} [{{item.staticdetail.code}}]
+                </el-col>
+              </el-row>
+
+              <el-row :gutter="20">
+                <el-col :span="12">
+                  动态风险分值：
+                  <el-tag size="small">{{item.activepoint}}</el-tag>
+                </el-col>
+              </el-row>
+
+              <el-row :gutter="20">
+                <el-col :span="24">
+                  <el-table :data="activeRiskRows(item.activedetail)" :span-method="tableSpan(item.activedetail)" size="medium" style="width: 100%" border>
+                    <el-table-column prop="item" label="检查项目"></el-table-column>
+                    <el-table-column prop="detail" label="检查内容" min-width="160"></el-table-column>
+                    <el-table-column prop="result" label="结果"></el-table-column>
+                    <el-table-column prop="point" label="得分" min-width="80"></el-table-column>
+                    <el-table-column label="备注" width="80">
+                      <template slot-scope="scope">
+                        <el-popover v-if="scope.row.remark" placement="top-start" title="备注" width="400" trigger="hover" :content="scope.row.remark">
+                          <el-button size="small" slot="reference">查看</el-button>
+                        </el-popover>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-col>
+              </el-row>
+
+            </el-collapse-item>
+          </el-collapse>
+        </el-col>
+      </el-row>
     </el-form>
-
-    <el-dialog title="动态风险" v-if="isPopup" :visible.sync="isPopup">
-      <el-table max-height="400" :data="activeRiskRows" :span-method="tableSpan" size="medium" style="width: 100%" border>
-        <el-table-column prop="item" label="检查项目"></el-table-column>
-        <el-table-column prop="detail" label="检查内容" min-width="160"></el-table-column>
-        <el-table-column prop="result" label="结果"></el-table-column>
-        <el-table-column prop="point" label="得分" min-width="80"></el-table-column>
-        <el-table-column label="备注" width="80">
-          <template slot-scope="scope">
-            <el-popover v-if="scope.row.remark" placement="top-start" title="备注" width="400" trigger="hover" :content="scope.row.remark">
-              <el-button size="small" slot="reference">查看</el-button>
-            </el-popover>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click.native="isPopup=false">完成</el-button>
-      </div>
-    </el-dialog>
-
   </div>
 </template>
 
@@ -137,8 +128,6 @@ export default {
     return {
       currentRisk: null,
       collapse: null,
-      isPopup: false,
-      popupItem: null,
       title: null,
       isreadonly: true
     };
@@ -149,6 +138,7 @@ export default {
     if (riskid === "1") {
       this.currentRisk = {
         biz: {
+          id: 1,
           name: "常吉面馆环城北路店",
           legal: "王小明",
           tel: "13872663110",
@@ -158,15 +148,16 @@ export default {
         },
         riskinfo: [
           {
+            id: 1,
             year: 2017,
             times: 1,
             date: "2017-07-01 12:00:00",
             staff: "张小明",
             department: "综合办公室",
-            lv: "A",
+            lv: "B",
             staticpoint: 13.5,
-            activepoint: 10,
-            finalpoint: 13,
+            activepoint: 20,
+            finalpoint: 33.5,
             staticdetail: {
               kind: "粮食加工品",
               name: "小麦粉",
@@ -234,6 +225,7 @@ export default {
             }
           },
           {
+            id: 2,
             year: 2018,
             times: 1,
             date: "2018-05-01 12:00:00",
@@ -329,10 +321,27 @@ export default {
     }
   },
 
-  computed: {
-    activeRiskRows() {
+  methods: {
+    tableSpan(item) {
+      let spansArray = {};
+
+      return ({ row, column, rowIndex, columnIndex }) => {
+        if (columnIndex !== 0) {
+          return;
+        }
+
+        return {
+          rowspan: this.allTableCross(item)[rowIndex]
+            ? this.allTableCross(item)[rowIndex]
+            : 0,
+          colspan: this.allTableCross(item)[rowIndex] ? 1 : 0
+        };
+      };
+    },
+
+    activeRiskRows(item) {
       let rows = [];
-      Object.entries(this.popupItem).forEach(([itemName, itemContentArray]) => {
+      Object.entries(item).forEach(([itemName, itemContentArray]) => {
         itemContentArray.forEach(content => {
           rows.push({
             item: itemName,
@@ -347,35 +356,15 @@ export default {
       return rows;
     },
 
-    allTableCross() {
+    allTableCross(item) {
       let itemContain = [],
         t = 0;
-      Object.entries(this.popupItem).forEach(([checkItemName, checkDetail]) => {
+      Object.entries(item).forEach(([checkItemName, checkDetail]) => {
         itemContain[t] = checkDetail.length;
         t += checkDetail.length;
       });
 
       return itemContain;
-    }
-  },
-
-  methods: {
-    tableSpan({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex !== 0) {
-        return;
-      }
-
-      return {
-        rowspan: this.allTableCross[rowIndex]
-          ? this.allTableCross[rowIndex]
-          : 0,
-        colspan: this.allTableCross[rowIndex] ? 1 : 0
-      };
-    },
-
-    showPopup(item) {
-      this.popupItem = item.activedetail;
-      this.isPopup = true;
     }
   }
 };
@@ -384,5 +373,11 @@ export default {
 <style lang="scss" scoped>
 .el-row {
   margin-bottom: 0;
+}
+
+.collapse-item {
+  .el-row {
+    margin-bottom: 10px;
+  }
 }
 </style>
