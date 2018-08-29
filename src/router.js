@@ -53,154 +53,158 @@ import RectifyRectify from '@/views/rectify/rectify';
 Vue.use(Router);
 
 let routes = [{
-  path: '/index',
-  alias: '/',
-  component: App,
-  children: [{
-      path: '/index',
-      component: Index
-    },
+    path: '/',
+    redirect: '/index'
+  },
+  {
+    path: '/index',
+    component: App,
+    children: [{
+        path: '/index',
+        component: Index
+      },
 
-    //基础信息管理
+      //基础信息管理
 
-    {
-      path: '/base/biz',
-      component: BaseBiz
-    }, {
-      path: '/base/template',
-      component: BaseTemplate
-    }, {
-      path: '/base/biz/:bizid',
-      component: BaseSingleBiz
-    }, {
-      path: '/base/template/:templateid',
-      component: BaseSingleTemplate
-    }, {
-      path: '/base/law',
-      component: BaseLaw
-    }, {
-      path: '/base/law/:lawid',
-      component: BaseSingeLaw
-    },
+      {
+        path: '/base/biz',
+        component: BaseBiz
+      }, {
+        path: '/base/template',
+        component: BaseTemplate
+      }, {
+        path: '/base/biz/:bizid',
+        component: BaseSingleBiz
+      }, {
+        path: '/base/template/:templateid',
+        component: BaseSingleTemplate
+      }, {
+        path: '/base/law',
+        component: BaseLaw
+      }, {
+        path: '/base/law/:lawid',
+        component: BaseSingeLaw
+      },
 
-    //网格化管理
+      //网格化管理
 
-    {
-      path: '/grid/area',
-      component: GridArea
-    }, {
-      path: '/grid/member',
-      component: GridMember
-    }, {
-      path: '/grid/area/:gridareaid',
-      component: GridSingleArea
-    }, {
-      path: '/grid/member/:gridmemberid',
-      component: GridSingleMember
-    },
+      {
+        path: '/grid/area',
+        component: GridArea
+      }, {
+        path: '/grid/member',
+        component: GridMember
+      }, {
+        path: '/grid/area/:gridareaid',
+        component: GridSingleArea
+      }, {
+        path: '/grid/member/:gridmemberid',
+        component: GridSingleMember
+      },
 
-    //消息通知管理
+      //消息通知管理
 
-    {
-      path: '/sms/list',
-      component: SMSList
-    }, {
-      path: '/sms/post',
-      component: SMSPost
-    },
+      {
+        path: '/sms/list',
+        component: SMSList
+      }, {
+        path: '/sms/post',
+        component: SMSPost
+      },
 
-    //检查计划管理
+      //检查计划管理
 
-    {
-      path: '/plan/list',
-      component: PlanList
-    }, {
-      path: '/plan/list/:planid',
-      component: PlanSinglePlan
-    }, {
-      path: '/plan/post',
-      component: PlanPost
-    }, {
-      path: '/plan/post/:planid',
-      component: PlanSinglePost
-    }, {
-      path: '/plan/recive',
-      component: PlanRecive
-    }, {
-      path: '/plan/archives',
-      component: PlanArchives
-    },
+      {
+        path: '/plan/list',
+        component: PlanList
+      }, {
+        path: '/plan/list/:planid',
+        component: PlanSinglePlan
+      }, {
+        path: '/plan/post',
+        component: PlanPost
+      }, {
+        path: '/plan/post/:planid',
+        component: PlanSinglePost
+      }, {
+        path: '/plan/recive',
+        component: PlanRecive
+      }, {
+        path: '/plan/archives',
+        component: PlanArchives
+      },
 
-    //日常检查
+      //日常检查
 
-    {
-      path: '/daily/post',
-      component: DailyPost
-    }, {
-      path: '/daily/monitor',
-      component: DailyMonitor
-    }, {
-      path: '/daily/report',
-      component: DailyReport
-    }, {
-      path: '/daily/post/:postid',
-      component: DailySinglePost
-    }, {
-      path: '/daily/monitor/:monitorid',
-      component: DailyMonitorList
-    }, {
-      path: '/daily/monitor/:monitorid/:monitorrecordid',
-      component: DailySingleMonitor
-    }, {
-      path: '/daily/report/:planid',
-      component: DailyReportList
-    }, {
-      path: '/daily/report/:planid/:reportid',
-      component: DailySingleReport
-    },
+      {
+        path: '/daily/post',
+        component: DailyPost
+      }, {
+        path: '/daily/monitor',
+        component: DailyMonitor
+      }, {
+        path: '/daily/report',
+        component: DailyReport
+      }, {
+        path: '/daily/post/:postid',
+        component: DailySinglePost
+      }, {
+        path: '/daily/monitor/:monitorid',
+        component: DailyMonitorList
+      }, {
+        path: '/daily/monitor/:monitorid/:monitorrecordid',
+        component: DailySingleMonitor
+      }, {
+        path: '/daily/report/:planid',
+        component: DailyReportList
+      }, {
+        path: '/daily/report/:planid/:reportid',
+        component: DailySingleReport
+      },
 
-    //专项检查
+      //专项检查
 
-    {
-      path: '/special/post',
-      component: SpecialPost
-    }, {
-      path: '/special/post/:postid',
-      component: SpecialSinglePost
-    }, {
-      path: '/special/monitor',
-      component: SpecialMonitor
-    }, {
-      path: '/special/monitor/:monitorid',
-      component: SpecialMonitorList
-    }, {
-      path: '/special/monitor/:monitorid/:monitorrecordid',
-      component: SpecialSingleMonitor
-    }, {
-      path: '/special/report',
-      component: SpecialReport
-    }, {
-      path: '/special/report/:planid',
-      component: SpecialReportList
-    }, {
-      path: '/special/report/:planid/:reportid',
-      component: SpecialSingleReport
-    },
+      {
+        path: '/special/post',
+        component: SpecialPost
+      }, {
+        path: '/special/post/:postid',
+        component: SpecialSinglePost
+      }, {
+        path: '/special/monitor',
+        component: SpecialMonitor
+      }, {
+        path: '/special/monitor/:monitorid',
+        component: SpecialMonitorList
+      }, {
+        path: '/special/monitor/:monitorid/:monitorrecordid',
+        component: SpecialSingleMonitor
+      }, {
+        path: '/special/report',
+        component: SpecialReport
+      }, {
+        path: '/special/report/:planid',
+        component: SpecialReportList
+      }, {
+        path: '/special/report/:planid/:reportid',
+        component: SpecialSingleReport
+      },
 
-    //风险评级
+      //风险评级
 
-    {
-      path: '/risk',
-      component: RiskRisk
-    }, {
-      path: '/risk/:riskid',
-      component: RiskSingleRisk
-    }, {
-      path: '/rectify',
-      component: RectifyRectify
-    }
-  ]
-}];
+      {
+        path: '/risk',
+        component: RiskRisk
+      }, {
+        path: '/risk/:riskid',
+        component: RiskSingleRisk
+      }, {
+        path: '/rectify',
+        component: RectifyRectify
+      }
+    ]
+  }
+];
 
 export default new Router({
   routes

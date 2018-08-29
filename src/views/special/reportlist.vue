@@ -8,29 +8,26 @@
     </el-breadcrumb>
 
     <el-row class="title">{{this.currentPlan.title}}</el-row>
-    <el-row  style="margin-top:20px;">
-      <el-col :span="4">
-        进度(70/150):
-      </el-col>
-      <el-col :span="10">
-        <el-progress :text-inside="true" :stroke-width="18" :percentage="47"></el-progress>
-      </el-col>
-    </el-row>
     <el-row style="margin-top:20px;">
       <el-col :span="24">
-        <el-table :data="reportdata" size="medium" stripe style="width: 100%;margin-bottom:20px;" border>
-          <el-table-column prop="date" label="检查时间" sortable></el-table-column>
-          <el-table-column prop="bizname" label="单位名称" width="260" sortable></el-table-column>
+        <el-table :data="reportdata" size="medium" style="width: 100%;margin-bottom:20px;" border>
+          <el-table-column prop="bizname" label="单位名称" sortable></el-table-column>
           <el-table-column prop="staff" label="执法人员" sortable></el-table-column>
           <el-table-column prop="kind" label="检查类别"></el-table-column>
-          <el-table-column prop="rectify" label="是否整改"></el-table-column>
-          <el-table-column prop="review" label="是否复查"></el-table-column>
-          <el-table-column prop="state" label="记录状态"></el-table-column>
-          <el-table-column prop="reviewdate" label="检查时间"></el-table-column>
-          <el-table-column prop="result" label="检查结果"></el-table-column>
-          <el-table-column prop="action" label="操作" width="240">
+          <el-table-column prop="date" label="检查时间" sortable></el-table-column>
+          <el-table-column label="检查结果">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看/编辑</el-button>
+              <el-tag :type="getResultType(scope.row.result)">{{scope.row.result}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="handle" label="处理方式">
+            <template slot-scope="scope">
+              <el-tag :type="getHandleType(scope.row.handle)">{{scope.row.handle}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="action" label="操作" min-width="120px">
+            <template slot-scope="scope">
+              <el-button @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看报告</el-button>
               <el-button size="mini" type="primary">打印</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
@@ -58,12 +55,27 @@ export default {
           date: "2018-08-01 12:00",
           bizname: "东南大道麦当劳DT餐厅",
           staff: "张小明",
-          kind: "日常检查",
-          rectify: "是",
-          review: "否",
-          state: "已通知整改",
-          reviewdate: "未复查",
-          result: "责令整改"
+          kind: "专项检查",
+          result: "符合",
+          handle: "通过"
+        },
+        {
+          id: 2,
+          date: "2018-08-01 12:00",
+          bizname: "东南理工娇娇饭店",
+          staff: "张小明",
+          kind: "专项检查",
+          result: "不符合",
+          handle: "立即停止经营"
+        },
+        {
+          id: 3,
+          date: "2018-08-01 12:00",
+          bizname: "东兴园饭店",
+          staff: "张小明",
+          kind: "专项检查",
+          result: "基本符合",
+          handle: "书面限期整改"
         }
       ]
     };
@@ -74,6 +86,18 @@ export default {
       this.currentPlan = {
         title: "虞山分局2018年下半年巡检计划"
       };
+    }
+  },
+  methods: {
+    getResultType(text) {
+      return {
+        ["符合"]:"success",["基本符合"]:"warning",["不符合"]:"danger"
+      }[text];
+    },
+    getHandleType(text) {
+      return {
+        ["通过"]:"success",["书面限期整改"]:"warning",["立即停止经营"]:"danger"
+      }[text];
     }
   }
 };

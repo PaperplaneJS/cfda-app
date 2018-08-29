@@ -87,20 +87,12 @@
         </el-row>
 
         <el-row>
-        <el-col :span="24">
-          <el-form-item label="检查描述:">
-            <el-input v-model="popupItem.desc" resize="none" :rows="4" type="textarea" readonly></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-col :span="24">
-          <el-form-item label="备注:">
-            <el-input v-model="popupItem.remark" resize="none" :rows="4" type="textarea" readonly></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
+          <el-col :span="24">
+            <el-form-item label="备注:">
+              <el-input v-model="popupItem.remark" resize="none" :rows="4" type="textarea" readonly></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -127,7 +119,6 @@ export default {
           date: "2018-06-01",
           limit: ["2018-06-01", "2018-12-01"],
           state: "待接收",
-          desc: "请按照检查要点表和相关法规执行",
           remark: "完成后及时上报结果"
         }
       ]

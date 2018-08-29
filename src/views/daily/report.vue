@@ -41,7 +41,7 @@
               <el-progress :text-inside="true" :stroke-width="18" :percentage="scope.row.progress*100"></el-progress>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="40px">
+          <el-table-column label="操作" min-width="60px">
              <template slot-scope="scope">
               <el-dropdown>
                 <el-button size="mini" type="primary">

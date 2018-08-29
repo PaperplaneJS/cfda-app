@@ -77,7 +77,7 @@
         <tr class="sign">
           <td colspan="2">
             <p>执法人员(签名)：</p>
-            <p style="text-align:right;margin-top:30px;">年&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;日</p>
+            <p style="text-align:right;margin-top:90px;">年&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;日</p>
           </td>
           <td colspan="2">
             <p>被检查单位意见：</p>
@@ -87,6 +87,15 @@
         </tr>
       </table>
     </div>
+
+    <el-row style="margin-top:20px;">
+      <el-col :span="24">
+        <el-button type="primary">打印</el-button>
+        <router-link :to="$route.path.replace('report','monitor')">
+          <el-button style="margin-left:20px;">查看各项详情</el-button>
+        </router-link>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
