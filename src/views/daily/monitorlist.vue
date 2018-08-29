@@ -32,28 +32,28 @@
           <el-table-column prop="staff" label="执法人员" sortable></el-table-column>
           <el-table-column prop="kind" label="监督检查类别"></el-table-column>
           <el-table-column prop="date" label="检查时间" sortable></el-table-column>
+          <el-table-column label="检查结果">
+            <template slot-scope="scope">
+              <el-tag :type="getResultType(scope.row.result)">{{scope.row.result}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="处理方式">
+            <template slot-scope="scope">
+              <el-tag :type="getResultType(scope.row.handle)">{{scope.row.handle}}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column prop="rectify" label="是否整改">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.rectify?'success':'warning'">{{scope.row.rectify?"是":"否"}}</el-tag>
+              <el-tag v-if="scope.row.rectify!==null" :type="scope.row.rectify?'success':'warning'">{{scope.row.rectify?"是":"否"}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="review" label="是否复查">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.review?'success':'warning'">{{scope.row.review?"是":"否"}}</el-tag>
+              <el-tag v-if="scope.row.review!==null" :type="scope.row.review?'success':'warning'">{{scope.row.review?"是":"否"}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="state" label="状态">
-            <template slot-scope="scope">
-              <el-tag>{{scope.row.state}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="reviewdate" label="复查时间"></el-table-column>
-          <el-table-column prop="result" label="检查结果">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.reviewdate">{{scope.row.reviewdate}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="action" label="操作" min-width="160">
+
+          <el-table-column prop="action" label="操作" min-width="120">
             <template slot-scope="scope">
               <el-button @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看和编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
@@ -84,11 +84,21 @@ export default {
           bizname: "东南大道麦当劳DT餐厅",
           staff: "张小明",
           kind: "日常检查",
-          rectify: true,
-          review: false,
-          state: "已通知整改",
-          reviewdate: null,
-          result: null
+          rectify: null,
+          review: null,
+          handle: "通知整改",
+          result: "基本符合"
+        },
+        {
+          id: 2,
+          date: "2018-08-02 12:00",
+          bizname: "娇娇饭店(东南理工分店)",
+          staff: "张小明",
+          kind: "日常检查",
+          rectify: null,
+          review: null,
+          handle: "停业整顿",
+          result: "不符合"
         }
       ]
     };
@@ -106,6 +116,24 @@ export default {
       };
 
       this.title = this.currentPlan.title;
+    }
+  },
+
+  methods: {
+    getResultType(text) {
+      switch (text) {
+        case "基本符合":
+        case "通知整改":
+          return "warning";
+
+        case "符合":
+        case "通过":
+          return "success";
+
+        case "不符合":
+        case "停业整顿":
+          return "danger";
+      }
     }
   }
 };

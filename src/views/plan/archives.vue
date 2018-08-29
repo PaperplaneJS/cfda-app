@@ -8,6 +8,22 @@
 
     <el-row class="title">计划归档</el-row>
 
+    <el-row :gutter="15">
+      <el-col :span="6">
+        <el-input clearable placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
+      </el-col>
+
+      <el-col :span="8">
+        <el-date-picker type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
+        </el-date-picker>
+      </el-col>
+
+      <el-col :span="8" :lg="6">
+        <el-button icon="el-icon-search" type="primary" round>查找...</el-button>
+        <el-button round>重置</el-button>
+      </el-col>
+    </el-row>
+
     <el-row>
       <el-col :span="24">
         <el-table :data="plandata" size="medium" stripe style="width: 100%" border>

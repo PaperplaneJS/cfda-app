@@ -13,6 +13,8 @@ import BaseSingeLaw from '@/views/base/singlelaw';
 
 import GridArea from '@/views/grid/area';
 import GridMember from '@/views/grid/member';
+import GridSingleArea from '@/views/grid/singlearea';
+import GridSingleMember from '@/views/grid/singlemember';
 
 import SMSList from '@/views/sms/list';
 import SMSPost from '@/views/sms/post';
@@ -89,6 +91,12 @@ let routes = [{
     }, {
       path: '/grid/member',
       component: GridMember
+    }, {
+      path: '/grid/area/:gridareaid',
+      component: GridSingleArea
+    }, {
+      path: '/grid/member/:gridmemberid',
+      component: GridSingleMember
     },
 
     //消息通知管理

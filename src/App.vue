@@ -4,7 +4,7 @@
       <el-aside class="aside" width="240px">
 
         <el-col :span="24">
-          <el-menu :unique-opened="true" class="aside-menu" :router="true" default-active="2" background-color="#383838" text-color="#fff" active-text-color="#ffd04b">
+          <el-menu ref="menu" :default-active="mentItem" :unique-opened="true" class="aside-menu" :router="true" background-color="#383838" text-color="#fff" active-text-color="#ffd04b">
             <div id="aside-log">
               LOGO放置位
             </div>
@@ -66,7 +66,7 @@
                 <span slot="title">日常检查</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="/daily/post">计划分配</el-menu-item>
+                <el-menu-item index="/daily/post">任务分派</el-menu-item>
                 <el-menu-item index="/daily/monitor">检查监管</el-menu-item>
                 <el-menu-item index="/daily/report">检查报告</el-menu-item>
               </el-menu-item-group>
@@ -78,7 +78,7 @@
                 <span slot="title">专项检查</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="/special/post">专项检查计划</el-menu-item>
+                <el-menu-item index="/special/post">专项检查分派</el-menu-item>
                 <el-menu-item index="/special/monitor">专项检查监管</el-menu-item>
                 <el-menu-item index="/special/report">专项检查报告</el-menu-item>
               </el-menu-item-group>
@@ -111,7 +111,7 @@
       </el-aside>
       <el-container>
         <el-header class="title" height="80px">
-          <span>常熟市食药监局管理平台</span>
+          <span class="titletext">常熟市食药监局管理平台</span>
           <div id="headmenu">
             <span>
               <el-button icon="el-icon-search" circle></el-button>
@@ -119,7 +119,9 @@
             <el-popover placement="bottom" title="通知和消息" width="400" trigger="manual" v-model="visible">
               <el-alert class="notice" v-for="item of notice" :key="item.id" :title="item.title" :type="item.type" :description="item.content" show-icon>
               </el-alert>
-              <el-button icon="el-icon-bell" circle slot="reference" @click="visible = !visible"></el-button>
+              <el-badge icon="el-icon-bell" circle slot="reference" :max="99" :value="3" class="item">
+                <el-button icon="el-icon-bell" circle @click="visible = !visible"></el-button>
+              </el-badge>
             </el-popover>
             <span>
               <el-button round>顾小华</el-button>
@@ -127,7 +129,7 @@
 
           </div>
         </el-header>
-        <el-main>
+        <el-main class="main">
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -142,6 +144,7 @@ export default {
   name: "app",
   data() {
     return {
+      mentItem: null,
       visible: false,
       notice: [
         {
@@ -160,6 +163,15 @@ export default {
         }
       ]
     };
+  },
+
+  beforeMount() {
+    this.mentItem = this.$route.path;
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    this.mentItem = to.path;
+    next();
   }
 };
 </script>
@@ -174,6 +186,8 @@ export default {
   background: #383838;
   border: none;
   min-height: 100vh;
+  box-shadow: 3px 0px 4px rgba(0, 21, 41, 0.08);
+  z-index: 1000;
 }
 
 .title {
@@ -181,8 +195,10 @@ export default {
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   display: flex;
   justify-content: space-between;
+  z-index: 999;
 
-  span {
+  .titletext {
+    padding-left: 10px;
     font-weight: 400;
     font-size: 30px;
     line-height: 80px;
@@ -214,5 +230,9 @@ export default {
   padding: 25px 10px;
   color: #fff;
   text-align: center;
+}
+
+.main {
+  padding-left: 30px;
 }
 </style>

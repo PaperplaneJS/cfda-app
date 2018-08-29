@@ -3,69 +3,115 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/daily/post">日常检查</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/post">计划分配</el-breadcrumb-item>
+      <el-breadcrumb-item to="/daily/post">任务分派</el-breadcrumb-item>
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
     <el-row class="title">{{title}}</el-row>
 
     <el-tabs style="margin-top:30px;" v-model="tab">
-      <el-tab-pane label="计划详情" name="plan">
-        <el-row style="font-size:18px;margin-bottom:15px;" class="section">计划详情</el-row>
+      <el-tab-pane label="计划说明" name="info">
+        <el-row style="font-size:18px;margin-bottom:15px;" class="section">计划说明</el-row>
+        <el-row :gutter="15" style="margin-bottom:15px;">
+          <el-col :span="12">
+            <el-alert title="本页展示的是市局下发的计划内容，无法修改。分派具体的任务和检查的企业、人员，请点击上方的任务制定和任务分派页" :closable="false" type="info">
+            </el-alert>
+          </el-col>
+        </el-row>
+
         <el-form label-position="left" label-width="100px">
-          <el-row>
+          <el-row :gutter="15">
             <el-col :span="12">
               <el-form-item label="计划标题:">
-                <el-input v-model="currentPlan.title" readonly></el-input>
+                <el-input v-model="originPlan.title" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="15">
             <el-col :span="6">
-              <el-form-item label="计划类别:">
-                <el-input v-model="currentPlan.kind" readonly></el-input>
+              <el-form-item label="类别:">
+                <el-input v-model="originPlan.kind" readonly></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="制定日期:">
-                <el-date-picker readonly type="date" v-model="currentPlan.date"></el-date-picker>
+                <el-date-picker readonly type="date" v-model="originPlan.date"></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row>
+          <el-row :gutter="15">
             <el-col :span="10">
               <el-form-item label="执行期限:">
-                <el-date-picker v-model="currentPlan.limit" readonly type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
+                <el-date-picker v-model="originPlan.limit" readonly type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
                 </el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="内容描述:">
-                <el-input v-model="currentPlan.desc" resize="none" :rows="4" type="textarea" readonly></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
+          <el-row :gutter="15">
             <el-col :span="12">
               <el-form-item label="备注:">
-                <el-input v-model="currentPlan.tip" :rows="4" type="textarea" resize="none" readonly></el-input>
+                <el-input v-model="originPlan.tip" :rows="4" type="textarea" resize="none" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row>
+        </el-form>
+      </el-tab-pane>
+
+      <el-tab-pane label="任务制定" name="plan">
+        <el-row style="font-size:18px;margin-bottom:15px;" class="section">任务制定</el-row>
+        <el-form label-position="left" label-width="100px">
+
+          <el-row :gutter="15">
+            <el-col :span="12">
+              <el-form-item label="任务标题:">
+                <el-input v-model="currentPlan.title"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="10">
+              <el-form-item label="执行期限:">
+                <el-date-picker v-model="currentPlan.limit" type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15" style="margin-bottom:20px;">
+            <el-col :span="10">
+              <el-alert title="分派任务的期限不能超出计划的期限" type="info" :closable="false" show-icon>
+              </el-alert>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="12">
+              <el-form-item label="详细描述:">
+                <el-input v-model="currentPlan.desc" resize="none" :rows="4" type="textarea"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
             <el-col :span="12">
               <el-form-item label="选择模板:">
-                <el-select placeholder="请选择">
+                <el-select v-model="currentPlan.content" placeholder="请选择">
                   <el-option v-for="item in templates" :key="item.id" :label="item.title" :value="item.id">
                   </el-option>
                 </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="6">
+              <el-form-item label="制定日期:">
+                <el-date-picker type="date" v-model="currentPlan.date"></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
@@ -76,6 +122,32 @@
       <el-tab-pane label="计划分派" name="detail">
         <el-row style="font-size:18px;margin-bottom:15px;" class="section">计划分派</el-row>
         <el-form label-position="left" style="margin-top:20px;" label-width="90px">
+          <el-row style="margin-bottom:20px;" :gutter="15">
+            <el-col :span="14">
+              <el-alert title="每个单位如果分派检查，必须指定主检查人和协同检查人" type="info" :closable="false" show-icon>
+              </el-alert>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15" style="margin-bottom:20px;">
+            <el-col :span="6">
+              <el-input clearable placeholder="搜索单位名/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
+            </el-col>
+
+            <el-col :span="3">
+              <el-select v-model="kind" clearable placeholder="选择类别">
+                <el-option label="食品销售" value="xiaoshou"></el-option>
+                <el-option label="食品生产" value="shengchan"></el-option>
+                <el-option label="食品服务" value="fuwu"></el-option>
+                <el-option label="保健品生产" value="baojianpin"></el-option>
+                <el-option label="小作坊" value="xiaozuofang"></el-option>
+              </el-select>
+            </el-col>
+
+            <el-col :span="5">
+              <el-cascader :options="griddata" placeholder="按网格筛选" change-on-select></el-cascader>
+            </el-col>
+          </el-row>
 
           <el-table id="plantable" :row-class-name="tableRowClassName" @selection-change="handleSelectionChange" :data="bizs" size="medium" style="width: 100%;margin-bottom:20px;" border>
             <el-table-column type="selection" width="40"></el-table-column>
@@ -102,7 +174,7 @@
             </el-pagination>
           </el-row>
 
-          <el-table v-if="!error" :data="allots" style="width: 100%;margin-bottom:20px;" border>
+          <el-table :data="allots" style="width: 100%;margin-bottom:20px;" border>
             <el-table-column label="人员姓名" width="130px" sortable>
               <template slot-scope="scope">
                 <el-tag>{{scope.row.staff}}</el-tag>
@@ -115,7 +187,7 @@
             </el-table-column>
           </el-table>
 
-          <el-row style="margin-bottom:20px;" v-else :gutter="12">
+          <el-row v-if="error" :gutter="12">
             <el-col :span="20">
               <el-alert :closable="false" title="检查计划分派出错" type="error" :description="error" show-icon>
               </el-alert>
@@ -124,9 +196,38 @@
 
         </el-form>
       </el-tab-pane>
+
+      <el-tab-pane label="已分派的任务" name="already">
+        <el-row>
+          <el-col :span="12">
+            <el-collapse v-model="alreadytask" accordion>
+              <el-collapse-item name="1">
+                <template slot="title">
+                  食品生产场所检查任务
+                  <el-tag size="mini" style="margin:0 10px;">执行中...</el-tag>
+                </template>
+
+                <el-row :gutter="15">
+                  <el-col :span="8">分派日期: 2018-07-01</el-col>
+                  <el-col :span="8">检查企业: 25</el-col>
+                </el-row>
+
+                <el-row :gutter="15">
+                  <el-col :span="8">执行情况: 23/25</el-col>
+                  <el-col :span="8">期限: 2018-07-01 ~ 2018-07-31</el-col>
+                </el-row>
+
+                <el-row :gutter="15">
+                  <el-col :span="16">模板: 食品生产日常监督检查要点表</el-col>
+                </el-row>
+              </el-collapse-item>
+            </el-collapse>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
     </el-tabs>
 
-    <el-row>
+    <el-row style="margin-top:20px;">
       <el-col :span="24">
         <el-button type="primary">确认分配</el-button>
         <router-link to="/plan/post">
@@ -143,8 +244,10 @@ export default {
   data() {
     return {
       title: null,
-      tab: "plan",
+      tab: "info",
+      originPlan: null,
       currentPlan: null,
+      alreadytask: null,
       templates: [
         { id: 1, title: "食品生产日常监督检查要点表" },
         { id: 2, title: "食品销售日常监督检查要点表" },
@@ -208,7 +311,35 @@ export default {
           staff: [null, null]
         }
       ],
-      multipleSelection: []
+      multipleSelection: [],
+      griddata: [
+        {
+          value: "常熟市",
+          label: "常熟市",
+          children: [
+            {
+              value: "虞山镇",
+              label: "虞山镇",
+              children: [
+                {
+                  value: "食药监分局",
+                  label: "食药监分局"
+                }
+              ]
+            },
+            {
+              value: "梅里镇",
+              label: "梅里镇",
+              children: [
+                {
+                  value: "食药监大队",
+                  label: "食药监大队"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     };
   },
   computed: {
@@ -261,17 +392,26 @@ export default {
   beforeMount() {
     let postid = this.$route.params.postid;
     if (postid === "1") {
-      this.currentPlan = {
+      this.originPlan = {
         title: "常熟市2018年下半年巡检计划",
         kind: "日常检查",
         date: "2018-05-01",
         limit: ["2018-06-01", "2018-12-01"],
-        content: ["食品生产日常监督检查要点表"],
         desc: "请依照法规对各食品生产单位进行检查，并即时将结果上报",
         tip: "检查项依照模板"
       };
 
-      this.title = this.currentPlan.title;
+      this.currentPlan = {
+        title: "",
+        kind: "",
+        date: null,
+        limit: [],
+        content: null,
+        desc: "",
+        tip: ""
+      };
+
+      this.title = this.originPlan.title;
     }
   },
   methods: {

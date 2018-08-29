@@ -42,8 +42,16 @@
             </template>
           </el-table-column>
           <el-table-column label="操作" min-width="40px">
-            <template slot-scope="scope">
-              <el-button @click.native="$router.push('report/'+scope.row.id)" type="primary" size="mini">进入查看</el-button>
+             <template slot-scope="scope">
+              <el-dropdown>
+                <el-button size="mini" type="primary">
+                  查看记录
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-for="item of scope.row.task" :key="item.id" @click.native="$router.push('report/'+item.id)">{{item.title}} [{{item.progress}}]</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -71,7 +79,11 @@ export default {
           department: "常熟市市局",
           limit: "2018-06-01 ~ 2018-12-01",
           state: "进行中 : 80/150",
-          progress: 0.53
+          progress: 0.53,
+          task: [
+            { id: 1, title: "食品生产场所检查任务", progress: "57/125" },
+            { id: 2, title: "小作坊巡查检查任务", progress: "23/25" }
+          ]
         }
       ]
     };

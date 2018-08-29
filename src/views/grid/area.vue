@@ -42,7 +42,7 @@
           </el-table-column>
           <el-table-column prop="action" label="操作" min-width="100">
             <template slot-scope="scope">
-              <el-button size="mini" type="primary">查看</el-button>
+              <el-button @click.native="$router.push('area/'+scope.row.id)" size="mini" type="primary">查看</el-button>
               <el-button size="mini">编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
@@ -65,8 +65,9 @@ export default {
     return {
       areadata: [
         {
+          id: 1,
           num: "01",
-          name: "经济开发区分局",
+          name: "虞山区食药监局分管区",
           state: "正常"
         }
       ],
@@ -74,7 +75,7 @@ export default {
     };
   },
 
-  methods:{
+  methods: {
     getType(text) {
       switch (text) {
         case "正常":

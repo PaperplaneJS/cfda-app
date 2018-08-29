@@ -38,6 +38,9 @@
                   <el-button v-if="!node.isLeaf" type="text" size="mini" @click="treeSelectChild(node,data)">
                     下级全选
                   </el-button>
+                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="treeEmptyChild(node,data)">
+                    清空
+                  </el-button>
                 </span>
               </span>
             </el-tree>
@@ -93,14 +96,17 @@ export default {
   },
   methods: {
     treeSelectChild(node, data) {
-      console.log(node);
-      this.setChildrenChecked(node);
+      this.setChildren(node, true);
     },
 
-    setChildrenChecked(node) {
-      node.checked = true;
+    treeEmptyChild(node, data) {
+      this.setChildren(node, false);
+    },
+
+    setChildren(node, target) {
+      node.checked = target;
       if (node.childNodes) {
-        node.childNodes.forEach(t => this.setChildrenChecked(t));
+        node.childNodes.forEach(t => this.setChildren(t, target));
       }
     }
   }

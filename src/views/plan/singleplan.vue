@@ -46,7 +46,7 @@
             <el-select v-model="currentPlan.kind" placeholder="请选择">
               <el-option label="日常检查" value="daily"></el-option>
               <el-option label="专项检查" value="special"></el-option>
-              <el-option label="全项检查(风险评级)" value="risk"></el-option>
+              <el-option label="全量检查(风险评级)" value="risk"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -56,14 +56,6 @@
         <el-col :span="12">
           <el-form-item label="专项通知:">
             <el-input :rows="4" type="textarea" placeholder="专项检查通知"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="内容描述:">
-            <el-input :rows="4" type="textarea" placeholder="选填,检查工作的简要描述"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -103,13 +95,6 @@ export default {
   data() {
     return {
       title: null,
-      templateData: [
-        { key: 1, label: "食品生产日常监督检查要点表" },
-        { key: 2, label: "食品销售日常监督检查要点表" },
-        { key: 3, label: "餐饮服务日常监督检查要点表" },
-        { key: 4, label: "保健食品生产日常监督检查要点表" },
-        { key: 5, label: "食品小作坊现场检查记录表" }
-      ],
       currentPlan: null
     };
   },

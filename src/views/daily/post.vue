@@ -3,10 +3,10 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/daily/post">日常检查</el-breadcrumb-item>
-      <el-breadcrumb-item>计划分配</el-breadcrumb-item>
+      <el-breadcrumb-item>计划分派</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">检查计划分配</el-row>
+    <el-row class="title">检查计划分派</el-row>
 
     <el-row :gutter="15">
       <el-col :span="6">
@@ -31,7 +31,11 @@
           <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>
           <el-table-column prop="limit" label="执行期限"></el-table-column>
-          <el-table-column prop="state" label="状态" sortable></el-table-column>
+          <el-table-column label="状态" sortable>
+            <template slot-scope="scope">
+              <el-tag>{{scope.row.state}}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" min-width="60px">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">查看 / 分派该计划</el-button>
@@ -61,6 +65,14 @@ export default {
           department: "常熟市市局",
           limit: "2018-06-01 ~ 2018-12-01",
           state: "待分配"
+        },
+        {
+          id: 2,
+          title: "虞山分局食品小作坊检查计划",
+          staff: "李刚",
+          department: "常熟市市局",
+          limit: "2018-06-01 ~ 2018-12-01",
+          state: "已分配1项任务"
         }
       ]
     };

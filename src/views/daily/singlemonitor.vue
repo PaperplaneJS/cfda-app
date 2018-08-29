@@ -12,7 +12,7 @@
     <el-tabs style="margin-top:30px;" v-model="tab">
       <el-tab-pane label="检查记录信息" name="info">
         <el-form label-position="left" style="margin-top:20px;" label-width="100px">
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">监管计划</el-row>
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">检查计划</el-row>
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="检查计划:">
@@ -24,21 +24,51 @@
           <el-row :gutter="20">
             <el-col :span="6">
               <el-form-item label="计划类别:">
-                <el-input v-model="currentMonitor.kind" readonly></el-input>
+                <el-input v-model="currentMonitor.plan.kind" readonly></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="6">
-              <el-form-item label="执法人员:">
-                <el-input v-model="currentMonitor.staff" readonly></el-input>
+              <el-form-item label="制定人员:">
+                <el-input v-model="currentMonitor.plan.staff" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
-            <el-col :span="20">
-              <el-form-item label="检查项目:">
-                <el-checkbox style="margin-bottom:10px;" v-for="item in currentMonitor.checkContent" :key="item" disabled checked :label="item" border></el-checkbox>
+            <el-col :span="6">
+              <el-form-item label="计划类别:">
+                <el-input v-model="currentMonitor.plan.kind" readonly></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item label="制定日期:">
+                <el-date-picker readonly v-model="currentMonitor.plan.date" type="datetime">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">分派任务</el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="任务标题:">
+                <el-input v-model="currentMonitor.task.title" readonly></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="6">
+              <el-form-item label="分派日期:">
+                <el-input v-model="currentMonitor.task.date" readonly></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item label="分派人员:">
+                <el-input v-model="currentMonitor.task.staff" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -62,6 +92,14 @@
             <el-col :span="6">
               <el-form-item label="联系电话:">
                 <el-input v-model="currentMonitor.biz.tel" readonly></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="单位地址:">
+                <el-input v-model="currentMonitor.biz.code" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -95,7 +133,21 @@
                 <el-date-picker readonly v-model="currentMonitor.date" type="datetime">
                 </el-date-picker>
               </el-form-item>
+            </el-col>
+          </el-row>
 
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">检查结果</el-row>
+          <el-row :gutter="20">
+            <el-col :span="6">
+              <el-form-item label="最终结果:">
+                <el-tag>{{currentMonitor.result}}</el-tag>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item label="处理方式:">
+                <el-tag>{{currentMonitor.handle}}</el-tag>
+              </el-form-item>
             </el-col>
           </el-row>
         </el-form>
@@ -103,8 +155,7 @@
 
       <el-tab-pane label="检查详细结果" name="detail">
         <el-row style="font-size:18px;margin-bottom:15px;" class="section">
-          {{`食品生产日常监督检查要点表` }}
-          <el-tag style="margin-left:5px;">总分:{{sumPoint}}</el-tag>
+          {{`食品生产日常监督检查要点表` }}[得分:{{sumPoint}}]
           <el-tag style="margin-left:5px;" type="success">符合项:{{computeItem["符合"]}}</el-tag>
           <el-tag style="margin-left:5px;" type="warning">基本符合项:{{computeItem["基本符合"]}}</el-tag>
           <el-tag style="margin-left:5px;" type="danger">不符合项:{{computeItem["不符合"]}}</el-tag>
@@ -157,6 +208,9 @@ export default {
     if (planid === "1") {
       plan = {
         name: "虞山分局2018年下半年巡检计划",
+        staff: "张强",
+        kind: "日常检查",
+        date: "2018-05-01",
         id: 1
       };
     }
@@ -165,17 +219,25 @@ export default {
       this.currentMonitor = {
         title: "东南大道麦当劳DT餐厅",
         plan,
-        kind: "日常检查",
-        staff: "张小明",
-        checkContent: ["食品生产日常监督检查要点表"],
+        task: {
+          title: "食品生产场所检查任务",
+          staff: "张小明",
+          date: "2018-07-01",
+          id: 1
+        },
+        checkContent: "食品生产日常监督检查要点表",
         biz: {
           name: "东南大道麦当劳DT餐厅",
           legal: "王小明",
           tel: "13872663110",
-          address: "东南开发区东南大道"
+          address: "东南开发区东南大道",
+          code: "CS-012-3827388"
         },
         date: "2018-07-01 12:00:00",
+        staff: "顾小华",
         department: "综合办公室",
+        result:"基本符合",
+        handle:"责令整改",
         checkdetail: {
           "一、场所环境": [
             {

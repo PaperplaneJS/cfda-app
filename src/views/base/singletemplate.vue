@@ -10,34 +10,18 @@
     <el-row class="title">{{title}}</el-row>
 
     <el-form label-position="left" style="margin-top:20px;" label-width="100px">
+      <el-row style="font-size:18px;margin-bottom:15px;" class="section">模板详情</el-row>
+
       <el-row :gutter="15">
-        <el-col :span="8">
+        <el-col :span="12">
           <el-form-item label="模板名称:">
             <el-input v-model="currentTemplate.name" placeholder="请输入模板名称"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="检查类别:">
-            <el-select style="width:100%;" v-model="currentTemplate.type" placeholder="请选择">
-              <el-option label="食品生产日常监督检查要点表" value="sc"></el-option>
-              <el-option label="食品销售日常监督检查要点表" value="xs"></el-option>
-              <el-option label="餐饮服务日常监督检查要点表" value="cy"></el-option>
-              <el-option label="保健食品生产日常监督检查要点表" value="bj"></el-option>
-              <el-option label="食品小作坊现场检查记录表" value="xzf"></el-option>
-            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="15">
-        <el-col :span="8">
-          <el-form-item label="所属检查计划:">
-            <el-select v-model="currentTemplate.plan" placeholder="请选择">
-              <el-option label="2018年日常巡检" value="richang"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
+        <el-col :span="12">
           <el-form-item label="激活状态:">
             <el-radio-group v-model="currentTemplate.active">
               <el-radio :label="true">启用</el-radio>
@@ -47,35 +31,34 @@
         </el-col>
       </el-row>
 
-      <el-row class="title">模板包含的项目和内容</el-row>
-
-      <el-row style="margin:20px auto;" :gutter="15">
-        <el-col :span="8">
-          <el-form-item label="设置检查内容:">
-            <el-input v-model="inputCheckItemName" placeholder="请输入检查内容,然后点击右边的添加"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-button @click.native="addCheckItem" type="primary" round>添加该内容</el-button>
-        </el-col>
-      </el-row>
-
+      <el-row style="font-size:18px;margin-bottom:15px;" class="section">模板检查项</el-row>
       <el-row>
-        <el-col :span="16">
+        <el-col style="margin:10px 0;" :span="16">
           <el-collapse v-model="currentCheckItem">
 
             <el-collapse-item v-for="item of currentTemplate.checkitem" :key="item.id" :name="item.id">
               <template slot="title">
                 <span>{{item.name}}</span>
-                <el-tag size="mini" style="margin-left:10px;margin-right:30px">{{item.items.length}}项</el-tag>
-                <el-button @click.native.stop="addCheckDetail(item)" type="primary" size="mini" round>添加项目</el-button>
-                <el-button @click.native.stop="deleteCheckItem(item)" type="danger" size="mini" round>删除本检查内容</el-button>
+                <el-tag size="mini" style="margin:0 10px;">{{item.items.length}}项</el-tag>
+                <el-button @click.native.stop="addCheckDetail(item)" type="text">添加项目</el-button>
+                <el-button @click.native.stop="deleteCheckItem(item)" type="text">删除本检查内容</el-button>
               </template>
               <el-alert style="margin-top:8px;" @close="deleteDetail(item,detail)" :title="detail.content" v-for="detail of item.items" :key="detail.id" type="info" :description="detailDesc(detail)">
               </el-alert>
             </el-collapse-item>
 
           </el-collapse>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="15">
+        <el-col :span="8">
+          <el-form-item label="设置检查内容:">
+            <el-input size="medium" v-model="inputCheckItemName" placeholder="请输入检查内容,然后点击右边的添加"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-button size="medium" @keypress.enter="addCheckItem" @click.native="addCheckItem" type="primary" round>添加该内容</el-button>
         </el-col>
       </el-row>
 
@@ -129,7 +112,7 @@
       </div>
     </el-dialog>
 
-    <el-row style="margin-top:25px;">
+    <el-row>
       <el-col :span="24">
         <el-button type="primary">提交</el-button>
         <el-button icon="el-icon-view">预览</el-button>
@@ -160,8 +143,6 @@ export default {
     if (tid.trim() === "new") {
       this.currentTemplate = {
         name: "",
-        type: null,
-        plan: "",
         active: true,
         checkitem: []
       };
@@ -220,7 +201,9 @@ export default {
     },
 
     detailDesc(detail) {
-      let str = `${detail.isrequired ? "必填" : "非必填"} / ${detail.isimportant ? "重点" : "普通"} / `;
+      let str = `${detail.isrequired ? "必填" : "非必填"} / ${
+        detail.isimportant ? "重点" : "普通"
+      } / `;
       detail.activeItem.forEach(t => {
         str += `${t}=${detail.selectItem[t]}; `;
       });

@@ -42,7 +42,7 @@
               <el-tag :type="getType(scope.row.state)">{{scope.row.state}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="action" label="操作" min-width="100px">
+          <el-table-column prop="action" label="操作" min-width="120px">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看</el-button>
               <el-button size="mini">编辑</el-button>

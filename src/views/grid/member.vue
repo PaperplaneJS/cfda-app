@@ -9,7 +9,7 @@
     <el-row class="title">网格人员管理</el-row>
     <el-row :gutter="15">
       <el-col :span="5" :lg="3">
-        <router-link to="area/new">
+        <router-link to="member/new">
           <el-button type="primary" icon="el-icon-plus">新增网格人员</el-button>
         </router-link>
       </el-col>
@@ -33,13 +33,13 @@
           <el-table-column type="index" label="序号"></el-table-column>
           <el-table-column prop="name" label="人员姓名" sortable></el-table-column>
           <el-table-column prop="sex" label="性别" sortable></el-table-column>
-          <el-table-column prop="department" label="网格类型" sortable></el-table-column>
+          <el-table-column prop="department" label="网格名称" sortable></el-table-column>
           <el-table-column prop="kind" label="网格类型" sortable></el-table-column>
           <el-table-column prop="role" label="岗位类别" sortable></el-table-column>
           <el-table-column prop="job" label="职务" sortable></el-table-column>
           <el-table-column prop="action" label="操作" min-width="100">
             <template slot-scope="scope">
-              <el-button size="mini" type="primary">查看</el-button>
+              <el-button @click.native="$router.push('member/'+scope.row.id)" size="mini" type="primary">查看</el-button>
               <el-button size="mini">编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
@@ -62,7 +62,8 @@ export default {
     return {
       memberdata: [
         {
-          name: "王小明",
+          id: 1,
+          name: "顾小华",
           sex: "男",
           department: "虞山镇食药监局",
           role: "食品药品监管人员",

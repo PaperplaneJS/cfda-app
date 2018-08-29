@@ -32,7 +32,7 @@
           <el-table-column prop="department" label="指定单位" sortable></el-table-column>
           <el-table-column prop="date" label="制定时间"></el-table-column>
           <el-table-column prop="limit" label="执行期限"></el-table-column>
-          <el-table-column label="状态与进度">
+          <el-table-column label="状态与总进度">
             <template slot-scope="scope">
               <div class="progresstip">
                 <el-tag size="small">
@@ -44,7 +44,15 @@
           </el-table-column>
           <el-table-column label="操作" min-width="60px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('monitor/'+scope.row.id)" type="primary" size="mini">查看记录</el-button>
+              <el-dropdown>
+                <el-button size="mini" type="primary">
+                  查看记录
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-for="item of scope.row.task" :key="item.id" @click.native="$router.push('monitor/'+item.id)">{{item.title}} [{{item.progress}}]</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -72,7 +80,11 @@ export default {
           date: "2018-06-01",
           limit: "2018-06-01 ~ 2018-12-01",
           state: "进行中 : 80/150",
-          progress: 0.53
+          progress: 0.53,
+          task: [
+            { id: 1, title: "食品生产场所检查任务", progress: "57/125" },
+            { id: 2, title: "小作坊巡查检查任务", progress: "23/25" }
+          ]
         }
       ]
     };
