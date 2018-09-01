@@ -9,46 +9,46 @@
 
     <el-row class="title">{{title}}</el-row>
 
-    <el-form label-position="left" style="margin-top:20px;" label-width="90px">
+    <el-form :rules="rules" ref="currentMmeber" :model="currentMmeber" label-position="left" style="margin-top:20px;" label-width="90px">
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="人员姓名:">
-            <el-input></el-input>
+          <el-form-item label="人员姓名:" prop="name">
+            <el-input v-model="currentMmeber.name"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="性别:">
-            <el-radio label="1">男</el-radio>
-            <el-radio label="2">女</el-radio>
+          <el-form-item label="性别:" prop="sex">
+            <el-radio v-model="currentMmeber.sex" :label="1">男</el-radio>
+            <el-radio v-model="currentMmeber.sex" :label="2">女</el-radio>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="状态:">
-            <el-radio label="1">激活</el-radio>
-            <el-radio label="2">注销</el-radio>
+          <el-form-item label="状态:" prop="state">
+            <el-radio v-model="currentMmeber.state" :label="1">激活</el-radio>
+            <el-radio v-model="currentMmeber.state" :label="2">注销</el-radio>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="6">
-          <el-form-item label="职务:">
-            <el-input></el-input>
+          <el-form-item label="职务:" prop="job">
+            <el-input v-model="currentMmeber.job"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="所属层级:">
-            <el-cascader :options="griddata" placeholder="选择层级" change-on-select></el-cascader>
+          <el-form-item label="所属层级:" prop="area">
+            <el-cascader :show-all-levels="false" v-model="currentMmeber.area" :props="{label:'name',value:'id'}" :options="$store.state.demoData.gridArea" placeholder="选择层级" change-on-select></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
@@ -73,34 +73,25 @@ export default {
     return {
       title: null,
       currentMmeber: null,
-      griddata: [
-        {
-          value: "常熟市",
-          label: "常熟市",
-          children: [
-            {
-              value: "虞山镇",
-              label: "虞山镇",
-              children: [
-                {
-                  value: "食药监分局",
-                  label: "食药监分局"
-                }
-              ]
-            },
-            {
-              value: "梅里镇",
-              label: "梅里镇",
-              children: [
-                {
-                  value: "食药监大队",
-                  label: "食药监大队"
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      rules: {
+        name: [
+          {
+            required: true,
+            message: "必须输入人员姓名",
+            trigger: "blur"
+          }
+        ],
+        sex: [
+          {
+            required: true,
+            message: "必须设置人员性别",
+            trigger: "change"
+          }
+        ],
+        state: [{ required: true }],
+        job: [{ required: true, message: "必须输入人员职务", trigger: "blur" }],
+        area: [{ required: true }]
+      }
     };
   },
 
@@ -108,11 +99,26 @@ export default {
     let gmid = this.$route.params.gridmemberid;
 
     if (gmid === "new") {
+      this.currentMmeber = {
+        name: "",
+        sex: null,
+        state: 1,
+        job: "",
+        area: null
+      };
       this.title = "新的网格人员";
     } else {
+      let member = this.$store.state.demoData.copy(
+        this.$store.state.demoData.gridMember.find(t => t.id == gmid)
+      );
+
       this.currentMmeber = {
-        id: "1",
-        name: "顾小华"
+        id: gmid,
+        name: member.name,
+        sex: member.sex,
+        state: member.state,
+        job: member.job,
+        area: this.$store.state.demoData.findAreaIDArray(member.area)
       };
 
       this.title = this.currentMmeber.name;

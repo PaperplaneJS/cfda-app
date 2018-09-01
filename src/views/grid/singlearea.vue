@@ -13,33 +13,33 @@
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="网格名称:">
-            <el-input></el-input>
+          <el-form-item label="网格名称:" required>
+            <el-input v-model="currentArea.name"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="状态:">
-            <el-radio label="1">激活</el-radio>
-            <el-radio label="2">注销</el-radio>
+          <el-form-item label="状态:" required>
+            <el-radio v-model="currentArea.state" :label="1">正常</el-radio>
+            <el-radio v-model="currentArea.state" :label="2">停用</el-radio>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="6">
-          <el-form-item label="网格代码:">
-            <el-input></el-input>
+          <el-form-item label="地区代码:" required>
+            <el-input v-model="currentArea.code"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="6">
-          <el-form-item label="所属层级:">
-            <el-cascader :options="griddata" placeholder="选择层级" change-on-select></el-cascader>
+          <el-form-item label="所属层级:" required>
+            <el-cascader :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentArea.lv" :options="$store.state.demoData.gridArea" placeholder="选择层级" change-on-select></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
@@ -63,50 +63,27 @@ export default {
   data() {
     return {
       title: null,
-      currentMmeber: null,
-      griddata: [
-        {
-          value: "常熟市",
-          label: "常熟市",
-          children: [
-            {
-              value: "虞山镇",
-              label: "虞山镇",
-              children: [
-                {
-                  value: "食药监分局",
-                  label: "食药监分局"
-                }
-              ]
-            },
-            {
-              value: "梅里镇",
-              label: "梅里镇",
-              children: [
-                {
-                  value: "食药监大队",
-                  label: "食药监大队"
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      currentArea: null
     };
   },
 
   beforeMount() {
-    let gmid = this.$route.params.gridareaid;
+    let areaid = this.$route.params.gridareaid;
 
-    if (gmid === "new") {
+    if (areaid === "new") {
+      this.currentArea = {
+        name: "",
+        code: "",
+        state: null,
+        lv: null
+      };
       this.title = "新建网格区域";
     } else {
-      this.currentMmeber = {
-        id: "1",
-        name: "虞山区食药监局分管区"
-      };
-
-      this.title = this.currentMmeber.name;
+      this.currentArea = this.$store.state.demoData.copy(this.$store.state.demoData.findArea(areaid));
+      let areaArray = this.$store.state.demoData.findAreaIDArray(areaid);
+      areaArray.pop();
+      this.$set(this.currentArea, "lv", areaArray);
+      this.title = this.currentArea.name;
     }
   }
 };

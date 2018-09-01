@@ -29,14 +29,6 @@
           </el-row>
 
           <el-row :gutter="15">
-            <el-col :span="12">
-              <el-form-item label="专项通告:">
-                <el-input v-model="originPlan.special" :rows="4" type="textarea" resize="none" readonly></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="15">
             <el-col :span="6">
               <el-form-item label="类别:">
                 <el-input v-model="originPlan.kind" readonly></el-input>
@@ -211,22 +203,22 @@
             <el-collapse v-model="alreadytask" accordion>
               <el-collapse-item name="1">
                 <template slot="title">
-                  {{alreadytask.title}}
-                  <el-tag size="mini" style="margin:0 10px;">{{alreadytask.state}}</el-tag>
+                  食品生产场所检查任务
+                  <el-tag size="mini" style="margin:0 10px;">执行中...</el-tag>
                 </template>
 
                 <el-row :gutter="15">
-                  <el-col :span="8">分派日期: {{alreadytask.date}}</el-col>
-                  <el-col :span="8">检查企业: {{alreadytask.total}}</el-col>
+                  <el-col :span="8">分派日期: 2018-07-01</el-col>
+                  <el-col :span="8">检查企业: 25</el-col>
                 </el-row>
 
                 <el-row :gutter="15">
-                  <el-col :span="8">执行情况: {{alreadytask.current}}/{{alreadytask.total}}</el-col>
-                  <el-col :span="8">期限: {{alreadytask.limit[0]}} ~ {{alreadytask.limit[1]}}</el-col>
+                  <el-col :span="8">执行情况: 23/25</el-col>
+                  <el-col :span="8">期限: 2018-07-01 ~ 2018-07-31</el-col>
                 </el-row>
 
                 <el-row :gutter="15">
-                  <el-col :span="16">模板: {{alreadytask.template}}</el-col>
+                  <el-col :span="16">模板: 食品生产监督检查要点表</el-col>
                 </el-row>
               </el-collapse-item>
             </el-collapse>
@@ -257,10 +249,10 @@ export default {
       currentPlan: null,
       alreadytask: null,
       templates: [
-        { id: 1, title: "食品生产专项监督检查要点表" },
-        { id: 2, title: "食品销售专项监督检查要点表" },
-        { id: 3, title: "餐饮服务专项监督检查要点表" },
-        { id: 4, title: "保健食品生产专项监督检查要点表" },
+        { id: 1, title: "食品生产日常监督检查要点表" },
+        { id: 2, title: "食品销售日常监督检查要点表" },
+        { id: 3, title: "餐饮服务日常监督检查要点表" },
+        { id: 4, title: "保健食品生产日常监督检查要点表" },
         { id: 5, title: "食品小作坊现场检查记录表" }
       ],
       staffs: [
@@ -406,8 +398,7 @@ export default {
         date: "2018-05-01",
         limit: ["2018-06-01", "2018-12-01"],
         desc: "请依照法规对各食品生产单位进行检查，并即时将结果上报",
-        tip: "检查项依照模板",
-        special: "专项检查xxxxxx"
+        tip: "检查项依照模板"
       };
 
       this.currentPlan = {
@@ -419,19 +410,6 @@ export default {
         desc: "",
         tip: ""
       };
-
-      this.alreadytask = [
-        {
-          id: 1,
-          title: "食品生产场所检查任务",
-          state: "执行中...",
-          date: "2018-07-01",
-          total: 25,
-          current: 19,
-          limit: ["2018-07-01", "2018-07-31"],
-          template: "食品生产专项监督检查要点表"
-        }
-      ];
 
       this.title = this.originPlan.title;
     }

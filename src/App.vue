@@ -139,7 +139,6 @@
 </template>
 
 <script>
-import "@/components/public.scss";
 export default {
   name: "app",
   data() {
@@ -234,5 +233,6 @@ export default {
 
 .main {
   padding-left: 30px;
+  position: relative;
 }
 </style>

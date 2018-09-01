@@ -8,7 +8,7 @@
 
     <el-row class="title">法律法规管理</el-row>
     <el-row :gutter="15">
-      <el-col :span="5" :lg="3">
+      <el-col :span="3">
         <router-link to="law/new">
           <el-button type="primary" icon="el-icon-plus">新建法律法规</el-button>
         </router-link>
@@ -24,7 +24,7 @@
         </el-select>
       </el-col>
 
-      <el-col :span="8" :lg="6">
+      <el-col :span="6">
         <el-button icon="el-icon-search" type="primary" round>查找...</el-button>
         <el-button round>重置</el-button>
       </el-col>

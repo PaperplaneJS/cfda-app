@@ -23,7 +23,7 @@
         </el-date-picker>
       </el-col>
 
-      <el-col :span="6" :lg="6">
+      <el-col :span="6">
         <el-button icon="el-icon-search" type="primary" round>查找...</el-button>
         <el-button round>重置</el-button>
       </el-col>
