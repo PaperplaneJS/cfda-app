@@ -9,7 +9,7 @@ Vue.config.productionTip = false;
 
 Vue.use(Vuex);
 
-let store = new Vuex.Store({ //store对象
+let store = new Vuex.Store({
   state: {
     demoData
   }

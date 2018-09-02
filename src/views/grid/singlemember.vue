@@ -88,9 +88,9 @@ export default {
             trigger: "change"
           }
         ],
-        state: [{ required: true }],
+        state: [{ required: true,message: "必须设置人员状态" }],
         job: [{ required: true, message: "必须输入人员职务", trigger: "blur" }],
-        area: [{ required: true }]
+        area: [{ required: true,message: "必须输入人员所属网格区域" }]
       }
     };
   },

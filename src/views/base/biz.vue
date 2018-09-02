@@ -9,17 +9,17 @@
     <el-row class="title">企业单位管理</el-row>
 
     <el-row type="flex" :gutter="15">
-      <el-col :span="3">
+      <el-col :span="2">
         <router-link to="biz/new">
-          <el-button size="medium" type="primary" icon="el-icon-plus">添加单位</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus">新建单位</el-button>
         </router-link>
       </el-col>
       <el-col :span="6">
-        <el-input size="medium" v-model="search.text" clearable placeholder="搜索单位名/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
+        <el-input size="small" v-model="search.text" clearable placeholder="搜索单位名/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
       <el-col :span="3">
-        <el-select size="medium" v-model="search.kind" clearable placeholder="选择类别">
+        <el-select size="small" v-model="search.kind" clearable placeholder="选择类别">
           <el-option value="食品销售">食品销售</el-option>
           <el-option value="食品生产">食品生产</el-option>
           <el-option value="餐饮服务">餐饮服务</el-option>
@@ -29,19 +29,19 @@
       </el-col>
 
       <el-col :span="3">
-        <el-select size="medium" v-model="search.state" clearable placeholder="选择状态">
+        <el-select size="small" v-model="search.state" clearable placeholder="选择状态">
           <el-option label="激活" :value="1"></el-option>
           <el-option label="停用" :value="2"></el-option>
         </el-select>
       </el-col>
 
       <el-col :span="5">
-        <el-cascader size="medium" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.demoData.gridArea" placeholder="按网格筛选" change-on-select></el-cascader>
+        <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.demoData.gridArea" placeholder="按网格筛选" change-on-select></el-cascader>
       </el-col>
 
-      <el-col :span="4" style="margin-left:auto;">
-        <el-button @click="searchSubmit" size="medium" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="medium" round>重置</el-button>
+      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
+        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
+        <el-button @click="searchReset" size="small" round>重置</el-button>
       </el-col>
     </el-row>
 
@@ -64,7 +64,7 @@
               <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="action" label="操作" min-width="120px">
+          <el-table-column align="right" prop="action" label="操作" min-width="120px">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('biz/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
@@ -150,7 +150,7 @@ export default {
         tableData = tableData.filter(
           t =>
             t.name.includes(searchText) ||
-            t.kind.includes(searchTexth) ||
+            t.kind.includes(searchText) ||
             t.contact.includes(searchText) ||
             (t.licence && t.licence.name.includes(searchText))
         );

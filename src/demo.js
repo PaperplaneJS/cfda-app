@@ -317,7 +317,7 @@ export default {
     tel: "18099281450",
     licence: {
       name: "方桥馄饨",
-      num: "CS-013-497701",
+      num: "CS-013-4977015",
       socialcode: "328783391011711510",
       supervise: "虞山街道办",
       superviser: "周小强",
@@ -365,7 +365,7 @@ export default {
     tel: "13206513443",
     licence: {
       name: "香村甜品",
-      num: "CS-213-98103388",
+      num: "CS-213-9810388",
       socialcode: "232358081728971241",
       supervise: "虞山街道办",
       superviser: "周小强",
@@ -389,7 +389,7 @@ export default {
     tel: "13771513390",
     licence: {
       name: "沙县小吃新颜路店",
-      num: "CS-232-44617388",
+      num: "CS-232-4461738",
       socialcode: "1120394802339712341",
       supervise: "莫城街道办",
       superviser: "周小强",
@@ -473,5 +473,14 @@ export default {
       licenceissue: "2017-11-10",
       licenceuntil: "2019-11-10"
     }
-  }, ]
+  }, ],
+
+  checkTemplate: [{
+    id: 1,
+    state: 1,
+    name: "食品生产日常监督检查要点表",
+    department: "常熟市食药监局",
+    staff: "张小明",
+    date: "2017-12-31"
+  }]
 }
