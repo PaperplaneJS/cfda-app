@@ -62,7 +62,7 @@
 
 <script>
 import { copy, uuid } from "@/components/utils.js";
-import menu from "@/components/menuItem.js";
+import menu from "@/components/menu.js";
 export default {
   name: "app",
   data() {

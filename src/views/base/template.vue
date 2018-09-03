@@ -103,7 +103,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.demoData.checkTemplate;
+      let tableData = this.$store.state.template;
 
       if (
         this.currentSearch.text &&

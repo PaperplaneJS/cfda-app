@@ -36,7 +36,7 @@
       </el-col>
 
       <el-col :span="5">
-        <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.demoData.gridArea" placeholder="按网格筛选" change-on-select></el-cascader>
+        <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="按网格筛选" change-on-select></el-cascader>
       </el-col>
 
       <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
@@ -50,15 +50,20 @@
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="name" label="企业名称" sortable></el-table-column>
           <el-table-column prop="kind" label="类型" sortable></el-table-column>
-          <el-table-column prop="licence.responsible" label="法人" sortable></el-table-column>
           <el-table-column label="网格区域" sortable>
             <template slot-scope="scope">
-              {{$store.state.demoData.findArea(scope.row.area).name}}
+              {{$store.state.gridarea.findArea(scope.row.area).name}}
             </template>
           </el-table-column>
           <el-table-column prop="contact" label="联系人" sortable></el-table-column>
           <el-table-column prop="tel" label="联系电话"></el-table-column>
-          <el-table-column prop="licence.num" label="许可证编号"></el-table-column>
+          <el-table-column label="许可证编号">
+            <template slot-scope="scope">
+              <span v-if="scope.row.licence">{{scope.row.licence.num}}</span>
+              <el-tag v-else>暂无许可证</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="licence.responsible" label="法人" sortable></el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
               <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
@@ -140,7 +145,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.demoData.bizs;
+      let tableData = this.$store.state.biz;
 
       if (
         this.currentSearch.text &&
@@ -166,9 +171,8 @@ export default {
 
       if (this.currentSearch.grid && this.currentSearch.grid.length > 0) {
         let gridSearch = this.currentSearch.grid.join(",").trim();
-
         tableData = tableData.filter(t =>
-          this.$store.state.demoData
+          this.$store.state.gridarea
             .findAreaIDArray(t.area)
             .join(",")
             .trim()

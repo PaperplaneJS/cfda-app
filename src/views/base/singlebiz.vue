@@ -47,7 +47,7 @@
 
             <el-col :span="8">
               <el-form-item prop="area" label="网格区域：" required>
-                <el-cascader :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentBizInfo.area" :options="$store.state.demoData.gridArea" placeholder="选择网格区域" style="width:100%;" change-on-select>
+                <el-cascader :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentBizInfo.area" :options="$store.state.gridarea.gridarea" placeholder="选择网格区域" style="width:100%;" change-on-select>
                 </el-cascader>
               </el-form-item>
             </el-col>
@@ -408,7 +408,8 @@ export default {
     editOK() {},
 
     editCancel() {
-      Object.assign(this.currentBizInfo, this.originBizInfo);
+      this.currentBizInfo = copy(this.originBizInfo);
+      this.currentBizInfo.licence = copy(this.originBizInfo.licence);
       this.hasLicence = this.currentBizInfo.licence !== null;
       this.edit = false;
     },
@@ -418,7 +419,7 @@ export default {
         this.currentBizInfo.licence = {};
         let defaultLincence =
           this.originBizInfo && this.originBizInfo.licence
-            ? this.originBizInfo.licence
+            ? copy(this.originBizInfo.licence)
             : {
                 name: "",
                 num: "",
@@ -434,7 +435,7 @@ export default {
                 licenceuntil: null
               };
 
-        Object.assign(this.currentBizInfo.licence, defaultLincence);
+        this.currentBizInfo.licence = defaultLincence;
       } else {
         this.currentBizInfo.licence = null;
       }
@@ -462,21 +463,21 @@ export default {
         this.hasLicence = false;
       } else {
         this.currentBizInfo = copy(
-          this.$store.state.demoData.bizs.find(t => t.id == bizid)
+          this.$store.state.biz.find(t => t.id == bizid)
         );
 
         this.originBizInfo = copy(
-          this.$store.state.demoData.bizs.find(t => t.id == bizid)
+          this.$store.state.biz.find(t => t.id == bizid)
         );
 
         if (this.currentBizInfo.area) {
-          this.currentBizInfo.area = this.$store.state.demoData.findAreaIDArray(
+          this.currentBizInfo.area = this.$store.state.gridarea.findAreaIDArray(
             this.currentBizInfo.area
           );
         }
 
         if (this.originBizInfo.area) {
-          this.originBizInfo.area = this.$store.state.demoData.findAreaIDArray(
+          this.originBizInfo.area = this.$store.state.gridarea.findAreaIDArray(
             this.originBizInfo.area
           );
         }
