@@ -35,7 +35,7 @@
 
           <el-row>
             <el-col :span="24">
-              <el-table :data="pageData" size="medium" stripe style="width: 100%">
+              <el-table :data="pageData" size="medium" style="width: 100%">
                 <el-table-column prop="name" label="模板名称" sortable></el-table-column>
                 <el-table-column prop="department" label="制定部门" sortable></el-table-column>
                 <el-table-column prop="staff" label="制定人" sortable></el-table-column>

@@ -41,12 +41,12 @@
             <el-popover placement="bottom" title="通知和消息" width="400" trigger="manual" v-model="visible">
               <el-alert class="notice" v-for="item of notice" :key="item.id" :title="item.title" :type="item.type" :description="item.content" show-icon>
               </el-alert>
-              <el-badge icon="el-icon-bell" circle slot="reference" :max="99" :value="3" class="item">
+              <el-badge icon="el-icon-bell" circle slot="reference" :max="99" :value="notice.length" class="item">
                 <el-button icon="el-icon-bell" circle @click="visible = !visible"></el-button>
               </el-badge>
             </el-popover>
             <span>
-              <el-button round>顾小华</el-button>
+              <el-button round>{{staff.name}}</el-button>
             </span>
 
           </div>
@@ -69,22 +69,8 @@ export default {
     return {
       currentMenuPath: null,
       visible: false,
-      notice: [
-        {
-          id: 1,
-          title: "有新的计划待接收",
-          type: "info",
-          content:
-            "有新检查计划[2018年下半年全市食品加工单位检查通知]已放入[计划接收]列表内"
-        },
-        {
-          id: 2,
-          title: "请在12月15日前进行风险评级",
-          type: "warning",
-          content:
-            "当前区域内还有12家单位没有进行年度风险评级/检查，请于12月15日前完成"
-        }
-      ],
+      notice: this.$store.state.current.notice,
+      staff: this.$store.state.current.staff,
       menu
     };
   },
@@ -187,8 +173,7 @@ export default {
 
 #aside-logo {
   border-radius: 4px;
-  margin: 20px 20px 30px;
-  padding: 25px 10px;
+  height: 10px;
   color: #fff;
   text-align: center;
 }

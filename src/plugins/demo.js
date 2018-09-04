@@ -12,7 +12,12 @@ import {
 import {
   template
 } from "@/components/template.js";
-
+import {
+  law
+} from "@/components/law.js";
+import {
+  sms
+} from "@/components/sms.js";
 
 Vue.use(Vuex);
 let store = new Vuex.Store({
@@ -21,7 +26,9 @@ let store = new Vuex.Store({
     current,
     gridarea,
     gridmember,
-    template
+    template,
+    law,
+    sms
   }
 });
 

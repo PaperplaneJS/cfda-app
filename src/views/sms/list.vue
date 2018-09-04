@@ -7,33 +7,34 @@
     </el-breadcrumb>
 
     <el-row class="title">消息列表</el-row>
-    <el-row :gutter="15">
+    <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input clearable placeholder="搜索消息内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
+        <el-input size="small" v-model="search.text" clearable placeholder="搜索消息内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
       <el-col :span="10">
-        <el-date-picker type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
+        <el-date-picker size="small" value-format="yyyy-MM-dd hh:mm" v-model="search.daterange" type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
         </el-date-picker>
       </el-col>
 
-      <el-col :span="6">
-        <el-button icon="el-icon-search" type="primary" round>查找...</el-button>
-        <el-button round>重置</el-button>
+      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
+        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
+        <el-button @click="searchReset" size="small" round>重置</el-button>
       </el-col>
     </el-row>
 
     <el-row>
       <el-col :span="24">
-        <el-table :row-class-name="tableRowClassName" :data="smsdata" size="medium" style="width: 100%" border>
-          <el-table-column type="index" label="序号" width="120"></el-table-column>
-          <el-table-column label="标题" sortable>
+        <el-table :row-class-name="tableRowClassName" :data="pageData" size="medium" style="width: 100%">
+          <el-table-column type="index" label="序号" width="60px"></el-table-column>
+          <el-table-column label="标题" sortable min-width="250px">
             <template slot-scope="scope">
               <el-tag size="small" style="margin-right:10px;" :type="getType(scope.row.read)">{{scope.row.read?"已读":"未读"}}</el-tag>{{scope.row.title}}
             </template>
           </el-table-column>
-          <el-table-column prop="origin" label="来源" sortable width="200"></el-table-column>
-          <el-table-column prop="date" label="时间" width="120">
+          <el-table-column prop="department" label="来源" sortable></el-table-column>
+          <el-table-column prop="date" label="时间" sortable></el-table-column>
+          <el-table-column align="right" prop="date" label="操作">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看</el-button>
             </template>
@@ -43,7 +44,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination background layout="prev, pager, next" :total="100">
+      <el-pagination :current-page.sync="smsTable.page" :page-size="smsTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
       </el-pagination>
     </el-row>
   </div>
@@ -54,23 +55,50 @@ export default {
   name: "sms_list",
   data() {
     return {
-      smsdata: [
-        {
-          id: 1,
-          title: "关于餐饮行业加强检查工作的通知",
-          origin: "虞山分局",
-          date: "2016-08-01",
-          read: false
-        },
-        {
-          id: 2,
-          title: "关于新的法律法规下发工作的通知",
-          origin: "虞山分局",
-          date: "2016-08-01",
-          read: true
-        }
-      ]
+      search: {
+        text: "",
+        daterange: []
+      },
+      currentSearch: {
+        text: "",
+        daterange: []
+      },
+      smsTable: {
+        page: 1,
+        pageSize: 10
+      }
     };
+  },
+
+  computed: {
+    tableData() {
+      let tableData = this.$store.state.sms;
+
+      if (
+        this.currentSearch.text &&
+        this.currentSearch.text.trim().length > 0
+      ) {
+        let searchText = this.currentSearch.text;
+        tableData = tableData.filter(
+          t => t.title.includes(searchText) || t.department.includes(searchText)
+        );
+      }
+
+      if (
+        this.currentSearch.daterange &&
+        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+      ) {
+      }
+
+      return tableData;
+    },
+
+    pageData() {
+      return this.tableData.slice(
+        (this.smsTable.page - 1) * this.smsTable.pageSize,
+        this.smsTable.page * this.smsTable.pageSize
+      );
+    }
   },
 
   methods: {
@@ -80,6 +108,7 @@ export default {
       }
       return "";
     },
+
     getType(isread) {
       switch (isread) {
         case true:
@@ -87,6 +116,18 @@ export default {
         case false:
           return "warning";
       }
+    },
+
+    searchSubmit() {
+      Object.assign(this.currentSearch, this.search);
+    },
+
+    searchReset() {
+      this.search = {
+        text: "",
+        daterange: []
+      };
+      this.searchSubmit();
     }
   }
 };

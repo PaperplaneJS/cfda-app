@@ -1,4 +1,4 @@
-let biz = [{
+export let biz = [{
   id: 1,
   name: "梅花糕小吃店",
   state: 1,
@@ -178,7 +178,3 @@ let biz = [{
     licenceuntil: "2019-11-10"
   }
 }, ];
-
-export {
-  biz
-}
