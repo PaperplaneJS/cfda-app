@@ -10,23 +10,28 @@
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="plandata" size="medium" style="width: 100%">
-          <el-table-column prop="title" label="标题" sortable></el-table-column>
-          <el-table-column prop="kind" label="计划类别" sortable></el-table-column>
+        <el-table :data="pageData" size="medium" style="width: 100%">
+          <el-table-column prop="title" label="标题" sortable min-width="180px"></el-table-column>
+          <el-table-column label="计划类别" sortable>
+            <template slot-scope="scope">
+              <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
-          <el-table-column prop="department" label="所属单位" sortable></el-table-column>
-          <el-table-column prop="date" label="制定时间"></el-table-column>
+          <el-table-column prop="department" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="post" label="下发时间"></el-table-column>
           <el-table-column label="执行期限">
             <template slot-scope="scope">
-              {{scope.row.limit[0]}} ~ {{scope.row.limit[1]}}
+              <el-tag size="mini">{{scope.row.limit[0]}}</el-tag> ~
+              <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
-              <el-tag :type="getType(scope.row.state)">{{scope.row.state}}</el-tag>
+              <el-tag size="small" :type="getPlanType(scope.row.state)">{{scope.row.state | planStateText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column align="right" label="操作">
             <template slot-scope="scope">
               <el-button @click.native="recivePlan(scope.row)" size="mini" type="primary">查看和接收</el-button>
             </template>
@@ -36,7 +41,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination background layout="prev, pager, next" :total="100">
+      <el-pagination :current-page.sync="planTable.page" :page-size="planTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
       </el-pagination>
     </el-row>
 
@@ -45,7 +50,7 @@
         <el-row :gutter="15">
           <el-col :span="24">
             <el-form-item label="计划标题:">
-              <el-input v-model="popupItem.title" readonly></el-input>
+              <el-input v-model="popupItem.title" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -53,13 +58,13 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="制定科室:">
-              <el-input v-model="popupItem.department" readonly></el-input>
+              <el-input v-model="popupItem.department" disabled></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="制定人员:">
-              <el-input v-model="popupItem.staff" readonly></el-input>
+              <el-input v-model="popupItem.staff" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -67,7 +72,11 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="计划类别:">
-              <el-input v-model="popupItem.kind" disabled></el-input>
+              <el-select disabled v-model="popupItem.kind">
+                <el-option label="日常检查" value="daily"></el-option>
+                <el-option label="专项检查" value="special"></el-option>
+                <el-option label="全量检查(风险评级)" value="risk"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -78,9 +87,17 @@
         </el-row>
 
         <el-row :gutter="15">
+          <el-col :span="12">
+            <el-form-item label="下发日期:">
+              <el-date-picker disabled type="date" v-model="popupItem.post"></el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="15">
           <el-col :span="24">
             <el-form-item label="执行期限:">
-              <el-date-picker v-model="popupItem.limit" readonly type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
+              <el-date-picker v-model="popupItem.limit" disabled type="daterange" range-separator="至">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -89,7 +106,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注:">
-              <el-input v-model="popupItem.remark" resize="none" :rows="4" type="textarea" readonly></el-input>
+              <el-input v-model="popupItem.remark" resize="none" :rows="4" type="textarea" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -97,7 +114,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="isPopup=false">取消</el-button>
-        <el-button @click.native="acceptPlan" type="primary">确定接收</el-button>
+        <el-button @click.native="acceptPlan" icon="el-icon-check" type="primary">确定接收</el-button>
       </div>
     </el-dialog>
   </div>
@@ -110,27 +127,76 @@ export default {
     return {
       isPopup: false,
       popupItem: null,
-      plandata: [
-        {
-          title: "常熟市2018年下半年巡检计划",
-          staff: "张小明",
-          kind: "日常检查",
-          department: "常熟市市局",
-          date: "2018-06-01",
-          limit: ["2018-06-01", "2018-12-01"],
-          state: "待接收",
-          remark: "完成后及时上报结果"
-        }
-      ]
+      planTable: {
+        page: 1,
+        pageSize: 10
+      }
     };
   },
 
+  filters: {
+    planStateText(state) {
+      switch (state) {
+        case 1:
+          return "待分发";
+        case 2:
+          return "待接收";
+        case 3:
+          return "执行中";
+        case 4:
+          return "已完成";
+        default:
+          return "未知";
+      }
+    },
+
+    planKindText(kind) {
+      switch (kind) {
+        case "daily":
+          return "日常检查";
+        case "special":
+          return "专项检查";
+        case "risk":
+          return "全量检查";
+        default:
+          return kind;
+      }
+    }
+  },
+
+  computed: {
+    tableData() {
+      let tableData = this.$store.state.plan.filter(t => t.state === 2);
+
+      return tableData;
+    },
+
+    pageData() {
+      return this.tableData.slice(
+        (this.planTable.page - 1) * this.planTable.pageSize,
+        this.planTable.page * this.planTable.pageSize
+      );
+    }
+  },
+
   methods: {
-    getType(text) {
-      return { ["待接收"]: "warning" }[text];
+    getPlanType(state) {
+      switch (state) {
+        case 1:
+          return "warning";
+        case 2:
+          return "warning";
+        case 3:
+          return "";
+        case 4:
+          return "success";
+        default:
+          return "info";
+      }
     },
 
     acceptPlan() {},
+
     recivePlan(item) {
       this.popupItem = item;
       this.isPopup = true;

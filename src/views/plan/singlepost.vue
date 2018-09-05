@@ -7,34 +7,40 @@
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{title}}</el-row>
+    <el-row class="title">{{title}}
+      <el-button @click="$router.push('/plan/list/'+currentPlan.id)" type="text">编辑计划</el-button>
+    </el-row>
 
     <el-form label-position="left" style="margin-top:20px;" label-width="100px">
       <el-row style="font-size:18px;margin-bottom:15px;" class="section">计划详情</el-row>
       <el-row>
-        <el-col :span="12">
-          <el-form-item label="计划标题:">
+        <el-col :span="16">
+          <el-form-item label="计划标题：">
             <el-input v-model="currentPlan.title" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="15">
-        <el-col :span="6">
-          <el-form-item label="计划类别:">
-            <el-input v-model="currentPlan.kind" disabled></el-input>
+        <el-col :span="8">
+          <el-form-item label="计划类别：">
+            <el-select style="width:100%;" disabled v-model="currentPlan.kind" placeholder="请选择">
+              <el-option label="日常检查" value="daily"></el-option>
+              <el-option label="专项检查" value="special"></el-option>
+              <el-option label="全量检查(风险评级)" value="risk"></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label="制定日期:">
-            <el-date-picker disabled type="date" v-model="currentPlan.date"></el-date-picker>
+        <el-col :span="8">
+          <el-form-item label="制定日期：">
+            <el-date-picker style="width:100%;" disabled type="date" v-model="currentPlan.date"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row>
         <el-col :span="10">
-          <el-form-item label="执行期限:">
+          <el-form-item label="执行期限：">
             <el-date-picker v-model="currentPlan.limit" disabled type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
             </el-date-picker>
           </el-form-item>
@@ -42,16 +48,16 @@
       </el-row>
 
       <el-row>
-        <el-col :span="12">
-          <el-form-item label="检查描述:">
+        <el-col :span="16">
+          <el-form-item label="检查描述：">
             <el-input v-model="currentPlan.desc" :rows="4" type="textarea" disabled placeholder="选填,检查工作的简要描述"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row>
-        <el-col :span="12">
-          <el-form-item label="备注:">
+        <el-col :span="16">
+          <el-form-item label="备注：">
             <el-input v-model="currentPlan.remark" :rows="4" type="textarea" disabled placeholder="选填,工作备注"></el-input>
           </el-form-item>
         </el-col>
@@ -59,16 +65,16 @@
 
       <el-row style="font-size:18px;margin-bottom:15px;" class="section">分发对象</el-row>
       <el-row>
-        <el-col :span="12">
-          <el-form-item label="分发给:">
-            <el-tree :expand-on-click-node="false" ref="tree" :check-strictly="true" style="margin-bottom:20px;" node-key="id" :default-expanded-keys="[2,3,4]" :data="gridtree" show-checkbox>
+        <el-col :span="16">
+          <el-form-item label="分发给：" required>
+            <el-tree @check="checkChange" :expand-on-click-node="false" ref="tree" :check-strictly="true" :default-expanded-keys="[treeData[0].id]" :props="{label:'name'}" style="margin-bottom:20px;" node-key="id" :data="treeData" show-checkbox>
               <span class="custom-tree-node" slot-scope="{ node, data }">
                 <span>{{ node.label }}</span>
                 <span>
-                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="treeSelectChild(node,data)">
-                    下级全选
+                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="node.checked=true">
+                    单个选中
                   </el-button>
-                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="treeEmptyChild(node,data)">
+                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="setChildren(node,false)">
                     清空
                   </el-button>
                 </span>
@@ -82,74 +88,50 @@
 
     <el-row>
       <el-col :span="24">
-        <el-button type="primary">确认分发</el-button>
-        <el-button>编辑计划</el-button>
+        <el-button icon="el-icon-check" type="primary">确认分发</el-button>
         <router-link to="/plan/post">
           <el-button style="margin-left:20px;">返回计划列表</el-button>
         </router-link>
-        
+
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
+import { copy } from "@/components/utils";
 export default {
   name: "plan_singleplan",
   data() {
     return {
       title: null,
-      currentPlan: null,
-      gridtree: [
-        {
-          label: "常熟市",
-          children: [
-            {
-              id: 2,
-              label: "虞山镇",
-              children: [
-                { label: "虞山分局" },
-                { label: "检察大队" },
-                { label: "食药监分局" }
-              ]
-            },
-            {
-              id: 3,
-              label: "梅里",
-              children: []
-            },
-            {
-              id: 4,
-              label: "赵市",
-              children: []
-            }
-          ]
-        }
-      ]
+      currentPlan: null
     };
   },
-  beforeMount() {
-    let planid = this.$route.params.planid;
-    if (planid === "1") {
-      this.currentPlan = {
-        title: "常熟市2018年下半年巡检计划",
-        kind: "日常检查",
-        date: "2018-05-01",
-        limit: ["2018-06-01", "2018-12-01"],
-        desc: "请按照检查要点表和相关法规执行",
-        remark: "完成后及时上报结果"
-      };
 
-      this.title = this.currentPlan.title;
+  beforeMount() {
+    this.init();
+  },
+
+  computed: {
+    treeData() {
+      return this.$store.state.gridarea.gridarea;
     }
   },
+
   methods: {
-    treeSelectChild(node, data) {
-      this.setChildren(node, true);
+    init() {
+      let planid = this.$route.params.planid;
+      this.currentPlan = copy(this.$store.state.plan.find(t => t.id == planid));
+      this.title = this.currentPlan.title;
     },
 
-    treeEmptyChild(node, data) {
-      this.setChildren(node, false);
+    checkChange(data) {
+      let node = this.$refs.tree.getNode(data);
+      if (node.checked) {
+        this.setChildren(node, node.checked);
+        node.expanded = true;
+      }
     },
 
     setChildren(node, target) {

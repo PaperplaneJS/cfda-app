@@ -19,7 +19,7 @@
       </el-col>
 
       <el-col :span="4">
-        <el-select size="small" v-model="search.kind" placeholder="按类别筛选">
+        <el-select size="small" clearable v-model="search.kind" placeholder="按类别筛选">
           <el-option label="日常检查" value="daily"></el-option>
           <el-option label="专项检查" value="special"></el-option>
           <el-option label="全量检查(风险评级)" value="risk"></el-option>
@@ -27,7 +27,7 @@
       </el-col>
 
       <el-col :span="6">
-        <el-date-picker size="small" v-model="search.daterange" type="daterange" range-separator="至" start-placeholder="制定日期范围" end-placeholder="截止">
+        <el-date-picker size="small" clearable v-model="search.daterange" type="daterange" range-separator="至" start-placeholder="制定日期范围" end-placeholder="截止">
         </el-date-picker>
       </el-col>
 
@@ -43,7 +43,7 @@
           <el-table-column prop="title" label="标题" min-width="120px" sortable></el-table-column>
           <el-table-column label="类别" sortable>
             <template slot-scope="scope">
-              <el-tag size="mini">{{scope.row.kind | postKindText}}</el-tag>
+              <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="staff" label="制定人" sortable></el-table-column>
@@ -57,7 +57,7 @@
           </el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
-              <el-tag size="mini" :type="getPostType(scope.row.state)">{{scope.row.state | postStateText}}</el-tag>
+              <el-tag size="small" :type="getPlanType(scope.row.state)">{{scope.row.state | planStateText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="right" label="操作" min-width="100px">
@@ -100,16 +100,22 @@ export default {
   },
 
   filters: {
-    postStateText(state) {
+    planStateText(state) {
       switch (state) {
         case 1:
           return "待分发";
+        case 2:
+          return "已分发";
+        case 3:
+          return "执行中";
+        case 4:
+          return "已完成";
         default:
           return "未知";
       }
     },
 
-    postKindText(kind) {
+    planKindText(kind) {
       switch (kind) {
         case "daily":
           return "日常检查";
@@ -169,10 +175,16 @@ export default {
   },
 
   methods: {
-    getPostType(state) {
+    getPlanType(state) {
       switch (state) {
         case 1:
           return "warning";
+        case 2:
+          return "";
+        case 3:
+          return "";
+        case 4:
+          return "success";
         default:
           return "info";
       }
