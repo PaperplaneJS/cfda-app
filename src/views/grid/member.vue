@@ -27,7 +27,7 @@
       </el-col>
     </el-row>
 
-    <el-row>
+    <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column type="index" label="序号" width="80px"></el-table-column>

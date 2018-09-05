@@ -45,9 +45,9 @@
       </el-col>
     </el-row>
 
-    <el-row>
+    <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="pageData" size="medium" style="width: 100%">
+        <el-table :data="pageData" size="medium" style="width: 100%;">
           <el-table-column prop="name" label="企业名称" sortable></el-table-column>
           <el-table-column prop="kind" label="类型" sortable></el-table-column>
           <el-table-column label="网格区域" sortable>

@@ -23,9 +23,9 @@
       </el-col>
     </el-row>
 
-    <el-row>
+    <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="rectifydata" size="medium" stripe style="width: 100%;margin-bottom:20px;" border>
+        <el-table :data="rectifydata" size="medium" style="width: 100%;margin-bottom:20px;">
           <el-table-column prop="bizname" label="单位名称" sortable></el-table-column>
           <el-table-column prop="date" label="检查时间" sortable></el-table-column>
           <el-table-column prop="staff" label="执法人员" sortable></el-table-column>

@@ -24,9 +24,9 @@
       </el-col>
     </el-row>
 
-    <el-row>
+    <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="plandata" size="medium" stripe style="width: 100%" border>
+        <el-table :data="plandata" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" sortable></el-table-column>
           <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
           <el-table-column prop="department" label="所属单位" sortable></el-table-column>

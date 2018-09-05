@@ -25,7 +25,7 @@
             <el-col :span="8">
               <el-form-item prop="state" label="激活状态：" required>
                 <el-radio-group v-model="currentBizInfo.state">
-                  <el-radio :label="1">启用</el-radio>
+                  <el-radio :label="1">激活</el-radio>
                   <el-radio :label="2">停用</el-radio>
                 </el-radio-group>
               </el-form-item>

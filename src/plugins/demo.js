@@ -18,6 +18,9 @@ import {
 import {
   sms
 } from "@/components/sms.js";
+import {
+  plan
+} from "@/components/plan.js";
 
 Vue.use(Vuex);
 let store = new Vuex.Store({
@@ -28,7 +31,8 @@ let store = new Vuex.Store({
     gridmember,
     template,
     law,
-    sms
+    sms,
+    plan
   }
 });
 

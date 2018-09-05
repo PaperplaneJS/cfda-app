@@ -35,9 +35,9 @@
       </el-col>
     </el-row>
 
-    <el-row>
+    <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="riskdata[year]" size="medium" stripe style="width: 100%;margin-bottom:20px;" border>
+        <el-table :data="riskdata[year]" size="medium" style="width: 100%;margin-bottom:20px;">
           <el-table-column prop="code" label="许可证编号"></el-table-column>
           <el-table-column prop="bizname" label="单位名称" sortable></el-table-column>
           <el-table-column prop="kind" label="单位类型" sortable></el-table-column>

@@ -10,7 +10,7 @@
     <el-row class="title">{{this.currentPlan.title}}</el-row>
     <el-row style="margin-top:20px;">
       <el-col :span="24">
-        <el-table :data="reportdata" size="medium" style="width: 100%;margin-bottom:20px;" border>
+        <el-table :data="reportdata" size="medium" style="width: 100%;margin-bottom:20px;">
           <el-table-column prop="bizname" label="单位名称" sortable></el-table-column>
           <el-table-column prop="staff" label="执法人员" sortable></el-table-column>
           <el-table-column prop="kind" label="检查类别"></el-table-column>

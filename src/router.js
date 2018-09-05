@@ -18,6 +18,7 @@ import GridSingleMember from '@/views/grid/singlemember';
 
 import SMSList from '@/views/sms/list';
 import SMSPost from '@/views/sms/post';
+import SMSSingleSMS from '@/views/sms/singlesms';
 
 import PlanList from '@/views/plan/list';
 import PlanPost from '@/views/plan/post';
@@ -109,11 +110,14 @@ let routes = [{
       //消息通知管理
 
       {
-        path: '/sms/list',
+        path: '/sms',
         component: SMSList
       }, {
         path: '/sms/post',
         component: SMSPost
+      }, {
+        path: '/sms/:smsid',
+        component: SMSSingleSMS
       },
 
       //检查计划管理

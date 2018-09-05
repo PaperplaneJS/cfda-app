@@ -30,12 +30,12 @@
       </el-col>
     </el-row>
 
-    <el-row>
+    <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="num" label="法令法规编号" sortable></el-table-column>
           <el-table-column prop="name" label="法令法规名称" min-width="250px" sortable></el-table-column>
-          <el-table-column prop="department" label="编制主体" sortable></el-table-column>
+          <el-table-column prop="department" label="编发主体" sortable></el-table-column>
           <el-table-column prop="date" label="创建日期" sortable></el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">

@@ -7,6 +7,7 @@
     </el-breadcrumb>
 
     <el-row class="title">网格区域</el-row>
+
     <el-row type="flex" :gutter="15">
       <el-col :span="3">
         <router-link to="area/new">
@@ -30,7 +31,7 @@
       </el-col>
     </el-row>
 
-    <el-row>
+    <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="code" label="主体代码" sortable></el-table-column>
@@ -79,7 +80,7 @@ export default {
 
   filters: {
     stateText(state) {
-      return state == 1 ? "正常" : "停用";
+      return state == 1 ? "激活" : "停用";
     }
   },
 

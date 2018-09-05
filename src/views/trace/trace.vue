@@ -12,9 +12,6 @@
         <div class="text">当前计划数目:
           <span class="bold">{{plan.current}}</span>
         </div>
-        <div class="text">总共:
-          <span class="bold">{{plan.total}}</span>
-        </div>
         <div class="button">
           <el-button @click.native="$router.push('/plan/list')" type="text" size="small">前往计划列表</el-button>
         </div>
@@ -24,9 +21,6 @@
       <span>
         <div class="text">当前任务进度:
           <span class="bold">{{task.computed}} / {{task.current}}</span>
-        </div>
-        <div class="text">所有任务:
-          <span class="bold">{{task.total}}</span>
         </div>
         <div class="button">
           <el-button @click.native="$router.push('/plan/list')" type="text" size="small">前往查看计划</el-button>
@@ -38,9 +32,6 @@
         <div>检查企业单位数目:
           <span class="bold">{{biz.computed}} / {{biz.current}}</span>
         </div>
-        <div class="text">所有单位:
-          <span class="bold">{{biz.total}}</span>
-        </div>
         <div class="button">
           <el-button @click.native="$router.push('/base/biz')" type="text" size="small">企业单位列表</el-button>
         </div>
@@ -50,9 +41,6 @@
       <span class="text">
         <div>风险评级进度:
           <span class="bold">{{risk.computed}} / {{risk.current}}</span>
-        </div>
-        <div class="text">总共:
-          <span class="bold">{{risk.total}}</span>
         </div>
         <div class="button">
           <el-button @click.native="$router.push('/risk')" type="text" size="small">前往风险评级</el-button>

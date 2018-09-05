@@ -33,10 +33,10 @@
             </el-col>
           </el-row>
 
-          <el-row>
+          <el-row style="margin-top: -10px;">
             <el-col :span="24">
               <el-table :data="pageData" size="medium" style="width: 100%">
-                <el-table-column prop="name" label="模板名称" sortable></el-table-column>
+                <el-table-column prop="name" label="模板名称" sortable min-width="120px;"></el-table-column>
                 <el-table-column prop="department" label="制定部门" sortable></el-table-column>
                 <el-table-column prop="staff" label="制定人" sortable></el-table-column>
                 <el-table-column prop="date" label="创建日期" sortable></el-table-column>

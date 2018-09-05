@@ -5,15 +5,16 @@ body {
 }
 
 .el-breadcrumb {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .el-row {
   margin-bottom: 20px;
 }
 
-.title {
+.el-row.title {
   font-size: 25px;
+  margin-bottom: 40px;
 }
 
 h1 {

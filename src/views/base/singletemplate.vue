@@ -363,15 +363,14 @@ export default {
       let j = detailIndex;
 
       if (j !== undefined && j !== null) {
-        this.detailPopupData = copy(
-          this.currentTemplate.content[i].children[j]
-        );
-        this.$set(this.detailPopupData, "index", [i, j]);
-        this.$set(this.detailPopupData, "limit", [0, 10]);
-        if (this.detailPopupData.type === "pingfen") {
-          this.detailPopupData.limit = this.detailPopupData.item[0].point;
-          this.detailPopupData.item[0].point = 0;
+        let popupData = copy(this.currentTemplate.content[i].children[j]);
+        popupData.index = [i, j];
+        popupData.limit = [0, 10];
+        if (popupData.type === "pingfen") {
+          popupData.limit = popupData.item[0].point;
+          popupData.item[0].point = 0;
         }
+        this.detailPopupData = popupData;
       } else {
         this.detailPopupData = {
           content: "",
@@ -445,24 +444,8 @@ export default {
 
     detailPopupOK([itemIndex, detailIndex]) {
       let i = itemIndex,
-        j = detailIndex;
-
-      let item = copy(this.detailPopupData.item);
-      if (!this.detailPopupData.point) {
-        item.forEach(t => Reflect.deleteProperty(t, "point"));
-      }
-      if (this.detailPopupData.type === "pingfen") {
-        item[0].point = this.detailPopupData.limit;
-      }
-
-      let newDetail = {
-        content: this.detailPopupData.content,
-        important: this.detailPopupData.important,
-        required: this.detailPopupData.required,
-        point: this.detailPopupData.point,
-        item,
-        type: this.detailPopupData.type
-      };
+        j = detailIndex,
+        newDetail = this.editToDetail(copy(this.detailPopupData));
 
       if (j !== undefined && j !== null) {
         this.currentTemplate.content[i].children.splice(j, 1, newDetail);
@@ -521,6 +504,26 @@ export default {
           ];
           break;
       }
+    },
+
+    editToDetail(editDetail) {
+      if (!editDetail.point) {
+        editDetail.item.forEach(t => Reflect.deleteProperty(t, "point"));
+      }
+      if (editDetail.type === "pingfen") {
+        editDetail.item[0].point = editDetail.limit;
+      }
+
+      let detail = {
+        content: editDetail.content,
+        important: editDetail.important,
+        required: editDetail.required,
+        point: editDetail.point,
+        item: editDetail.item,
+        type: editDetail.type
+      };
+
+      return detail;
     }
   }
 };

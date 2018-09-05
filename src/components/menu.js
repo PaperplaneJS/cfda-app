@@ -41,7 +41,7 @@ export default [{
     icon: "el-icon-message",
     group: [{
         label: "消息列表",
-        url: "list"
+        url: ""
       },
       {
         label: "消息发布",
@@ -54,7 +54,7 @@ export default [{
     url: "plan",
     icon: "el-icon-document",
     group: [{
-        label: "计划查看制定",
+        label: "查看制定",
         url: "list"
       },
       {

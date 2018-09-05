@@ -107,6 +107,10 @@ export default {
       let menuWithRoutePath = copy(this.menu);
       let genPath = function(menuItem, basePath) {
         let currentPath = `${basePath}/${menuItem.url}`;
+        if (menuItem.url.trim().length <= 0) {
+          currentPath = `${basePath}`;
+        }
+
         Object.assign(menuItem, {
           url: currentPath,
           id: uuid(6, 16)
