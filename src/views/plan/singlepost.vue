@@ -116,6 +116,10 @@ export default {
   computed: {
     treeData() {
       return this.$store.state.gridarea.gridarea;
+    },
+
+    planDetail() {
+      return this.$refs.tree.getCheckedNodes().map(t => "" + t.id);
     }
   },
 

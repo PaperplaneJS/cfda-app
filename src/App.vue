@@ -36,7 +36,7 @@
           <span class="titletext">常熟市食药监局管理平台</span>
           <div id="headmenu">
             <span>
-              <el-button icon="el-icon-search" circle></el-button>
+              <el-button icon="el-icon-tickets" circle></el-button>
             </span>
             <el-popover placement="bottom" title="通知和消息" width="400" trigger="manual" v-model="visible">
               <el-alert class="notice" v-for="item of notice" :key="item.id" :title="item.title" :type="item.type" :description="item.content" show-icon>

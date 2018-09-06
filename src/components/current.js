@@ -1,6 +1,7 @@
 let staff = {
-  id: 1,
-  name: "顾小华",
+  staffid: "3",
+  name: "李小明",
+  departmentid: "2",
   department: "虞山街道办"
 }
 

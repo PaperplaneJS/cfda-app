@@ -95,7 +95,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.plan.filter(t => t.state === 5);
+      let tableData = this.$store.state.archives;
 
       if (
         this.currentSearch.text &&

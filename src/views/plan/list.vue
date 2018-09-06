@@ -58,6 +58,9 @@
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
               <el-tag size="small" :type="getPlanType(scope.row.state)">{{scope.row.state | planStateText}}</el-tag>
+              <el-popover style="margin-left:5px;" v-if="scope.row.state!==1" placement="top-start" title="分发情况" width="300" trigger="hover" :content="postDetail(scope.row)">
+                <el-button type="text" size="small" slot="reference">分发情况</el-button>
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column align="right" label="操作" min-width="100px">
@@ -201,6 +204,12 @@ export default {
         daterange: []
       };
       this.searchSubmit();
+    },
+
+    postDetail(post) {
+      return post.postdetail
+        .map(t => this.$store.state.gridarea.findArea(t).name)
+        .join("， ");
     }
   }
 };

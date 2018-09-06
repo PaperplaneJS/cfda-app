@@ -21,6 +21,12 @@ import {
 import {
   plan
 } from "@/components/plan.js";
+import {
+  archives
+} from "@/components/archives.js";
+import {
+  task
+} from "@/components/task.js";
 
 Vue.use(Vuex);
 let store = new Vuex.Store({
@@ -32,7 +38,9 @@ let store = new Vuex.Store({
     template,
     law,
     sms,
-    plan
+    plan,
+    archives,
+    task
   }
 });
 

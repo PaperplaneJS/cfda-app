@@ -103,7 +103,7 @@ let gridmember = [{
   sex: 1,
   state: 1,
   job: "副局长"
-}, ];
+} ];
 
 export {
   gridmember
