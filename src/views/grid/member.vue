@@ -8,11 +8,6 @@
 
     <el-row class="title">网格人员管理</el-row>
     <el-row type="flex" :gutter="15">
-      <el-col :span="3">
-        <router-link to="member/new">
-          <el-button type="primary" size="small" icon="el-icon-plus">新建网格人员</el-button>
-        </router-link>
-      </el-col>
       <el-col :span="6">
         <el-input clearable size="small" v-model="search.text" placeholder="搜索姓名/岗位/单位名等" prefix-icon="el-icon-search"></el-input>
       </el-col>
@@ -46,8 +41,7 @@
           <el-table-column prop="job" label="职务" sortable></el-table-column>
           <el-table-column align="right" prop="action" label="操作" min-width="60px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('member/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
-              <el-button size="mini" type="danger">删除</el-button>
+              <el-button @click.native="$router.push('member/'+scope.row.id)" size="mini" type="primary">查看</el-button>
             </template>
           </el-table-column>
         </el-table>

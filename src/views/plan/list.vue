@@ -51,7 +51,7 @@
           <el-table-column prop="date" label="制定时间"></el-table-column>
           <el-table-column label="执行期限">
             <template slot-scope="scope">
-              <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>~
+              <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
               <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
             </template>
           </el-table-column>

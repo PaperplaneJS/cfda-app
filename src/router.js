@@ -157,16 +157,16 @@ let routes = [{
         path: '/daily/post/:postid',
         component: DailySinglePost
       }, {
-        path: '/daily/monitor/:monitorid',
+        path: '/daily/monitor/:taskid',
         component: DailyMonitorList
       }, {
-        path: '/daily/monitor/:monitorid/:monitorrecordid',
+        path: '/daily/monitor/:taskid/:taskrecordid',
         component: DailySingleMonitor
       }, {
-        path: '/daily/report/:planid',
+        path: '/daily/report/:taskid',
         component: DailyReportList
       }, {
-        path: '/daily/report/:planid/:reportid',
+        path: '/daily/report/:taskid/:taskrecordid',
         component: DailySingleReport
       },
 

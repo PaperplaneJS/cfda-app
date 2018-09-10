@@ -236,8 +236,8 @@ export default {
         date: "2018-07-01 12:00:00",
         staff: "顾小华",
         department: "综合办公室",
-        result:"基本符合",
-        handle:"责令整改",
+        result: "基本符合",
+        handle: "责令整改",
         checkdetail: {
           "一、场所环境": [
             {

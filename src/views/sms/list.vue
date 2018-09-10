@@ -38,7 +38,7 @@
           </el-table-column>
           <el-table-column prop="department" label="发布机构" sortable></el-table-column>
           <el-table-column prop="staff" label="发布人" sortable></el-table-column>
-          <el-table-column prop="date" label="时间" sortable></el-table-column>
+          <el-table-column prop="date" label="发布时间" sortable></el-table-column>
           <el-table-column align="right" prop="date" label="操作">
             <template slot-scope="scope">
               <el-button @click="$router.push('sms/'+scope.row.id)" size="mini" type="primary">查看</el-button>

@@ -22,7 +22,7 @@
           <el-table-column prop="post" label="下发时间"></el-table-column>
           <el-table-column label="执行期限">
             <template slot-scope="scope">
-              <el-tag size="mini">{{scope.row.limit[0]}}</el-tag> ~
+              <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
               <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
             </template>
           </el-table-column>
@@ -72,7 +72,7 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="计划类别:">
-              <el-select disabled v-model="popupItem.kind">
+              <el-select style="width:100%;" disabled v-model="popupItem.kind">
                 <el-option label="日常检查" value="daily"></el-option>
                 <el-option label="专项检查" value="special"></el-option>
                 <el-option label="全量检查(风险评级)" value="risk"></el-option>
@@ -81,7 +81,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="制定日期:">
-              <el-date-picker disabled type="date" v-model="popupItem.date"></el-date-picker>
+              <el-date-picker style="width:100%;" disabled type="datetime" v-model="popupItem.date"></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -89,7 +89,16 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="下发日期:">
-              <el-date-picker disabled type="date" v-model="popupItem.post"></el-date-picker>
+              <el-date-picker style="width:100%;" disabled type="date" v-model="popupItem.post"></el-date-picker>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="使用模板：">
+              <el-select disabled style="width:100%;" v-model="popupItem.templateid">
+                <el-option v-for="item of taskTemplate" :key="item.id" :label="item.name" :value="item.id">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -176,6 +185,12 @@ export default {
         (this.planTable.page - 1) * this.planTable.pageSize,
         this.planTable.page * this.planTable.pageSize
       );
+    },
+
+    taskTemplate() {
+      return this.$store.state.template.map(t => {
+        return { id: t.id, name: t.name };
+      });
     }
   },
 

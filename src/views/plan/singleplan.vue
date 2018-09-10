@@ -19,19 +19,6 @@
       </el-row>
 
       <el-row :gutter="15">
-        <el-col :span="8">
-          <el-form-item label="制定科室:">
-            <el-input disabled v-model="currentPlan.department"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="制定人员:">
-            <el-input disabled v-model="currentPlan.staff"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="15">
         <el-col :span="16">
           <el-form-item label="执行期限:" required>
             <el-date-picker :disabled="!edit" v-model="currentPlan.limit" type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
@@ -47,10 +34,10 @@
         </el-col>
       </el-row>
 
-      <el-row>
-        <el-col :span="10">
+      <el-row :gutter="15">
+        <el-col :span="8">
           <el-form-item label="检查类别:" required>
-            <el-select :disabled="!edit" v-model="currentPlan.kind" placeholder="请选择">
+            <el-select style="width:100%;" :disabled="!edit" v-model="currentPlan.kind" placeholder="请选择">
               <el-option label="日常检查" value="daily"></el-option>
               <el-option label="专项检查" value="special"></el-option>
               <el-option label="全量检查(风险评级)" value="risk"></el-option>
@@ -78,8 +65,32 @@
 
       <el-row>
         <el-col :span="16">
+          <el-form-item label="使用模板：" required>
+            <el-select :disabled="!edit" style="width:100%;" v-model="currentPlan.templateid">
+              <el-option v-for="item of taskTemplate" :key="item.id" :label="item.name" :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col :span="16">
           <el-form-item label="备注:">
             <el-input :disabled="!edit" :rows="4" v-model="currentPlan.remark" type="textarea" placeholder="选填,工作备注"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="15">
+        <el-col :span="8">
+          <el-form-item label="制定科室:">
+            <el-input disabled v-model="currentPlan.department"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="制定人员:">
+            <el-input disabled v-model="currentPlan.staff"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -125,6 +136,14 @@ export default {
     this.init();
   },
 
+  computed: {
+    taskTemplate() {
+      return this.$store.state.template.map(t => {
+        return { id: t.id, name: t.name };
+      });
+    }
+  },
+
   methods: {
     init() {
       let planid = this.$route.params.planid;
@@ -139,7 +158,8 @@ export default {
           limit: [],
           state: 1,
           remark: "",
-          special: ""
+          special: "",
+          templateid: null
         };
 
         this.title = "制定新的计划";

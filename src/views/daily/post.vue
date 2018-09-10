@@ -13,6 +13,13 @@
         <el-input size="small" v-model="search.text" clearable placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
+      <el-col :span="3">
+        <el-select size="small" v-model="search.state" clearable placeholder="选择状态">
+          <el-option label="未分派任务" :value="2"></el-option>
+          <el-option label="已分派任务" :value="3"></el-option>
+        </el-select>
+      </el-col>
+
       <el-col :span="8">
         <el-date-picker size="small" v-model="search.daterange" type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
         </el-date-picker>
@@ -32,19 +39,20 @@
           <el-table-column prop="department" label="制定单位" sortable></el-table-column>
           <el-table-column label="执行期限">
             <template slot-scope="scope">
-              <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>~
+              <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
               <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="post" label="下发日期"></el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
-              <el-tag size="small">{{stateText(scope.row)}}</el-tag>
+              <el-tag size="small">{{originTask(scope.row)?`已分派${originTask(scope.row)}任务`:'待分派'}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column align="right" label="操作" min-width="80px">
+          <el-table-column align="right" label="操作" min-width="120px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">查看 / 分派任务</el-button>
+              <el-button v-if="originTask(scope.row)" @click.native="$router.push('/daily/monitor')" size="mini">查看已分派任务</el-button>
+              <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">分派任务</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -65,11 +73,13 @@ export default {
     return {
       search: {
         text: "",
-        daterange: []
+        daterange: [],
+        state: null
       },
       currentSearch: {
         text: "",
-        daterange: []
+        daterange: [],
+        state: null
       },
       planTable: {
         page: 1,
@@ -82,7 +92,9 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.plan.filter(t => t.state === 2);
+      let tableData = this.$store.state.plan.filter(
+        t => t.state == 2 || t.state == 3
+      );
 
       if (
         this.currentSearch.text &&
@@ -97,8 +109,8 @@ export default {
         );
       }
 
-      if (this.currentSearch.kind && this.currentSearch.kind != "") {
-        tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
+      if (this.currentSearch.state && this.currentSearch.state != "") {
+        tableData = tableData.filter(t => t.state === this.currentSearch.state);
       }
 
       if (
@@ -133,22 +145,23 @@ export default {
     searchReset() {
       this.search = {
         text: "",
-        daterange: []
+        daterange: [],
+        state: null
       };
       this.searchSubmit();
     },
 
-    stateText(plan) {
-      let tasklist = this.$store.state.task.find(
+    originTask(plan) {
+      let taskItem = this.$store.state.task.find(
         t =>
           t.planid == plan.id &&
           t.department == this.$store.state.current.staff.departmentid
-      ).tasklist;
-      if (tasklist.length <= 0) {
-        return "待分派";
-      } else {
-        return `已分派${tasklist.length}个任务`;
+      );
+
+      if (taskItem) {
+        return taskItem.tasklist ? taskItem.tasklist.length : 0;
       }
+      return 0;
     }
   }
 };

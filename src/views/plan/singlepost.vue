@@ -38,11 +38,22 @@
         </el-col>
       </el-row>
 
-      <el-row>
-        <el-col :span="10">
+      <el-row :gutter="15">
+        <el-col :span="8">
           <el-form-item label="执行期限：">
-            <el-date-picker v-model="currentPlan.limit" disabled type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
+            <el-date-picker style="width:100%;" v-model="currentPlan.limit" disabled type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
             </el-date-picker>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="15">
+        <el-col :span="16">
+          <el-form-item label="选择模板：" required>
+            <el-select disabled style="width:100%;" v-model="currentPlan.templateid">
+              <el-option v-for="item of taskTemplate" :key="item.id" :label="item.name" :value="item.id">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
@@ -120,6 +131,12 @@ export default {
 
     planDetail() {
       return this.$refs.tree.getCheckedNodes().map(t => "" + t.id);
+    },
+
+    taskTemplate() {
+      return this.$store.state.template.map(t => {
+        return { id: t.id, name: t.name };
+      });
     }
   },
 
