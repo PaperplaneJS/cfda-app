@@ -1,11 +1,11 @@
 <template>
-  <div id="daily_singlemonitor">
+  <div id="daily_singlereport">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/monitor">日常检查</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/monitor">检查监督</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/monitor">{{planTitle}} (计划)</el-breadcrumb-item>
-      <el-breadcrumb-item :to="`/daily/monitor/${taskID}`">{{taskTitle}} (任务)</el-breadcrumb-item>
+      <el-breadcrumb-item to="/daily/report">日常检查</el-breadcrumb-item>
+      <el-breadcrumb-item to="/daily/report">检查监督</el-breadcrumb-item>
+      <el-breadcrumb-item to="/daily/report">{{planTitle}} (计划)</el-breadcrumb-item>
+      <el-breadcrumb-item :to="`/daily/report/${taskID}`">{{taskTitle}} (任务)</el-breadcrumb-item>
       <el-breadcrumb-item>{{currentDetail.biz.name}} (报告页)</el-breadcrumb-item>
     </el-breadcrumb>
     <div id="main">
@@ -16,34 +16,34 @@
       </div>
 
       <table>
-        <tr>
+        <tr class="info">
           <td class="label">名称:</td>
           <td>{{currentDetail.biz.name}}</td>
           <td class="label">地址:</td>
           <td>{{currentDetail.biz.address}}</td>
         </tr>
-        <tr>
+        <tr class="info">
           <td class="label">联系人:</td>
           <td>{{currentDetail.biz.contact}}</td>
           <td class="label">联系方式:</td>
           <td>{{currentDetail.biz.tel}}</td>
         </tr>
-        <tr>
+        <tr class="info">
           <td class="label">许可证编号:</td>
-          <td>{{currentDetail.biz.licence?currentDetail.biz.licence.code:""}}</td>
+          <td>{{currentDetail.biz.licence?currentDetail.biz.licence.num:""}}</td>
           <td class="label">检查次数:</td>
           <td>本年度第{{currentDetail.yearcount}}次检查</td>
         </tr>
         <tr>
           <td class="content" colspan="4">
             <p>检查内容：</p>
-            <p>江苏省苏州市常熟市{{departmentName}}食品药品监督管理局检查人员{{staffName[0]}}、{{staffName[1]}}根据《中华人民共和国食品安全法》及其实施条例、《{{templateTitle}}》的规定，于{{currentDetail.date}}对你单位进行了监督检查。本次监督检查按照表《{{templateTitle}}》开展，共检查了{{currentDetail.content.length}}项内容。其中:
+            <p>江苏省苏州市常熟市{{departmentName}}食品药品监督管理局检查人员{{staffName[0]}}、{{staffName[1]}}根据《中华人民共和国食品安全法》及其实施条例、《{{currentTemplate.name}}》的规定，于{{currentDetail.date}}对你单位进行了监督检查。本次监督检查按照表《{{currentTemplate.name}}》开展，共检查了{{currentDetail.content.length}}项内容。其中:
             </p>
             <p>
-              重点项{{checkCount}}项，项目序号分别是：{{getResult.important.num.join(", ")}} ；发现问题{{getResult.important.problem.length}}项，项目序号分别是：{{getResult.important.problem.join(", ")}} 。
+              重点项{{checkItems[0].length}}项，项目序号分别是：{{checkItems[0].map(t=>t.num).join(", ")}} ；发现问题{{checkItems[0].filter(t=>!t.checked).length}}项，项目序号分别是：{{checkItems[0].filter(t=>!t.checked).map(t=>t.num).join(", ")}} 。
             </p>
             <p>
-              一般项{{checkCount}}项，项目序号分别是：{{getResult.normal.num.join(", ")}} ；发现问题{{getResult.normal.problem.length}}项，项目序号分别是：{{getResult.normal.problem.join(", ")}} 。
+              一般项{{checkItems[1].length}}项，项目序号分别是：{{checkItems[1].map(t=>t.num).join(", ")}} ；发现问题{{checkItems[1].filter(t=>!t.checked).length}}项，项目序号分别是：{{checkItems[1].filter(t=>!t.checked).map(t=>t.num).join(", ")}} 。
             </p>
           </td>
         </tr>
@@ -51,28 +51,34 @@
           <td class="result" colspan="4">
             <p>检查结果：
               <span class="resultselected">
-                <span class="check"></span>
-                符合</span>
+                <span :class="{'checked':currentDetail.result=='符合'}"></span>
+                符合
+              </span>
               <span class="resultselected">
-                <span class="check checked"></span>
-                基本符合</span>
+                <span :class="{'checked':currentDetail.result=='基本符合'}"></span>
+                基本符合
+              </span>
               <span class="resultselected">
-                <span class="check"></span>
-                不符合</span>
+                <span :class="{'checked':currentDetail.result=='不符合'}"></span>
+                不符合
+              </span>
             </p>
             <p>结果处理：
               <span class="resultselected">
-                <span class="check"></span>
-                通过</span>
+                <span :class="{'checked':currentDetail.handle=='通过'}"></span>
+                通过
+              </span>
               <span class="resultselected">
-                <span class="check checked"></span>
-                书面限期整改</span>
+                <span :class="{'checked':currentDetail.handle=='通知整改'}"></span>
+                书面限期整改
+              </span>
               <span class="resultselected">
-                <span class="check"></span>
-                食品生产经营者立即停止食品生产经营活动</span>
+                <span :class="{'checked':currentDetail.handle=='停业整顿'}"></span>
+                食品生产经营者立即停止食品生产经营活动
+              </span>
             </p>
             <p style="margin-top:10px;">说明：</p>
-            <p class="desc">{{currentDetail.desc}}</p>
+            <p class="desc"></p>
           </td>
         </tr>
         <tr class="sign">
@@ -102,15 +108,15 @@
 
 <script>
 export default {
-  name: "daily_singlemonitor",
+  name: "daily_singlereport",
 
   data() {
     return {
       currentDetail: null,
+      currentTemplate: null,
       taskID: null,
       taskTitle: null,
-      planTitle: null,
-      templateTitle: null
+      planTitle: null
     };
   },
 
@@ -119,8 +125,28 @@ export default {
   },
 
   computed: {
-    checkCount() {
+    checkItems() {
+      let result = [[], []];
+      let template = this.currentTemplate.content;
+      for (let i = 0; i < template.length; i++) {
+        for (let j = 0; j < template[i].children.length; j++) {
+          let templateItem = template[i].children[j];
+          let checkItem = this.currentDetail.content[`${i + 1}.${j + 1}`];
+          if (checkItem) {
+            let r = {
+              num: `${i + 1}.${j + 1}`,
+              checked: checkItem.checked
+            };
 
+            if (templateItem.important) {
+              result[0].push(r);
+            } else {
+              result[1].push(r);
+            }
+          }
+        }
+      }
+      return result;
     },
 
     staffName() {
@@ -150,15 +176,16 @@ export default {
         if (taskItem) {
           this.taskTitle = taskItem.title;
           this.taskID = taskid;
-          this.planTitle = this.$store.state.plan.find(
-            p => p.id == t.planid
-          ).title;
-          this.templateTitle = this.$store.state.template.find(
-            t => t.id == this.currentPlan.templateid
-          ).title;
-          this.currentDetail = this.currentTask.detail.find(
-            d => d.id == taskrecordid
+
+          let plan = this.$store.state.plan.find(p => p.id == t.planid);
+
+          this.planTitle = plan.title;
+          this.currentTemplate = this.$store.state.template.find(
+            t => t.id == plan.templateid
           );
+          let detail = taskItem.detail.find(d => d.id == taskrecordid);
+          detail.biz = this.$store.state.biz.find(t => t.id == detail.bizid);
+          this.currentDetail = detail;
 
           return false;
         }
@@ -200,16 +227,22 @@ export default {
     td {
       border-collapse: collapse;
       border: 1.5px solid #000;
-      padding: 8px 18px;
+      padding: 5px 8px;
     }
 
-    .label {
-      width: 90px;
+    tr.info {
+      td {
+        width: 34%;
+      }
+
+      .label {
+        width: 16%;
+      }
     }
 
     .content {
       p {
-        margin: 10px 0;
+        margin: 0 0 8px;
         text-indent: 30px;
 
         &:first-child {
@@ -224,16 +257,19 @@ export default {
       }
       .resultselected {
         margin-right: 10px;
+
+        span {
+          width: 8px;
+          height: 8px;
+          border: 1px solid #000;
+          display: inline-block;
+        }
+
+        .checked {
+          background-color: #000;
+        }
       }
-      .check {
-        width: 8px;
-        height: 8px;
-        border: 1px solid #000;
-        display: inline-block;
-      }
-      .checked {
-        background-color: #000;
-      }
+
       .desc {
         text-indent: 30px;
         min-height: 140px;
