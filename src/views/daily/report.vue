@@ -112,8 +112,10 @@ export default {
           let planItem = copy(
             this.$store.state.plan.find(plan => plan.id == t.planid)
           );
-          planItem.task = taskItem;
-          tableData.push(planItem);
+          if (planItem.kind == "daily") {
+            planItem.task = taskItem;
+            tableData.push(planItem);
+          }
         }
       });
 

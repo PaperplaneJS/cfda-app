@@ -4,58 +4,63 @@
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/special/monitor">专项检查</el-breadcrumb-item>
       <el-breadcrumb-item to="/special/monitor">检查监督</el-breadcrumb-item>
-      <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special/monitor">{{plantitle}} (计划)</el-breadcrumb-item>
+      <el-breadcrumb-item>{{title}} (任务)</el-breadcrumb-item>
     </el-breadcrumb>
 
     <el-row class="title">{{title}}</el-row>
 
-    <el-row :gutter="15">
+    <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input clearable placeholder="搜索单位名称/结果等" prefix-icon="el-icon-search"></el-input>
+        <el-input v-model="search.text" size="small" clearable placeholder="搜索单位名称/结果等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
+      <el-select size="small" v-model="search.kind" clearable placeholder="筛选结果类别">
+        <el-option value="符合">符合</el-option>
+        <el-option value="基本符合">基本符合</el-option>
+        <el-option value="不符合">不符合</el-option>
+      </el-select>
+
       <el-col :span="10">
-        <el-date-picker type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
+        <el-date-picker v-model="search.daterange" size="small" clearable type="daterange" range-separator="至" start-placeholder="检查日期" end-placeholder="截止日期">
         </el-date-picker>
       </el-col>
 
-      <el-col :span="6">
-        <el-button icon="el-icon-search" type="primary" round>查找...</el-button>
-        <el-button round>重置</el-button>
+      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
+        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
+        <el-button @click="searchReset" size="small" round>重置</el-button>
       </el-col>
     </el-row>
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="monitordata" size="medium" stripe style="width: 100%;margin-bottom:20px;" border>
-          <el-table-column prop="bizname" label="单位名称" sortable></el-table-column>
-          <el-table-column prop="staff" label="执法人员" sortable></el-table-column>
-          <el-table-column prop="kind" label="监督检查类别"></el-table-column>
+        <el-table :data="pageData" size="medium" style="width: 100%;margin-bottom:20px;">
+          <el-table-column prop="bizname" label="单位名称" min-width="180px" sortable></el-table-column>
+          <el-table-column label="执法人员" sortable>
+            <template slot-scope="scope">
+              <div>主检查人：
+                <el-tag size="mini">{{scope.row.staffinfo[0]}}</el-tag>
+              </div>
+              <div>协同检查：
+                <el-tag size="mini">{{scope.row.staffinfo[1]}}</el-tag>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="date" label="检查时间" sortable></el-table-column>
           <el-table-column label="检查结果">
             <template slot-scope="scope">
-              <el-tag :type="getResultType(scope.row.result)">{{scope.row.result}}</el-tag>
+              <el-tag size="small" :type="getResultType(scope.row.result)">{{scope.row.result}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="处理方式">
             <template slot-scope="scope">
-              <el-tag :type="getResultType(scope.row.handle)">{{scope.row.handle}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="rectify" label="是否整改">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.rectify!==null" :type="scope.row.rectify?'success':'warning'">{{scope.row.rectify?"是":"否"}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="review" label="是否复查">
-            <template slot-scope="scope">
-              <el-tag v-if="scope.row.review!==null" :type="scope.row.review?'success':'warning'">{{scope.row.review?"是":"否"}}</el-tag>
+              <el-tag size="small" :type="getResultType(scope.row.handle)">{{scope.row.handle}}</el-tag>
             </template>
           </el-table-column>
 
-          <el-table-column prop="action" label="操作" min-width="120">
+          <el-table-column align="right" prop="action" label="操作" min-width="100px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看和编辑</el-button>
+              <el-button @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看记录</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
@@ -64,71 +69,138 @@
     </el-row>
 
     <el-row>
-      <el-pagination background layout="prev, pager, next" :total="100">
+      <el-pagination :current-page.sync="taskDetailTable.page" :page-size="taskDetailTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
       </el-pagination>
     </el-row>
   </div>
 </template>
 
 <script>
+import { copy } from "@/components/utils";
 export default {
   name: "special_monitorlist",
   data() {
     return {
       title: null,
-      currentPlan: null,
-      monitordata: [
-        {
-          id: 1,
-          date: "2018-08-01 12:00",
-          bizname: "东南大道麦当劳DT餐厅",
-          staff: "张小明",
-          kind: "专项检查",
-          rectify: null,
-          review: null,
-          handle: "通知整改",
-          result: "基本符合"
-        },
-        {
-          id: 2,
-          date: "2018-08-02 12:00",
-          bizname: "娇娇饭店(东南理工分店)",
-          staff: "张小明",
-          kind: "专项检查",
-          rectify: null,
-          review: null,
-          handle: "停业整顿",
-          result: "不符合"
-        }
-      ]
+      plantitle: null,
+      currentTask: null,
+
+      search: {
+        text: "",
+        daterange: [],
+        kind: ""
+      },
+      currentSearch: {
+        text: "",
+        daterange: [],
+        kind: ""
+      },
+      taskDetailTable: {
+        page: 1,
+        pageSize: 10
+      }
     };
   },
-  beforeMount() {
-    let planid = this.$route.params.monitorid;
-    if (planid === "1") {
-      this.currentPlan = {
-        title: "常熟市2018年下半年巡检计划",
-        kind: "专项检查",
-        date: "2018-05-01",
-        limit: ["2018-06-01", "2018-12-01"],
-        desc: "请按照检查要点表和相关法规执行",
-        remark: "完成后及时上报结果"
-      };
 
-      this.title = this.currentPlan.title;
+  beforeMount() {
+    this.init();
+  },
+
+  computed: {
+    tableData() {
+      let tableData = copy(this.currentTask.detail);
+      tableData.forEach(t => {
+        t.bizname = this.$store.state.biz.find(biz => biz.id == t.bizid).name;
+        t.staffinfo = [
+          this.$store.state.gridmember.find(staff => staff.id == t.staff[0].id)
+            .name,
+          this.$store.state.gridmember.find(staff => staff.id == t.staff[1].id)
+            .name
+        ];
+      });
+
+      if (
+        this.currentSearch.text &&
+        this.currentSearch.text.trim().length > 0
+      ) {
+        let searchText = this.currentSearch.text;
+        tableData = tableData.filter(
+          t =>
+            t.bizname.includes(searchText) ||
+            t.staffinfo[0].includes(searchText) ||
+            t.staffinfo[1].includes(searchText) ||
+            t.handle.includes(searchText) ||
+            t.result.includes(searchText)
+        );
+      }
+
+      if (this.currentSearch.kind && this.currentSearch.kind != "") {
+        tableData = tableData.filter(t => t.result === this.currentSearch.kind);
+      }
+
+      if (
+        this.currentSearch.daterange &&
+        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+      ) {
+        tableData = tableData.filter(t => {
+          let dt = new Date(t.date);
+          return (
+            dt.getTime() >= this.currentSearch.daterange[0].getTime() &&
+            dt.getTime() <= this.currentSearch.daterange[1].getTime()
+          );
+        });
+      }
+
+      return tableData;
+    },
+
+    pageData() {
+      return this.tableData.slice(
+        (this.taskDetailTable.page - 1) * this.taskDetailTable.pageSize,
+        this.taskDetailTable.page * this.taskDetailTable.pageSize
+      );
     }
   },
 
   methods: {
+    init() {
+      let taskid = this.$route.params.taskid;
+
+      this.$store.state.task.forEach(t => {
+        let taskItem = t.tasklist.find(ti => ti.id == taskid);
+        if (taskItem) {
+          this.currentTask = copy(taskItem);
+          this.plantitle = this.$store.state.plan.find(
+            p => p.id == t.planid
+          ).title;
+          return false;
+        }
+      });
+      this.title = this.currentTask.title;
+    },
+
+    searchSubmit() {
+      Object.assign(this.currentSearch, this.search);
+    },
+
+    searchReset() {
+      this.search = {
+        text: "",
+        daterange: [],
+        kind: ""
+      };
+      this.searchSubmit();
+    },
+
     getResultType(text) {
       switch (text) {
-        case "基本符合":
-        case "通知整改":
-          return "warning";
-
         case "符合":
         case "通过":
           return "success";
+
+        case "基本符合":
+        case "通知整改":
+          return "warning";
 
         case "不符合":
         case "停业整顿":

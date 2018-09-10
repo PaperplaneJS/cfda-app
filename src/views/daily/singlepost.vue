@@ -46,16 +46,28 @@
 
           <el-row :gutter="15">
             <el-col :span="8">
-              <el-form-item label="接收时间：">
-                <el-date-picker disabled style="width:100%;" type="datetime" v-model="task.recive"></el-date-picker>
+              <el-form-item label="使用模板：">
+                <el-select disabled style="width:100%;" v-model="plan.templateid">
+                  <el-option v-for="item of $store.state.template.map(t=>({id:t.id,name:t.name}))" :key="item.id" :label="item.name" :value="item.id">
+                  </el-option>
+                </el-select>
               </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-button @click="$router.push('/base/template/'+plan.templateid)" type="text">查看模板</el-button>
             </el-col>
           </el-row>
 
           <el-row :gutter="15">
-            <el-col :span="10">
+            <el-col :span="8">
+              <el-form-item label="接收时间：">
+                <el-date-picker disabled style="width:100%;" type="datetime" v-model="task.recive"></el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
               <el-form-item label="执行期限：">
-                <el-date-picker v-model="plan.limit" disabled type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
+                <el-date-picker style="width:100%;" v-model="plan.limit" disabled type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -122,9 +134,14 @@
         <el-form label-position="left" style="margin-top:20px;" label-width="90px">
 
           <el-row style="margin-bottom:20px;" :gutter="15">
-            <el-col :span="14">
-              <el-alert title="请选择该次检查任务所要检查的企业单位，可以使用复选框多选" type="info" :closable="false" show-icon>
+            <el-col :span="16">
+              <el-alert title="请在该次检查任务需检查/抽查的企业单位左侧的复选框打钩。选择完成后点击「确认任务分派」选项卡" type="info" :closable="false" show-icon>
               </el-alert>
+            </el-col>
+            <el-col :span="4">
+              <el-tag>
+                <strong>已选择{{bizSelection?bizSelection.length:0}}家企业单位</strong>
+              </el-tag>
             </el-col>
           </el-row>
 
@@ -197,65 +214,6 @@
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane name="staff">
-        <span :style="{'padding-right':staffDisplayNumber?'20px':'0'}" slot="label">
-          <el-badge v-if="staffDisplayNumber" :value="staffDisplayNumber" :max="999" class="item">
-            分配检查人员
-          </el-badge>
-          <span v-else>分配检查人员</span>
-        </span>
-        <el-form label-position="left" style="margin-top:20px;" label-width="90px">
-          <el-row style="margin-bottom:20px;" :gutter="15">
-            <el-col :span="14">
-              <el-alert title="为选择的企业分配检查人员，每家企业必须有主要检查人员和协办人员，且不能是同一人" type="info" :closable="false" show-icon>
-              </el-alert>
-            </el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="24">
-              <el-table :row-key="'id'" @selection-change="staffTableSelect" :data="staffData" size="medium" style="width: 100%;">
-                <el-table-column :reserve-selection="true" type="selection" width="40px"></el-table-column>
-                <el-table-column prop="biz.name" label="企业名称" sortable></el-table-column>
-                <el-table-column prop="biz.kind" label="类型" sortable></el-table-column>
-                <el-table-column label="网格区域" sortable>
-                  <template slot-scope="scope">
-                    {{$store.state.gridarea.findArea(scope.row.biz.area).name}}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="biz.contact" label="联系人" sortable></el-table-column>
-                <el-table-column prop="biz.tel" label="联系电话"></el-table-column>
-                <el-table-column label="许可证编号">
-                  <template slot-scope="scope">
-                    <span v-if="scope.row.biz.licence">{{scope.row.biz.licence.num}}</span>
-                    <el-tag v-else>暂无许可证</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column align="right" label="主检查人员 / 协查人员" min-width="200px">
-                  <template slot-scope="scope">
-                    <el-popover v-if="((scope.row.staff[0]&&scope.row.staff[1])&&scope.row.staff[0]==scope.row.staff[1])||(scope.row.staff[0]&&!scope.row.staff[1])||(!scope.row.staff[0]&&scope.row.staff[1])" title="错误" width="250" trigger="hover" content="每家企业必须有2名不同的检查人员共同参与检查">
-                      <i slot="reference" style="color:#f56c6c" class="el-icon-error"></i>
-                    </el-popover>
-                    <el-popover v-if="!scope.row.staff[0]&&!scope.row.staff[1]" title="未设置" width="250" trigger="hover" content="请为每家企业单位分派2个不同的检查人员">
-                      <i slot="reference" style="color:#ebb563" class="el-icon-warning"></i>
-                    </el-popover>
-                    <el-select @change="staffSetChange(0,scope.row.staff[0],scope.row.id)" style="margin:4px;width:110px;" size="mini" v-model="scope.row.staff[0]" placeholder="主检查人" clearable>
-                      <el-option v-for="item of staffList" :key="item.id" :label="item.name" :value="item.id">
-                      </el-option>
-                    </el-select>
-                    <el-select @change="staffSetChange(1,scope.row.staff[1],scope.row.id)" style="margin:4px;width:110px;" size="mini" v-model="scope.row.staff[1]" placeholder="协查人" clearable>
-                      <el-option v-for="item of staffList" :key="item.id" :label="item.name" :value="item.id">
-                      </el-option>
-                    </el-select>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-col>
-          </el-row>
-
-        </el-form>
-      </el-tab-pane>
-
       <el-tab-pane label="确认任务分派" name="confirm">
         <el-form label-position="left" label-width="100px">
 
@@ -295,14 +253,7 @@
           <el-row :gutter="15">
             <el-col :span="20">
               <el-form-item label="分派情况：">
-                <el-table :data="confirmData" :row-key="'id'" size="medium" border style="width: 100%;">
-                  <el-table-column prop="staff" label="执法人员" width="120px" sortable></el-table-column>
-                  <el-table-column label="检查企业">
-                    <template slot-scope="scope">
-                      <el-tag size="mini" style="margin-left:5px;margin-bottom:5px;" v-for="item of scope.row.biz" :key="item.id">{{item.name}}</el-tag>
-                    </template>
-                  </el-table-column>
-                </el-table>
+                <el-tag size="mini" style="margin-left:5px;margin-bottom:5px;" v-for="item of confirmData" :key="item.id">{{item.name}}</el-tag>
               </el-form-item>
             </el-col>
           </el-row>
@@ -332,8 +283,6 @@ export default {
       currentTask: null,
 
       bizSelection: [],
-      staffSelection: [],
-      staffSet: {},
 
       bizSearch: {
         text: "",
@@ -365,7 +314,6 @@ export default {
   },
 
   computed: {
-
     bizTableData() {
       let bizTableData = this.$store.state.biz;
 
@@ -416,56 +364,10 @@ export default {
       );
     },
 
-    staffList() {
-      return this.$store.state.gridmember
-        .filter(t =>
-          this.$store.state.gridarea
-            .findAreaIDArray(t.area)
-            .map(t => "" + t)
-            .includes(this.$store.state.current.staff.departmentid)
-        )
-        .map(t => ({
-          id: t.id,
-          name: t.name
-        }));
-    },
-
-    staffData() {
+    confirmData() {
       return this.bizSelection.map(t => ({
         id: t.id,
-        biz: t,
-        staff: [
-          this.staffSet[t.id] ? this.staffSet[t.id][0] : null,
-          this.staffSet[t.id] ? this.staffSet[t.id][1] : null
-        ]
-      }));
-    },
-
-    staffDisplayNumber() {
-      return this.bizSelection
-        ? this.bizSelection.length - this.correctStaff.length
-        : 0;
-    },
-
-    correctStaff() {
-      return this.staffData.filter(
-        t => t.staff[0] && t.staff[1] && t.staff[0] !== t.staff[1]
-      );
-    },
-
-    confirmData() {
-      let data = {};
-      this.correctStaff.forEach(t => {
-        if (!data[t.staff[0]]) {
-          data[t.staff[0]] = [];
-        }
-        data[t.staff[0]].push({ id: t.id, name: t.biz.name });
-      });
-
-      return Object.entries(data).map(([key, value]) => ({
-        id: key,
-        staff: this.staffList.find(t => t.id == key).name,
-        biz: value
+        name: t.name
       }));
     }
   },
@@ -518,24 +420,6 @@ export default {
 
     bizTableSelect(selection) {
       this.bizSelection = selection;
-    },
-
-    staffTableSelect(selection) {
-      this.staffSelection = selection.map(t => t.id);
-    },
-
-    staffSetChange(staffIndex, staffID, bizID) {
-      let selectedBizIDArray = [bizID];
-      if (this.staffSelection && this.staffSelection.includes(bizID)) {
-        selectedBizIDArray = this.staffSelection;
-      }
-
-      selectedBizIDArray.forEach(t => {
-        if (!this.staffSet[t]) {
-          this.$set(this.staffSet, t, []);
-        }
-        this.$set(this.staffSet[t], staffIndex, staffID);
-      });
     }
   }
 };

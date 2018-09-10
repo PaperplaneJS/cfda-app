@@ -27,6 +27,9 @@ import {
 import {
   task
 } from "@/components/task.js";
+import {
+  risk
+} from "@/components/risk.js";
 
 Vue.use(Vuex);
 let store = new Vuex.Store({
@@ -40,7 +43,8 @@ let store = new Vuex.Store({
     sms,
     plan,
     archives,
-    task
+    task,
+    risk
   }
 });
 

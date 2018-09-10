@@ -4,181 +4,244 @@
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/special/monitor">专项检查</el-breadcrumb-item>
       <el-breadcrumb-item to="/special/monitor">检查监督</el-breadcrumb-item>
-      <el-breadcrumb-item :to="`/special/monitor/${currentMonitor.plan.id}`">{{currentMonitor.plan.name}}</el-breadcrumb-item>
-      <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special/monitor">{{currentPlan.title}} (计划)</el-breadcrumb-item>
+      <el-breadcrumb-item :to="`/special/monitor/${currentTask.id}`">{{currentTask.title}} (任务)</el-breadcrumb-item>
+      <el-breadcrumb-item>{{currentDetail.biz.name}} (详情)</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{title}}</el-row>
+    <el-row class="title">{{currentDetail.biz.name}} (检查详情)</el-row>
+
     <el-tabs style="margin-top:30px;" v-model="tab">
-      <el-tab-pane label="检查记录信息" name="info">
+      <el-tab-pane label="检查计划与任务" name="info">
         <el-form label-position="left" style="margin-top:20px;" label-width="100px">
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">检查计划</el-row>
+
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">现场检查结果</el-row>
           <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="检查计划:">
-                <el-input v-model="currentMonitor.plan.name" readonly></el-input>
+            <el-col :span="8">
+              <el-form-item label="主检查人：">
+                <el-input v-model="currentDetail.staffinfo[0]" disabled></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="所属科室：">
+                <el-input v-model="currentDetail.departmentinfo[0]" disabled></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
-            <el-col :span="6">
-              <el-form-item label="计划类别:">
-                <el-input v-model="currentMonitor.plan.kind" readonly></el-input>
+            <el-col :span="8">
+              <el-form-item label="协同检查：">
+                <el-input v-model="currentDetail.staffinfo[1]" disabled></el-input>
               </el-form-item>
             </el-col>
 
-            <el-col :span="6">
-              <el-form-item label="制定人员:">
-                <el-input v-model="currentMonitor.plan.staff" readonly></el-input>
+            <el-col :span="8">
+              <el-form-item label="所属科室：">
+                <el-input v-model="currentDetail.departmentinfo[0]" disabled></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
-            <el-col :span="6">
-              <el-form-item label="计划类别:">
-                <el-input v-model="currentMonitor.plan.kind" readonly></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item label="制定日期:">
-                <el-date-picker readonly v-model="currentMonitor.plan.date" type="datetime">
+            <el-col :span="16">
+              <el-form-item label="检查时间：">
+                <el-date-picker style="width:100%;" disabled v-model="currentDetail.date" type="datetime">
                 </el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">分派任务</el-row>
           <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="任务标题:">
-                <el-input v-model="currentMonitor.task.title" readonly></el-input>
+            <el-col :span="8">
+              <el-form-item label="检查结果：">
+                <el-tag size="medium">{{currentDetail.result}}</el-tag>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="处理方式：">
+                <el-tag size="medium">{{currentDetail.handle}}</el-tag>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row :gutter="20">
-            <el-col :span="6">
-              <el-form-item label="分派日期:">
-                <el-input v-model="currentMonitor.task.date" readonly></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item label="分派人员:">
-                <el-input v-model="currentMonitor.task.staff" readonly></el-input>
-              </el-form-item>
-            </el-col>
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">检查计划相关信息
+            <el-button @click="$router.push('/special/monitor')" type="text" size="mini">查看计划</el-button>
           </el-row>
-
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">单位信息</el-row>
           <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="被检单位名:">
-                <el-input v-model="currentMonitor.biz.name" readonly></el-input>
+            <el-col :span="16">
+              <el-form-item label="检查计划：">
+                <el-input v-model="currentPlan.title" disabled></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
-            <el-col :span="6">
-              <el-form-item label="负责人:">
-                <el-input v-model="currentMonitor.biz.legal" readonly></el-input>
+            <el-col :span="8">
+              <el-form-item label="计划类别：">
+                <el-select style="width:100%;" disabled v-model="currentPlan.kind">
+                  <el-option label="专项检查" value="special"></el-option>
+                  <el-option label="专项检查" value="special"></el-option>
+                  <el-option label="全量检查(风险评级)" value="risk"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
 
-            <el-col :span="6">
-              <el-form-item label="联系电话:">
-                <el-input v-model="currentMonitor.biz.tel" readonly></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="单位地址:">
-                <el-input v-model="currentMonitor.biz.code" readonly></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="单位地址:">
-                <el-input v-model="currentMonitor.biz.address" resize="none" readonly type="textarea"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">检查现场记录</el-row>
-          <el-row :gutter="20">
-            <el-col :span="6">
-              <el-form-item label="检查科室:">
-                <el-input v-model="currentMonitor.department" readonly></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item label="执法人员:">
-                <el-input v-model="currentMonitor.staff" readonly></el-input>
+            <el-col :span="8">
+              <el-form-item label="制定人员：">
+                <el-input v-model="currentPlan.staff" disabled></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="检查时间:">
-                <el-date-picker readonly v-model="currentMonitor.date" type="datetime">
+            <el-col :span="8">
+              <el-form-item label="计划期限：">
+                <el-date-picker style="width:100%;" v-model="currentPlan.limit" disabled type="daterange" range-separator="至">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="接收日期：">
+                <el-date-picker style="width:100%;" disabled v-model="currentTask.recive" type="datetime">
                 </el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">检查结果</el-row>
-          <el-row :gutter="20">
-            <el-col :span="6">
-              <el-form-item label="最终结果:">
-                <el-tag>{{currentMonitor.result}}</el-tag>
+          <el-row :gutter="15">
+            <el-col :span="8">
+              <el-form-item label="使用模板：">
+                <el-select disabled style="width:100%;" v-model="currentTemplate.id">
+                  <el-option v-for="item of $store.state.template.map(t=>({id:t.id,name:t.name}))" :key="item.id" :label="item.name" :value="item.id">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
 
-            <el-col :span="6">
-              <el-form-item label="处理方式:">
-                <el-tag>{{currentMonitor.handle}}</el-tag>
+            <el-col :span="8">
+              <el-button @click="$router.push('/base/template/'+currentTemplate.id)" type="text">查看模板</el-button>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="16">
+              <el-form-item label="计划备注：">
+                <el-input v-model="currentPlan.remark" :rows="4" disabled type="textarea"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">分派任务详情
+            <el-button @click="$router.push('/special/monitor')" type="text" size="mini">查看任务</el-button>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="16">
+              <el-form-item label="任务标题：">
+                <el-input v-model="currentTask.title" disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="分派日期：">
+                <el-date-picker style="width:100%;" disabled v-model="currentTask.date" type="datetime">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="任务期限：">
+                <el-date-picker style="width:100%;" v-model="currentTask.limit" disabled type="daterange" range-separator="至">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="16">
+              <el-form-item label="生产地址:">
+                <el-input v-model="currentTask.desc" :rows="4" type="textarea" disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">被检查单位信息
+            <el-button @click="$router.push('/base/biz/'+currentDetail.biz.id)" type="text" size="mini">查看单位</el-button>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="16">
+              <el-form-item label="检查单位名：">
+                <el-input v-model="currentDetail.biz.name" disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="负责人：">
+                <el-input v-model="currentDetail.biz.contact" disabled></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="联系电话：">
+                <el-input v-model="currentDetail.biz.tel" disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20" v-if="currentDetail.biz.licence">
+            <el-col :span="8">
+              <el-form-item label="许可证号：">
+                <el-input v-model="currentDetail.biz.licence.num" disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="16">
+              <el-form-item label="单位地址：">
+                <el-input v-model="currentDetail.biz.address" :rows="4" disabled type="textarea"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane label="检查详细结果" name="detail">
-        <el-row style="font-size:18px;margin-bottom:15px;" class="section">
-          {{`食品生产专项监督检查要点表` }}[得分:{{sumPoint}}]
-          <el-tag style="margin-left:5px;" type="success">符合项:{{computeItem["符合"]}}</el-tag>
-          <el-tag style="margin-left:5px;" type="warning">基本符合项:{{computeItem["基本符合"]}}</el-tag>
-          <el-tag style="margin-left:5px;" type="danger">不符合项:{{computeItem["不符合"]}}</el-tag>
-        </el-row>
-
+      <el-tab-pane label="详细结果" name="detail">
         <el-row>
           <el-col :span="24">
-            <el-table :data="checkDetail" :span-method="tableSpan" size="medium" style="width: 100%;margin-bottom:20px;" border>
-              <el-table-column prop="item" label="检查内容" width="160px"></el-table-column>
-              <el-table-column prop="detail" label="检查项目"></el-table-column>
-              <el-table-column label="结果" width="120px">
+            <el-table :data="checkResult" :span-method="resultSpan" size="medium" style="width: 100%;margin-bottom:20px;" border>
+              <el-table-column label="检查内容" width="200px">
                 <template slot-scope="scope">
-                  <el-tag :type="getType(scope.row.result)">{{scope.row.result}}</el-tag>
+                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="mini">{{scope.row.i+1}}</el-tag>
+                  {{scope.row.item}}
                 </template>
               </el-table-column>
-              <el-table-column label="得分" width="80px">
+              <el-table-column prop="detail" label="检查项目">
                 <template slot-scope="scope">
-                  <el-tag>{{scope.row.point}}</el-tag>
+                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="mini">{{scope.row.i+1}}.{{scope.row.j+1}}</el-tag>
+                  <el-tag style="margin-bottom:5px;margin-right:8px;" v-if="scope.row.important" size="mini" type="danger">重点项</el-tag>
+                  {{scope.row.detail}}
+                </template>
+              </el-table-column>
+              <el-table-column label="结果" width="120px">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.result" :type="getResultType(scope.row.result)" size="mini">
+                    {{scope.row.result.check}}
+                    <strong v-if="scope.row.result.point"> [分值:{{scope.row.result.point}}]</strong>
+                  </el-tag>
+                  <el-tag v-else size="small" type="info">留空项</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="备注" width="90px">
                 <template slot-scope="scope">
-                  <el-popover v-if="scope.row.remark" placement="top-start" title="备注" width="400" trigger="hover" :content="scope.row.remark">
+                  <el-popover v-if="scope.row.result&&scope.row.result.remark" placement="top-start" title="备注" width="400" trigger="hover" :content="scope.row.result.remark">
                     <el-button style="margin:0 5px;" size="mini" slot="reference">备注</el-button>
                   </el-popover>
                 </template>
@@ -187,176 +250,243 @@
           </el-col>
         </el-row>
       </el-tab-pane>
+      <el-tab-pane label="查看报告" name="report">
+        <div id="main">
+          <div class="title">
+            <h3>江苏省苏州市常熟市{{$store.state.gridarea.findArea(currentDetail.biz.area).name}}食品药品监督管理局</h3>
+            <h1>食品生产经营专项监督检查结果记录表</h1>
+            <p>编号:{{currentDetail.num}}</p>
+          </div>
+
+          <table>
+            <tr class="info">
+              <td class="label">名称:</td>
+              <td>{{currentDetail.biz.name}}</td>
+              <td class="label">地址:</td>
+              <td>{{currentDetail.biz.address}}</td>
+            </tr>
+            <tr class="info">
+              <td class="label">联系人:</td>
+              <td>{{currentDetail.biz.contact}}</td>
+              <td class="label">联系方式:</td>
+              <td>{{currentDetail.biz.tel}}</td>
+            </tr>
+            <tr class="info">
+              <td class="label">许可证编号:</td>
+              <td>{{currentDetail.biz.licence?currentDetail.biz.licence.num:""}}</td>
+              <td class="label">检查次数:</td>
+              <td>本年度第{{currentDetail.yearcount}}次检查</td>
+            </tr>
+            <tr>
+              <td class="content" colspan="4">
+                <p>检查内容：</p>
+                <p>江苏省苏州市常熟市{{departmentName}}食品药品监督管理局检查人员{{staffName[0]}}、{{staffName[1]}}根据《中华人民共和国食品安全法》及其实施条例、《{{currentTemplate.name}}》的规定，于{{currentDetail.date}}对你单位进行了监督检查。本次监督检查按照表《{{currentTemplate.name}}》开展，共检查了{{currentDetail.content.length}}项内容。其中:
+                </p>
+                <p>
+                  重点项{{checkItems[0].length}}项，项目序号分别是：{{checkItems[0].map(t=>t.num).join(", ")}} ；发现问题{{checkItems[0].filter(t=>!t.checked).length}}项，项目序号分别是：{{checkItems[0].filter(t=>!t.checked).map(t=>t.num).join(", ")}} 。
+                </p>
+                <p>
+                  一般项{{checkItems[1].length}}项，项目序号分别是：{{checkItems[1].map(t=>t.num).join(", ")}} ；发现问题{{checkItems[1].filter(t=>!t.checked).length}}项，项目序号分别是：{{checkItems[1].filter(t=>!t.checked).map(t=>t.num).join(", ")}} 。
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td class="result" colspan="4">
+                <p>检查结果：
+                  <span class="resultselected">
+                    <span :class="{'checked':currentDetail.result=='符合'}"></span>
+                    符合
+                  </span>
+                  <span class="resultselected">
+                    <span :class="{'checked':currentDetail.result=='基本符合'}"></span>
+                    基本符合
+                  </span>
+                  <span class="resultselected">
+                    <span :class="{'checked':currentDetail.result=='不符合'}"></span>
+                    不符合
+                  </span>
+                </p>
+                <p>结果处理：
+                  <span class="resultselected">
+                    <span :class="{'checked':currentDetail.handle=='通过'}"></span>
+                    通过
+                  </span>
+                  <span class="resultselected">
+                    <span :class="{'checked':currentDetail.handle=='通知整改'}"></span>
+                    书面限期整改
+                  </span>
+                  <span class="resultselected">
+                    <span :class="{'checked':currentDetail.handle=='停业整顿'}"></span>
+                    食品生产经营者立即停止食品生产经营活动
+                  </span>
+                </p>
+                <p style="margin-top:10px;">说明：</p>
+                <p class="desc"></p>
+              </td>
+            </tr>
+            <tr class="sign">
+              <td colspan="2">
+                <p>执法人员(签名)：</p>
+                <p style="text-align:right;margin-top:90px;">年&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;日</p>
+              </td>
+              <td colspan="2">
+                <p>被检查单位意见：</p>
+                <p style="margin-top:40px;">法人或责任人意见：</p>
+                <p style="text-align:right;margin-top:30px;">年&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;日</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </el-tab-pane>
     </el-tabs>
 
   </div>
 </template>
 
 <script>
+import { copy } from "@/components/utils";
 export default {
   name: "special_singlemonitor",
+
   data() {
     return {
-      currentMonitor: null,
-      tab: "info"
+      tab: "info",
+      currentPlan: null,
+      currentTask: null,
+      currentDetail: null,
+      currentTemplate: null
     };
   },
+
   beforeMount() {
-    let planid = this.$route.params.monitorid;
-    let monitorrecordid = this.$route.params.monitorrecordid;
-    let plan = {};
-    if (planid === "1") {
-      plan = {
-        name: "虞山分局2018年下半年巡检计划",
-        staff: "张强",
-        kind: "专项检查",
-        date: "2018-05-01",
-        id: 1
-      };
-    }
-
-    if (monitorrecordid === "1") {
-      this.currentMonitor = {
-        title: "东南大道麦当劳DT餐厅",
-        plan,
-        task: {
-          title: "食品生产场所检查任务",
-          staff: "张小明",
-          date: "2018-07-01",
-          id: 1
-        },
-        checkContent: "食品生产专项监督检查要点表",
-        biz: {
-          name: "东南大道麦当劳DT餐厅",
-          legal: "王小明",
-          tel: "13872663110",
-          address: "东南开发区东南大道",
-          code: "CS-012-3827388"
-        },
-        date: "2018-07-01 12:00:00",
-        staff: "顾小华",
-        department: "综合办公室",
-        result: "基本符合",
-        handle: "责令整改",
-        checkdetail: {
-          "一、场所环境": [
-            {
-              check:
-                "生产加工场所周围25米内无虫害大量孳生的潜在场所；无有害废弃物以及粉尘、有害气体、放射性物质和其他扩散性污染源等有毒有害及潜在污染源；各类污染源难以避开时应当有必要的防范措施，有效清除污染源造成的影响。",
-              result: "基本符合",
-              point: 5,
-              remark: "附近有鱼塘，昆虫较多"
-            },
-            {
-              check:
-                "生产加工场所应当环境整洁、平整无积水，不得散发出异味,不得有各种杂物堆放；道路应当铺设混泥土、沥青或者其他硬质材料；垃圾应当密闭式存放，并远离生产区，排污沟渠也应为密闭式。",
-              result: "符合",
-              point: 10,
-              remark: null
-            },
-            {
-              check:
-                "生活区、生产区应当相互隔离；生产区内不得饲养家禽、家畜；不得设立坑式厕所。",
-              result: "符合",
-              point: 10,
-              remark: null
-            }
-          ],
-          "二、布局": [
-            {
-              check:
-                "生产加工场所的面积和空间应当与生产能力相适应，便于设备安置、消毒清洁、物料存储及人员操作。",
-              result: "基本符合",
-              point: 10,
-              remark: null
-            },
-            {
-              check:
-                "按照生产工艺的先后次序和产品特点合理布局，设立原辅料、生产、成品等功能间，按序排列生产设备。",
-              result: "不符合",
-              point: 0,
-              remark: null
-            }
-          ]
-        }
-      };
-
-      this.title = this.currentMonitor.title;
-    }
+    this.init();
   },
 
   computed: {
-    checkDetail() {
-      let tableRows = [];
-      Object.entries(this.currentMonitor.checkdetail).forEach(
-        ([checkItemName, checkDetail]) => {
-          checkDetail.forEach(detail => {
-            tableRows.push({
-              item: checkItemName,
-              detail: detail.check,
-              result: detail.result,
-              point: detail.point,
-              remark: detail.remark
-            });
-          });
-        }
-      );
+    checkResult() {
+      let result = [];
+      let template = this.currentTemplate.content;
+      for (let i = 0; i < template.length; i++) {
+        for (let j = 0; j < template[i].children.length; j++) {
+          let templateItem = template[i].children[j];
 
-      return tableRows;
+          let item = {
+            i,
+            j,
+            detail: templateItem.content,
+            important: templateItem.important,
+            result: this.currentDetail.content[`${i + 1}.${j + 1}`]
+          };
+
+          if (j === 0) {
+            item.item = template[i].title;
+            item.rowspan = template[i].children.length;
+          }
+
+          result.push(item);
+        }
+      }
+
+      return result;
     },
 
-    allTableCross() {
-      let itemContain = [],
-        t = 0;
-      Object.entries(this.currentMonitor.checkdetail).forEach(
-        ([checkItemName, checkDetail]) => {
-          itemContain[t] = checkDetail.length;
-          t += checkDetail.length;
+    checkItems() {
+      let result = [[], []];
+      let template = this.currentTemplate.content;
+      for (let i = 0; i < template.length; i++) {
+        for (let j = 0; j < template[i].children.length; j++) {
+          let templateItem = template[i].children[j];
+          let checkItem = this.currentDetail.content[`${i + 1}.${j + 1}`];
+          if (checkItem) {
+            let r = {
+              num: `${i + 1}.${j + 1}`,
+              checked: checkItem.checked
+            };
+
+            if (templateItem.important) {
+              result[0].push(r);
+            } else {
+              result[1].push(r);
+            }
+          }
         }
-      );
-      return itemContain;
+      }
+      return result;
     },
 
-    sumPoint() {
-      let sum = 0;
-      this.checkDetail.forEach(t => (sum += t.point));
-
-      return sum;
+    staffName() {
+      return [
+        this.$store.state.gridmember.find(
+          t => t.id == this.currentDetail.staff[0].id
+        ).name,
+        this.$store.state.gridmember.find(
+          t => t.id == this.currentDetail.staff[1].id
+        ).name
+      ];
     },
 
-    computeItem() {
-      let obj = { ["符合"]: 0, ["基本符合"]: 0, ["不符合"]: 0 };
-      Object.entries(this.currentMonitor.checkdetail).forEach(
-        ([checkItemName, checkDetail]) => {
-          checkDetail.forEach(detail => {
-            obj[detail.result] += 1;
-          });
-        }
-      );
-
-      return obj;
+    departmentName() {
+      return this.$store.state.gridarea.findArea(this.currentDetail.biz.area)
+        .name;
     }
   },
+
   methods: {
-    tableSpan({ row, column, rowIndex, columnIndex }) {
+    init() {
+      let taskid = this.$route.params.taskid;
+      let taskrecordid = this.$route.params.taskrecordid;
+
+      this.$store.state.task.forEach(t => {
+        let taskItem = t.tasklist.find(ti => ti.id == taskid);
+        if (taskItem) {
+          let task = copy(taskItem);
+          task.recive = t.recive;
+          this.currentTask = task;
+          this.currentPlan = copy(
+            this.$store.state.plan.find(p => p.id == t.planid)
+          );
+          this.currentTemplate = copy(
+            this.$store.state.template.find(
+              t => t.id == this.currentPlan.templateid
+            )
+          );
+          return false;
+        }
+      });
+      let detail = copy(
+        this.currentTask.detail.find(d => d.id == taskrecordid)
+      );
+
+      detail.biz = this.$store.state.biz.find(biz => biz.id == detail.bizid);
+      detail.staffinfo = [
+        this.$store.state.gridmember.find(t => t.id == detail.staff[0].id).name,
+        this.$store.state.gridmember.find(t => t.id == detail.staff[1].id).name
+      ];
+      detail.departmentinfo = [
+        this.$store.state.gridarea.findArea(detail.staff[0].department).name,
+        this.$store.state.gridarea.findArea(detail.staff[1].department).name
+      ];
+
+      this.currentDetail = detail;
+    },
+
+    resultSpan({ row, column, rowIndex, columnIndex }) {
       if (columnIndex !== 0) {
         return;
       }
 
       return {
-        rowspan: this.allTableCross[rowIndex]
-          ? this.allTableCross[rowIndex]
-          : 0,
-        colspan: this.allTableCross[rowIndex] ? 1 : 0
+        colspan: row.rowspan ? 1 : 0,
+        rowspan: row.rowspan || 0
       };
     },
 
-    getType(text) {
-      return {
-        ["符合"]: "success",
-        ["基本符合"]: "warning",
-        ["不符合"]: "danger"
-      }[text];
+    getResultType(result) {
+      if (result.checked === null || result.checked === undefined) {
+        return "";
+      }
+
+      return result.checked ? "success" : "danger";
     }
   }
 };
@@ -365,5 +495,93 @@ export default {
 <style lang="scss" scoped>
 .el-row {
   margin-bottom: 0;
+}
+
+#main {
+  width: 700px;
+  margin-top: 20px;
+
+  .title {
+    h3 {
+      font-size: 22px;
+      text-align: center;
+      font-weight: normal;
+      margin: 5px 0;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    p {
+      text-align: right;
+      margin: 5px 0;
+      font-size: 15px;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      border-collapse: collapse;
+      border: 1.5px solid #000;
+      padding: 5px 8px;
+    }
+
+    tr.info {
+      td {
+        width: 34%;
+      }
+
+      .label {
+        width: 16%;
+      }
+    }
+
+    .content {
+      p {
+        margin: 0 0 8px;
+        text-indent: 30px;
+
+        &:first-child {
+          text-indent: 0;
+        }
+      }
+    }
+
+    .result {
+      p {
+        margin: 0;
+      }
+      .resultselected {
+        margin-right: 10px;
+
+        span {
+          width: 8px;
+          height: 8px;
+          border: 1px solid #000;
+          display: inline-block;
+        }
+
+        .checked {
+          background-color: #000;
+        }
+      }
+
+      .desc {
+        text-indent: 30px;
+        min-height: 140px;
+      }
+    }
+
+    .sign {
+      p {
+        margin: 0;
+      }
+    }
+  }
 }
 </style>

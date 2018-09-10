@@ -47,7 +47,7 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="检查时间：">
-                <el-date-picker disabled v-model="currentDetail.date" type="datetime">
+                <el-date-picker style="width:100%;" disabled v-model="currentDetail.date" type="datetime">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -103,14 +103,27 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-          </el-row>
 
-          <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="接收日期：">
                 <el-date-picker style="width:100%;" disabled v-model="currentTask.recive" type="datetime">
                 </el-date-picker>
               </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="8">
+              <el-form-item label="使用模板：">
+                <el-select disabled style="width:100%;" v-model="currentTemplate.id">
+                  <el-option v-for="item of $store.state.template.map(t=>({id:t.id,name:t.name}))" :key="item.id" :label="item.name" :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-button @click="$router.push('/base/template/'+currentTemplate.id)" type="text">查看模板</el-button>
             </el-col>
           </el-row>
 
@@ -140,9 +153,7 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-          </el-row>
 
-          <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="任务期限：">
                 <el-date-picker style="width:100%;" v-model="currentTask.limit" disabled type="daterange" range-separator="至">

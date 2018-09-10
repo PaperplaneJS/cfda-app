@@ -93,7 +93,7 @@ export default {
   computed: {
     tableData() {
       let tableData = this.$store.state.plan.filter(
-        t => t.state == 2 || t.state == 3
+        t => t.kind == "daily" && (t.state == 2 || t.state == 3)
       );
 
       if (

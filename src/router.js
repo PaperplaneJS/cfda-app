@@ -182,19 +182,19 @@ let routes = [{
         path: '/special/monitor',
         component: SpecialMonitor
       }, {
-        path: '/special/monitor/:monitorid',
+        path: '/special/monitor/:taskid',
         component: SpecialMonitorList
       }, {
-        path: '/special/monitor/:monitorid/:monitorrecordid',
+        path: '/special/monitor/:taskid/:taskrecordid',
         component: SpecialSingleMonitor
       }, {
         path: '/special/report',
         component: SpecialReport
       }, {
-        path: '/special/report/:planid',
+        path: '/special/report/:taskid',
         component: SpecialReportList
       }, {
-        path: '/special/report/:planid/:reportid',
+        path: '/special/report/:taskid/:taskrecordid',
         component: SpecialSingleReport
       },
 

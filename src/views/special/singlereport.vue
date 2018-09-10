@@ -1,48 +1,49 @@
 <template>
-  <div id="special_singlemonitor">
+  <div id="special_singlereport">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/special/report">专项检查</el-breadcrumb-item>
-      <el-breadcrumb-item to="/special/report">检查报告</el-breadcrumb-item>
-      <el-breadcrumb-item :to="`/special/report/${currentReport.plan.id}`">{{currentReport.plan.name}}</el-breadcrumb-item>
-      <el-breadcrumb-item>{{currentReport.title}}</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special/report">检查监督</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special/report">{{planTitle}} (计划)</el-breadcrumb-item>
+      <el-breadcrumb-item :to="`/special/report/${taskID}`">{{taskTitle}} (任务)</el-breadcrumb-item>
+      <el-breadcrumb-item>{{currentDetail.biz.name}} (报告页)</el-breadcrumb-item>
     </el-breadcrumb>
     <div id="main">
       <div class="title">
-        <h3>江苏省苏州市常熟市{{currentReport.biz.grid}}食品药品监督管理局</h3>
+        <h3>江苏省苏州市常熟市{{$store.state.gridarea.findArea(currentDetail.biz.area).name}}食品药品监督管理局</h3>
         <h1>食品生产经营专项监督检查结果记录表</h1>
-        <p>编号:{{currentReport.num}}</p>
+        <p>编号:{{currentDetail.num}}</p>
       </div>
 
       <table>
-        <tr>
+        <tr class="info">
           <td class="label">名称:</td>
-          <td>{{currentReport.biz.name}}</td>
+          <td>{{currentDetail.biz.name}}</td>
           <td class="label">地址:</td>
-          <td>{{currentReport.biz.address}}</td>
+          <td>{{currentDetail.biz.address}}</td>
         </tr>
-        <tr>
+        <tr class="info">
           <td class="label">联系人:</td>
-          <td>{{currentReport.biz.contact}}</td>
+          <td>{{currentDetail.biz.contact}}</td>
           <td class="label">联系方式:</td>
-          <td>{{currentReport.biz.tel}}</td>
+          <td>{{currentDetail.biz.tel}}</td>
         </tr>
-        <tr>
+        <tr class="info">
           <td class="label">许可证编号:</td>
-          <td>{{currentReport.biz.code}}</td>
+          <td>{{currentDetail.biz.licence?currentDetail.biz.licence.num:""}}</td>
           <td class="label">检查次数:</td>
-          <td>本年度第{{currentReport.count}}次检查</td>
+          <td>本年度第{{currentDetail.yearcount}}次检查</td>
         </tr>
         <tr>
           <td class="content" colspan="4">
             <p>检查内容：</p>
-            <p>江苏省苏州市常熟市{{currentReport.biz.grid}}食品药品监督管理局检查人员{{currentReport.staff}}根据《中华人民共和国食品安全法》及其实施条例、《食品生产经营专项监督检查管理办法》的规定，于{{currentReport.date}}对你单位进行了监督检查。本次监督检查按照表{{currentReport.checkContent}}开展，共检查了{{getResult.count}}项内容。其中:
+            <p>江苏省苏州市常熟市{{departmentName}}食品药品监督管理局检查人员{{staffName[0]}}、{{staffName[1]}}根据《中华人民共和国食品安全法》及其实施条例、《{{currentTemplate.name}}》的规定，于{{currentDetail.date}}对你单位进行了监督检查。本次监督检查按照表《{{currentTemplate.name}}》开展，共检查了{{currentDetail.content.length}}项内容。其中:
             </p>
             <p>
-              重点项{{getResult.important.count}}项，项目序号分别是：{{getResult.important.num.join(", ")}} ；发现问题{{getResult.important.problem.length}}项，项目序号分别是：{{getResult.important.problem.join(", ")}} 。
+              重点项{{checkItems[0].length}}项，项目序号分别是：{{checkItems[0].map(t=>t.num).join(", ")}} ；发现问题{{checkItems[0].filter(t=>!t.checked).length}}项，项目序号分别是：{{checkItems[0].filter(t=>!t.checked).map(t=>t.num).join(", ")}} 。
             </p>
             <p>
-              一般项{{getResult.normal.count}}项，项目序号分别是：{{getResult.normal.num.join(", ")}} ；发现问题{{getResult.normal.problem.length}}项，项目序号分别是：{{getResult.normal.problem.join(", ")}} 。
+              一般项{{checkItems[1].length}}项，项目序号分别是：{{checkItems[1].map(t=>t.num).join(", ")}} ；发现问题{{checkItems[1].filter(t=>!t.checked).length}}项，项目序号分别是：{{checkItems[1].filter(t=>!t.checked).map(t=>t.num).join(", ")}} 。
             </p>
           </td>
         </tr>
@@ -50,28 +51,34 @@
           <td class="result" colspan="4">
             <p>检查结果：
               <span class="resultselected">
-                <span class="check"></span>
-                符合</span>
+                <span :class="{'checked':currentDetail.result=='符合'}"></span>
+                符合
+              </span>
               <span class="resultselected">
-                <span class="check checked"></span>
-                基本符合</span>
+                <span :class="{'checked':currentDetail.result=='基本符合'}"></span>
+                基本符合
+              </span>
               <span class="resultselected">
-                <span class="check"></span>
-                不符合</span>
+                <span :class="{'checked':currentDetail.result=='不符合'}"></span>
+                不符合
+              </span>
             </p>
             <p>结果处理：
               <span class="resultselected">
-                <span class="check"></span>
-                通过</span>
+                <span :class="{'checked':currentDetail.handle=='通过'}"></span>
+                通过
+              </span>
               <span class="resultselected">
-                <span class="check checked"></span>
-                书面限期整改</span>
+                <span :class="{'checked':currentDetail.handle=='通知整改'}"></span>
+                书面限期整改
+              </span>
               <span class="resultselected">
-                <span class="check"></span>
-                食品生产经营者立即停止食品生产经营活动</span>
+                <span :class="{'checked':currentDetail.handle=='停业整顿'}"></span>
+                食品生产经营者立即停止食品生产经营活动
+              </span>
             </p>
             <p style="margin-top:10px;">说明：</p>
-            <p class="desc">{{currentReport.desc}}</p>
+            <p class="desc"></p>
           </td>
         </tr>
         <tr class="sign">
@@ -101,147 +108,88 @@
 
 <script>
 export default {
-  name: "special_singlemonitor",
+  name: "special_singlereport",
+
   data() {
     return {
-      currentReport: null
+      currentDetail: null,
+      currentTemplate: null,
+      taskID: null,
+      taskTitle: null,
+      planTitle: null
     };
   },
+
   beforeMount() {
-    let planid = this.$route.params.planid;
-    let reportid = this.$route.params.reportid;
+    this.init();
+  },
 
-    let plan = {};
-    if (planid === "1") {
-      plan = {
-        name: "虞山分局2018年下半年巡检计划",
-        staff: "张强",
-        kind: "专项检查",
-        date: "2018-05-01",
-        id: 1
-      };
-    }
+  computed: {
+    checkItems() {
+      let result = [[], []];
+      let template = this.currentTemplate.content;
+      for (let i = 0; i < template.length; i++) {
+        for (let j = 0; j < template[i].children.length; j++) {
+          let templateItem = template[i].children[j];
+          let checkItem = this.currentDetail.content[`${i + 1}.${j + 1}`];
+          if (checkItem) {
+            let r = {
+              num: `${i + 1}.${j + 1}`,
+              checked: checkItem.checked
+            };
 
-    if (reportid === "1") {
-      this.currentReport = {
-        title: "东南大道麦当劳DT餐厅",
-        num: "10002383",
-        count: 1,
-        plan,
-        task: {
-          title: "食品生产场所检查任务",
-          staff: "张小明",
-          date: "2018-07-01",
-          id: 1
-        },
-        checkContent: "食品生产专项监督检查要点表",
-        biz: {
-          name: "东南大道麦当劳DT餐厅",
-          contact: "王小明",
-          tel: "13872663110",
-          address: "东南开发区东南大道",
-          code: "CS-012-3827388",
-          grid: "虞山镇"
-        },
-        date: "2018-07-01",
-        staff: "顾小华",
-        department: "综合办公室",
-        result: "基本符合",
-        handle: "责令整改",
-        desc: "整改期限3个月",
-        checkdetail: {
-          "一、场所环境": [
-            {
-              num: 1,
-              check:
-                "生产加工场所周围25米内无虫害大量孳生的潜在场所；无有害废弃物以及粉尘、有害气体、放射性物质和其他扩散性污染源等有毒有害及潜在污染源；各类污染源难以避开时应当有必要的防范措施，有效清除污染源造成的影响。",
-              result: "基本符合",
-              point: 5,
-              remark: "附近有鱼塘，昆虫较多",
-              isimportant: true
-            },
-            {
-              num: 2,
-              check:
-                "生产加工场所应当环境整洁、平整无积水，不得散发出异味,不得有各种杂物堆放；道路应当铺设混泥土、沥青或者其他硬质材料；垃圾应当密闭式存放，并远离生产区，排污沟渠也应为密闭式。",
-              result: "符合",
-              point: 10,
-              remark: null,
-              isimportant: true
-            },
-            {
-              num: 3,
-              check:
-                "生活区、生产区应当相互隔离；生产区内不得饲养家禽、家畜；不得设立坑式厕所。",
-              result: "符合",
-              point: 10,
-              remark: null,
-              isimportant: false
+            if (templateItem.important) {
+              result[0].push(r);
+            } else {
+              result[1].push(r);
             }
-          ],
-          "二、布局": [
-            {
-              num: 4,
-              check:
-                "生产加工场所的面积和空间应当与生产能力相适应，便于设备安置、消毒清洁、物料存储及人员操作。",
-              result: "基本符合",
-              point: 10,
-              remark: null,
-              isimportant: false
-            },
-            {
-              num: 5,
-              check:
-                "按照生产工艺的先后次序和产品特点合理布局，设立原辅料、生产、成品等功能间，按序排列生产设备。",
-              result: "不符合",
-              point: 0,
-              remark: null,
-              isimportant: true
-            }
-          ]
+          }
         }
-      };
+      }
+      return result;
+    },
 
-      this.title = this.currentReport.title;
+    staffName() {
+      return [
+        this.$store.state.gridmember.find(
+          t => t.id == this.currentDetail.staff[0].id
+        ).name,
+        this.$store.state.gridmember.find(
+          t => t.id == this.currentDetail.staff[1].id
+        ).name
+      ];
+    },
+
+    departmentName() {
+      return this.$store.state.gridarea.findArea(this.currentDetail.biz.area)
+        .name;
     }
   },
-  computed: {
-    getResult() {
-      let resultobj = {
-        count: 0,
-        important: {
-          count: 0,
-          num: [],
-          problem: []
-        },
-        normal: {
-          count: 0,
-          num: [],
-          problem: []
+
+  methods: {
+    init() {
+      let taskid = this.$route.params.taskid;
+      let taskrecordid = this.$route.params.taskrecordid;
+
+      this.$store.state.task.forEach(t => {
+        let taskItem = t.tasklist.find(ti => ti.id == taskid);
+        if (taskItem) {
+          this.taskTitle = taskItem.title;
+          this.taskID = taskid;
+
+          let plan = this.$store.state.plan.find(p => p.id == t.planid);
+
+          this.planTitle = plan.title;
+          this.currentTemplate = this.$store.state.template.find(
+            t => t.id == plan.templateid
+          );
+          let detail = taskItem.detail.find(d => d.id == taskrecordid);
+          detail.biz = this.$store.state.biz.find(t => t.id == detail.bizid);
+          this.currentDetail = detail;
+
+          return false;
         }
-      };
-
-      Object.entries(this.currentReport.checkdetail).forEach(
-        ([checkItemName, checkDetail]) => {
-          checkDetail.forEach(detail => {
-            if (detail.result) {
-              resultobj.count += 1;
-
-              let counter = detail.isimportant
-                ? resultobj.important
-                : resultobj.normal;
-
-              counter.count += 1;
-              counter.num.push(detail.num);
-              if (detail.result === "不符合") {
-                counter.problem.push(detail.num);
-              }
-            }
-          });
-        }
-      );
-
-      return resultobj;
+      });
     }
   }
 };
@@ -279,16 +227,22 @@ export default {
     td {
       border-collapse: collapse;
       border: 1.5px solid #000;
-      padding: 8px 18px;
+      padding: 5px 8px;
     }
 
-    .label {
-      width: 90px;
+    tr.info {
+      td {
+        width: 34%;
+      }
+
+      .label {
+        width: 16%;
+      }
     }
 
     .content {
       p {
-        margin: 10px 0;
+        margin: 0 0 8px;
         text-indent: 30px;
 
         &:first-child {
@@ -303,16 +257,19 @@ export default {
       }
       .resultselected {
         margin-right: 10px;
+
+        span {
+          width: 8px;
+          height: 8px;
+          border: 1px solid #000;
+          display: inline-block;
+        }
+
+        .checked {
+          background-color: #000;
+        }
       }
-      .check {
-        width: 8px;
-        height: 8px;
-        border: 1px solid #000;
-        display: inline-block;
-      }
-      .checked {
-        background-color: #000;
-      }
+
       .desc {
         text-indent: 30px;
         min-height: 140px;
