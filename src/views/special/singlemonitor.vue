@@ -1,5 +1,5 @@
 <template>
-  <div id="special_singlemonitor">
+  <el-row id="special_singlemonitor">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/special/monitor">专项检查</el-breadcrumb-item>
@@ -340,7 +340,7 @@
       </el-tab-pane>
     </el-tabs>
 
-  </div>
+  </el-row>
 </template>
 
 <script>

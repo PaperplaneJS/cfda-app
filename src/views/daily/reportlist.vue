@@ -1,5 +1,5 @@
 <template>
-  <div id="daily_reportlist">
+  <el-row id="daily_reportlist">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/daily/report">日常检查</el-breadcrumb-item>
@@ -72,7 +72,7 @@
       <el-pagination :current-page.sync="taskDetailTable.page" :page-size="taskDetailTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
       </el-pagination>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

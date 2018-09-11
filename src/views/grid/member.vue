@@ -1,5 +1,5 @@
 <template>
-  <div id="grid_member">
+  <el-row id="grid_member">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/grid/member">网格化管理</el-breadcrumb-item>
@@ -52,7 +52,7 @@
       <el-pagination :current-page.sync="memberTable.page" :page-size="memberTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
       </el-pagination>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

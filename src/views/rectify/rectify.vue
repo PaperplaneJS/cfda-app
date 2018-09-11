@@ -1,11 +1,11 @@
 <template>
-  <div id="rectify_rectify">
+  <el-row id="rectify_rectify">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/rectify">整改管理</el-breadcrumb-item>
+      <el-breadcrumb-item to="/rectify">行政处罚</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">整改管理</el-row>
+    <el-row class="title">行政处罚</el-row>
 
     <el-row :gutter="15">
       <el-col :span="6">
@@ -64,7 +64,7 @@
       <el-pagination background layout="prev, pager, next" :total="100">
       </el-pagination>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

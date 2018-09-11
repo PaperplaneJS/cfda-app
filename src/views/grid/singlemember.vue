@@ -1,5 +1,5 @@
 <template>
-  <div id="grid_singlemember">
+  <el-row id="grid_singlemember">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/grid/member">网格化管理</el-breadcrumb-item>
@@ -69,7 +69,7 @@
         </router-link>
       </el-col>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>
@@ -166,7 +166,7 @@ export default {
     editCancel() {
       this.currentMember = copy(this.originMemebr);
       this.edit = false;
-    },
+    }
   }
 };
 </script>

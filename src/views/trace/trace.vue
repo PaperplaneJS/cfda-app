@@ -1,5 +1,5 @@
 <template>
-  <div id="trace_trace">
+  <el-row id="trace_trace">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item>跟踪监督</el-breadcrumb-item>
@@ -142,7 +142,7 @@
         </el-tabs>
       </el-col>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

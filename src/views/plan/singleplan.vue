@@ -1,5 +1,5 @@
 <template>
-  <div id="plan_singleplan">
+  <el-row id="plan_singleplan">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/plan/list">检查计划管理</el-breadcrumb-item>
@@ -63,7 +63,7 @@
         </el-row>
       </template>
 
-      <el-row>
+      <el-row :gutter="15">
         <el-col :span="8">
           <el-form-item label="使用模板：" required>
             <el-select :disabled="!edit" style="width:100%;" v-model="currentPlan.templateid">
@@ -74,7 +74,7 @@
         </el-col>
       </el-row>
 
-      <el-row>
+      <el-row :gutter="15">
         <el-col :span="16">
           <el-form-item label="备注:">
             <el-input :disabled="!edit" :rows="4" v-model="currentPlan.remark" type="textarea" placeholder="选填,工作备注"></el-input>
@@ -95,10 +95,10 @@
         </el-col>
       </el-row>
 
-      <el-row>
-        <el-col :span="16">
+      <el-row :gutter="15">
+        <el-col :span="8">
           <el-form-item label="制定日期:" required>
-            <el-date-picker :disabled="!edit" v-model="currentPlan.date" type="date" placeholder="选择计划制定日期"></el-date-picker>
+            <el-date-picker style="width:100%;" :disabled="!edit" v-model="currentPlan.date" type="date" placeholder="选择计划制定日期"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -115,7 +115,7 @@
         </router-link>
       </el-col>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>
@@ -138,7 +138,20 @@ export default {
 
   computed: {
     taskTemplate() {
-      return this.$store.state.template.map(t => {
+      let list = copy(this.$store.state.template);
+
+      if (
+        this.currentPlan.kind == "daily" ||
+        this.currentPlan.kind == "special"
+      ) {
+        list = list.filter(t => t.kind == "daily");
+      } else if (this.currentPlan.kind == "risk") {
+        list = list.filter(t => t.kind == "risk");
+      } else {
+        return [];
+      }
+
+      return list.map(t => {
         return { id: t.id, name: t.name };
       });
     }

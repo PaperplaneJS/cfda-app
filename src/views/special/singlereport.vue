@@ -1,5 +1,5 @@
 <template>
-  <div id="special_singlereport">
+  <el-row id="special_singlereport">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/special/report">专项检查</el-breadcrumb-item>
@@ -103,7 +103,7 @@
         </router-link>
       </el-col>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

@@ -1,9 +1,9 @@
 <template>
-  <el-row id="base_singlebiz">
+  <el-row id="base_singleworkshop">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/biz">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">食品企业</el-breadcrumb-item>
+      <el-breadcrumb-item to="/base/biz">小作坊备案</el-breadcrumb-item>
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
@@ -12,11 +12,11 @@
     <el-tabs style="margin-top:30px;" v-model="tab">
       <el-tab-pane label="基本信息" name="base">
 
-        <el-form :rules="bizRules" ref="currentBizInfo" :model="currentBizInfo" :disabled="!edit" label-position="left" style="margin-top:20px;" label-width="100px">
+        <el-form :rules="bizRules" ref="currentBizInfo" :model="currentBizInfo" :disabled="!edit" label-position="left" style="margin-top:20px;" label-width="110px">
           <el-row :gutter="20">
             <el-col :span="16">
-              <el-form-item prop="name" label="企业名称：" required>
-                <el-input v-model="currentBizInfo.name" placeholder="请输入企业名称"></el-input>
+              <el-form-item prop="name" label="小作坊名称：" required>
+                <el-input v-model="currentBizInfo.name" placeholder="请输入小作坊名称"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -41,10 +41,9 @@
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="kind" label="企业类型：" required>
-                <el-select v-model="currentBizInfo.kind" style="width:100%" placeholder="请选择">
-                  <el-option label="食品经营" value="食品经营"></el-option>
-                  <el-option label="餐饮服务" value="餐饮服务"></el-option>
+              <el-form-item prop="kind" label="个体类型：">
+                <el-select disabled v-model="currentBizInfo.kind" style="width:100%">
+                  <el-option label="食品小作坊" value="食品小作坊"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -64,13 +63,13 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item prop="contact" label="联系人员：">
-                <el-input v-model="currentBizInfo.contact" placeholder="请输入企业联系人姓名"></el-input>
+                <el-input v-model="currentBizInfo.contact" placeholder="请输入小作坊联系人姓名"></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
               <el-form-item prop="tel" label="联系电话：">
-                <el-input v-model="currentBizInfo.tel" placeholder="请输入企业联系人电话"></el-input>
+                <el-input v-model="currentBizInfo.tel" placeholder="请输入小作坊联系人电话"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -98,7 +97,7 @@
 
           <el-row :gutter="20">
             <el-col :span="16">
-              <el-form-item prop="address" label="企业地址：">
+              <el-form-item prop="address" label="小作坊地址：">
                 <el-input :rows="4" type="textarea" v-model="currentBizInfo.address"></el-input>
               </el-form-item>
             </el-col>
@@ -114,7 +113,7 @@
 
           <el-row :gutter="15">
             <el-col :span="16">
-              <el-alert show-icon title="如果该企业单位有许可证信息，那么勾选上面的「有许可证」复选框，然后在「许可信息」一页输入其许可证内容" type="info">
+              <el-alert show-icon title="如果该小作坊单位有许可证信息，那么勾选上面的「有许可证」复选框，然后在「许可信息」一页输入其许可证内容" type="info">
               </el-alert>
             </el-col>
           </el-row>
@@ -174,7 +173,7 @@
           <el-row>
             <el-col :span="16">
               <el-form-item prop="productaddr" label="生产地址:">
-                <el-input v-model="currentBizInfo.licence.productaddr" :rows="4" type="textarea" placeholder="请输入企业生产地址"></el-input>
+                <el-input v-model="currentBizInfo.licence.productaddr" :rows="4" type="textarea" placeholder="请输入小作坊生产地址"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -284,7 +283,7 @@
         <el-button @click="editOK" v-if="edit" icon="el-icon-check" type="primary">{{isNew?"提交审核":"完成编辑"}}</el-button>
         <el-button @click="editCancel" v-if="edit&&!isNew" icon="el-icon-close">取消并还原</el-button>
         <router-link to="/base/biz">
-          <el-button style="margin-left:20px;">返回企业管理</el-button>
+          <el-button style="margin-left:20px;">返回小作坊管理</el-button>
         </router-link>
       </el-col>
     </el-row>
@@ -294,7 +293,7 @@
 <script>
 import { copy } from "@/components/utils";
 export default {
-  name: "base_singlebiz",
+  name: "base_singleworkshop",
   data() {
     return {
       tab: "base",
@@ -309,28 +308,28 @@ export default {
         name: [
           {
             required: true,
-            message: "必须输入企业单位名称",
+            message: "必须输入小作坊单位名称",
             trigger: ["blur", "change"]
           }
         ],
         state: [
           {
             required: true,
-            message: "必须设置企业单位状态",
+            message: "必须设置小作坊单位状态",
             trigger: ["blur", "change"]
           }
         ],
         kind: [
           {
             required: true,
-            message: "必须选择企业单位类型",
+            message: "必须选择小作坊单位类型",
             trigger: ["blur", "change"]
           }
         ],
         area: [
           {
             required: true,
-            message: "必须设置企业单位网格区域",
+            message: "必须设置小作坊单位网格区域",
             trigger: ["blur", "change"]
           }
         ]
@@ -466,7 +465,7 @@ export default {
           licence: null
         };
 
-        this.title = "新增企业";
+        this.title = "新增小作坊";
         this.isNew = true;
         this.edit = true;
         this.hasLicence = false;

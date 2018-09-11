@@ -1,5 +1,5 @@
 <template>
-  <div id="daily_singleplan">
+  <el-row id="daily_singleplan">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/daily/post">日常检查</el-breadcrumb-item>
@@ -266,7 +266,7 @@
         </el-row>
       </el-tab-pane>
     </el-tabs>
-  </div>
+  </el-row>
 </template>
 
 <script>

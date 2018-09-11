@@ -1,5 +1,5 @@
 <template>
-  <div id="sms_post">
+  <el-row id="sms_post">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/sms">消息管理</el-breadcrumb-item>
@@ -73,7 +73,7 @@
       </el-col>
     </el-row>
 
-  </div>
+  </el-row>
 </template>
 
 <script>

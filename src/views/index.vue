@@ -1,10 +1,10 @@
 <template>
-  <div id="index">
+  <el-row id="index">
     <div id="container">
       <div id="map">
       </div>
     </div>
-  </div>
+  </el-row>
 </template>
 
 <script>

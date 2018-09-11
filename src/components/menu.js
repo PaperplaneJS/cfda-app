@@ -8,8 +8,14 @@ export default [{
     url: "base",
     icon: "el-icon-tickets",
     group: [{
-        label: "企业管理",
+        label: "食品企业",
         url: "biz"
+      }, {
+        label: "食品小作坊",
+        url: "workshop"
+      }, {
+        label: "网络商家",
+        url: "netshop"
       },
       {
         label: "模板管理",
@@ -108,12 +114,12 @@ export default [{
     ]
   },
   {
-    label: "风险评级",
+    label: "量化评级",
     url: "risk",
     icon: "el-icon-sort"
   },
   {
-    label: "整改管理",
+    label: "行政处罚",
     url: "rectify",
     icon: "el-icon-bell"
   },

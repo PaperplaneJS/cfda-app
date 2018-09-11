@@ -1,5 +1,5 @@
 <template>
-  <div id="base_law">
+  <el-row id="base_law">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/law">基础信息</el-breadcrumb-item>
@@ -39,12 +39,12 @@
           <el-table-column prop="date" label="创建日期" sortable></el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
-              <el-tag :type="getStateType(scope.row.state)">{{scope.row.state | stateText}}</el-tag>
+              <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state | stateText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="right" prop="action" label="操作" min-width="120px">
             <template slot-scope="scope">
-              <el-button @click="$router.push('law/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
+              <el-button @click="$router.push('law/'+scope.row.id)" size="mini" type="primary">进入查看</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
@@ -56,8 +56,7 @@
       <el-pagination :current-page.sync="lawTable.page" :page-size="lawTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
       </el-pagination>
     </el-row>
-
-  </div>
+  </el-row>
 </template>
 
 <script>

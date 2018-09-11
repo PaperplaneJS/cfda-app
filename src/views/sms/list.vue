@@ -1,5 +1,5 @@
 <template>
-  <div id="sms_list">
+  <el-row id="sms_list">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/sms">消息管理</el-breadcrumb-item>
@@ -52,7 +52,7 @@
       <el-pagination :current-page.sync="smsTable.page" :page-size="smsTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
       </el-pagination>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

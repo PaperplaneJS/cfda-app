@@ -1,5 +1,5 @@
 <template>
-  <div id="plan_recive">
+  <el-row id="plan_recive">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/plan/recive">检查计划管理</el-breadcrumb-item>
@@ -126,7 +126,7 @@
         <el-button @click.native="acceptPlan" icon="el-icon-check" type="primary">确定接收</el-button>
       </div>
     </el-dialog>
-  </div>
+  </el-row>
 </template>
 
 <script>

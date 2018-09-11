@@ -1,8 +1,8 @@
 <template>
-  <div id="rectify_singlerectify">
+  <el-row id="rectify_singlerectify">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/rectify">整改管理</el-breadcrumb-item>
+      <el-breadcrumb-item to="/rectify">行政处罚</el-breadcrumb-item>
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
@@ -84,7 +84,7 @@
         </el-collapse>
       </el-col>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

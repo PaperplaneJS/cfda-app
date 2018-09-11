@@ -1,28 +1,21 @@
 <template>
-  <el-row id="base_biz">
+  <el-row id="base_netshop">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/biz">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">食品企业</el-breadcrumb-item>
+      <el-breadcrumb-item to="/base/biz">网络商家</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">食品企业管理</el-row>
+    <el-row class="title">网络商家无证备案</el-row>
 
     <el-row type="flex" :gutter="15">
-      <el-col :span="2">
-        <router-link to="biz/new">
-          <el-button size="small" type="primary" icon="el-icon-plus">新建单位</el-button>
+      <el-col :span="3">
+        <router-link to="netshop/new">
+          <el-button size="small" type="primary" icon="el-icon-plus">网络商家备案</el-button>
         </router-link>
       </el-col>
       <el-col :span="6">
-        <el-input size="small" v-model="search.text" clearable placeholder="搜索名称/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
-      </el-col>
-
-      <el-col :span="3">
-        <el-select size="small" v-model="search.kind" clearable placeholder="选择类别">
-          <el-option value="食品经营">食品经营</el-option>
-          <el-option value="餐饮服务">餐饮服务</el-option>
-        </el-select>
+        <el-input size="small" v-model="search.text" clearable placeholder="搜索名称/联系方式/联系人等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
       <el-col :span="3">
@@ -31,7 +24,6 @@
           <el-option label="快餐店" value="快餐店"></el-option>
           <el-option label="小吃店" value="小吃店"></el-option>
           <el-option label="饮品店" value="饮品店"></el-option>
-          <el-option label="食堂" value="食堂"></el-option>
         </el-select>
       </el-col>
 
@@ -49,7 +41,7 @@
         </el-select>
       </el-col>
 
-      <el-col :span="5">
+      <el-col :span="3">
         <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="网格区域" change-on-select></el-cascader>
       </el-col>
 
@@ -62,8 +54,8 @@
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%;">
-          <el-table-column prop="name" label="企业名称" sortable></el-table-column>
-          <el-table-column prop="kind" label="类型" sortable></el-table-column>
+          <el-table-column prop="name" label="商家名称" sortable></el-table-column>
+          <el-table-column prop="category" label="经营类别" sortable></el-table-column>
           <el-table-column label="网格区域" sortable>
             <template slot-scope="scope">
               {{$store.state.gridarea.findArea(scope.row.area).name}}
@@ -74,10 +66,9 @@
           <el-table-column label="许可证编号">
             <template slot-scope="scope">
               <span v-if="scope.row.licence">{{scope.row.licence.num}}</span>
-              <el-tag v-else>暂无许可证</el-tag>
+              <el-tag size="small" v-else>暂无许可证</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="licence.responsible" label="法人" sortable></el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
               <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
@@ -85,7 +76,7 @@
           </el-table-column>
           <el-table-column align="right" prop="action" label="操作" min-width="120px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('biz/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
+              <el-button @click.native="$router.push('netshop/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
@@ -102,24 +93,22 @@
 
 <script>
 export default {
-  name: "base_biz",
+  name: "base_netshop",
   data() {
     return {
       search: {
         text: "",
-        kind: "",
-        category: "",
-        licence: "",
-        state: "",
-        grid: []
+        state: null,
+        grid: [],
+        licence: null,
+        category: null
       },
       currentSearch: {
         text: "",
-        kind: "",
-        category: "",
-        licence: "",
         state: "",
-        grid: []
+        grid: [],
+        licence: null,
+        category: null
       },
       bizTable: {
         page: 1,
@@ -153,11 +142,10 @@ export default {
     searchReset() {
       this.search = {
         text: "",
-        kind: "",
-        category: "",
-        licence: "",
         state: "",
-        grid: []
+        grid: [],
+        licence: null,
+        category: null
       };
       this.searchSubmit();
     }
@@ -165,11 +153,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.biz.filter(
-        t =>
-          t.kind == "餐饮服务" ||
-          (t.kind === "食品经营" && t.kind !== "网上商家")
-      );
+      let tableData = this.$store.state.biz.filter(t => t.type == "netshop");
 
       if (
         this.currentSearch.text &&
@@ -189,10 +173,6 @@ export default {
         tableData = tableData.filter(t => t.state === this.currentSearch.state);
       }
 
-      if (this.currentSearch.kind && this.currentSearch.kind != "") {
-        tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
-      }
-
       if (this.currentSearch.category && this.currentSearch.category != "") {
         tableData = tableData.filter(
           t => t.category === this.currentSearch.category
@@ -200,11 +180,7 @@ export default {
       }
 
       if (this.currentSearch.licence) {
-        if (this.currentSearch.licence === true) {
-          tableData = tableData.filter(t => t.licence);
-        } else {
-          tableData = tableData.filter(t => !t.licence);
-        }
+        tableData = tableData.filter(t => t.licence);
       }
 
       if (this.currentSearch.grid && this.currentSearch.grid.length > 0) {

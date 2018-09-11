@@ -15,7 +15,7 @@
         </router-link>
       </el-col>
       <el-col :span="6">
-        <el-input size="small" v-model="search.text" clearable placeholder="搜索名称/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
+        <el-input size="small" v-model="search.text" clearable placeholder="搜索单位名/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
       <el-col :span="3">
@@ -26,31 +26,14 @@
       </el-col>
 
       <el-col :span="3">
-        <el-select size="small" v-model="search.category" clearable placeholder="经营种类">
-          <el-option label="餐馆" value="餐馆"></el-option>
-          <el-option label="快餐店" value="快餐店"></el-option>
-          <el-option label="小吃店" value="小吃店"></el-option>
-          <el-option label="饮品店" value="饮品店"></el-option>
-          <el-option label="食堂" value="食堂"></el-option>
-        </el-select>
-      </el-col>
-
-      <el-col :span="3">
-        <el-select size="small" v-model="search.licence" clearable placeholder="许可证">
-          <el-option label="有许可证" :value="true"></el-option>
-          <el-option label="暂无" :value="false"></el-option>
-        </el-select>
-      </el-col>
-
-      <el-col :span="3">
-        <el-select size="small" v-model="search.state" clearable placeholder="状态">
+        <el-select size="small" v-model="search.state" clearable placeholder="选择状态">
           <el-option label="激活" :value="1"></el-option>
           <el-option label="停用" :value="2"></el-option>
         </el-select>
       </el-col>
 
       <el-col :span="5">
-        <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="网格区域" change-on-select></el-cascader>
+        <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="按网格筛选" change-on-select></el-cascader>
       </el-col>
 
       <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
@@ -108,16 +91,12 @@ export default {
       search: {
         text: "",
         kind: "",
-        category: "",
-        licence: "",
         state: "",
         grid: []
       },
       currentSearch: {
         text: "",
         kind: "",
-        category: "",
-        licence: "",
         state: "",
         grid: []
       },
@@ -154,8 +133,6 @@ export default {
       this.search = {
         text: "",
         kind: "",
-        category: "",
-        licence: "",
         state: "",
         grid: []
       };
@@ -165,11 +142,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.biz.filter(
-        t =>
-          t.kind == "餐饮服务" ||
-          (t.kind === "食品经营" && t.kind !== "网上商家")
-      );
+      let tableData = this.$store.state.biz.filter(t => t.type == "biz");
 
       if (
         this.currentSearch.text &&
@@ -191,20 +164,6 @@ export default {
 
       if (this.currentSearch.kind && this.currentSearch.kind != "") {
         tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
-      }
-
-      if (this.currentSearch.category && this.currentSearch.category != "") {
-        tableData = tableData.filter(
-          t => t.category === this.currentSearch.category
-        );
-      }
-
-      if (this.currentSearch.licence) {
-        if (this.currentSearch.licence === true) {
-          tableData = tableData.filter(t => t.licence);
-        } else {
-          tableData = tableData.filter(t => !t.licence);
-        }
       }
 
       if (this.currentSearch.grid && this.currentSearch.grid.length > 0) {

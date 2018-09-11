@@ -86,18 +86,21 @@ export default {
 
   methods: {
     routePathChange(urlPath) {
-      let menuPath = null;
-      let findPath = function(item) {
-        if (urlPath.includes(item.url)) {
-          menuPath = item.url;
-        }
+      let menuPath = "";
+      let paths = urlPath.split("/").filter(t => t.trim().length > 0);
 
-        if (item.group) {
-          item.group.forEach(t => findPath(t));
-        }
-      };
+      let match = this.menuWithRoutePath.find(m => m.path == paths[0]);
+      if (match) {
+        menuPath += `/${paths[0]}`;
+      }
 
-      this.menuWithRoutePath.forEach(t => findPath(t));
+      if (match && match.group) {
+        let group = match.group.find(g => g.path == paths[1]);
+        if (match) {
+          menuPath += `/${paths[1]}`;
+        }
+      }
+      
       this.currentMenuPath = menuPath;
     }
   },
@@ -112,6 +115,7 @@ export default {
         }
 
         Object.assign(menuItem, {
+          path: menuItem.url,
           url: currentPath,
           id: uuid(6, 16)
         });

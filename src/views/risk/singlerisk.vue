@@ -1,8 +1,8 @@
 <template>
-  <div id="risk_singlerisk">
+  <el-row id="risk_singlerisk">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/risk">风险评级</el-breadcrumb-item>
+      <el-breadcrumb-item to="/risk">量化分级</el-breadcrumb-item>
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
@@ -118,7 +118,7 @@
         </el-col>
       </el-row>
     </el-form>
-  </div>
+  </el-row>
 </template>
 
 <script>

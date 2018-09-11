@@ -1,18 +1,13 @@
 <template>
-  <div id="risk_risk">
+  <el-row id="risk_risk">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/risk">风险评级</el-breadcrumb-item>
+      <el-breadcrumb-item to="/risk">量化评级</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">风险评级 ({{currentYear}}年度)</el-row>
+    <el-row class="title">量化评级 ({{currentYear}}年度)</el-row>
 
     <el-row style="margin-bottom:40px;" :gutter="15">
-      <el-col :span="12">
-        <el-alert title="餐饮服务行业每个年度需要进行全量检查，评定风险等级后，结果将汇总在本页" type="info" :closable="false" show-icon>
-        </el-alert>
-      </el-col>
-
       <el-col :span="10">
         <el-radio-group v-model="currentYear" size="small">
           <el-radio-button v-for="item of riskYears.slice(-8)" :key="item" :label="item"></el-radio-button>
@@ -30,6 +25,11 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
+
+      <el-col :span="12">
+        <el-alert title="餐饮服务行业每个年度需要进行全量检查，评定风险等级后，结果将汇总在本页" type="info" :closable="false" show-icon>
+        </el-alert>
+      </el-col>
     </el-row>
 
     <el-row type="flex" :gutter="15">
@@ -39,10 +39,10 @@
 
       <el-col :span="4">
         <el-select size="small" v-model="search.level" clearable placeholder="选择级别">
-          <el-option value="A">A</el-option>
-          <el-option value="B">B</el-option>
-          <el-option value="C">C</el-option>
-          <el-option value="D">D</el-option>
+          <el-option value="优秀">优秀</el-option>
+          <el-option value="良好">良好</el-option>
+          <el-option value="一般">一般</el-option>
+          <el-option value="不合格">不合格</el-option>
         </el-select>
       </el-col>
 
@@ -89,7 +89,7 @@
       <el-pagination :current-page.sync="riskTable.page" :page-size="riskTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
       </el-pagination>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

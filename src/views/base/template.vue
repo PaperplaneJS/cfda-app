@@ -11,17 +11,24 @@
         <div class="grid-content">
           <el-row class="title">检查项目模板管理</el-row>
           <el-row type="flex" :gutter="15">
-            <el-col :span="2">
-              <router-link to="/base/template/new">
-                <el-button size="small" type="primary" icon="el-icon-plus">新建模板</el-button>
-              </router-link>
+            <el-col :span="3">
+              <el-dropdown size="small" split-button type="primary" @click="$router.push('/base/template/new')">
+                新建常规模板
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="$router.push('/base/risktemplate/new')">新建量化分级模板</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </el-col>
             <el-col :span="6">
               <el-input v-model="search.text" size="small" clearable placeholder="搜索模板名/创建人等" prefix-icon="el-icon-search"></el-input>
             </el-col>
 
             <el-col :span="3">
-              <el-select size="small" v-model="search.state" clearable placeholder="选择状态">
+              <el-input v-model="search.kind" size="small" clearable placeholder="筛选类别" prefix-icon="el-icon-search"></el-input>
+            </el-col>
+
+            <el-col :span="3">
+              <el-select size="small" v-model="search.state" clearable placeholder="筛选状态">
                 <el-option label="激活" :value="1"></el-option>
                 <el-option label="停用" :value="2"></el-option>
               </el-select>
@@ -37,6 +44,11 @@
             <el-col :span="24">
               <el-table :data="pageData" size="medium" style="width: 100%">
                 <el-table-column prop="name" label="模板名称" sortable min-width="120px;"></el-table-column>
+                <el-table-column prop="kind" label="类别" sortable>
+                  <template slot-scope="scope">
+                    <el-tag size="small">{{scope.row.kind | kindText}}</el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="department" label="制定部门" sortable></el-table-column>
                 <el-table-column prop="staff" label="制定人" sortable></el-table-column>
                 <el-table-column prop="date" label="创建日期" sortable></el-table-column>
@@ -45,10 +57,10 @@
                     <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column align="right" prop="action" label="操作" min-width="70px">
+                <el-table-column align="right" prop="action" label="操作" min-width="90px">
                   <template slot-scope="scope">
-                    <el-button @click="$router.push('template/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
-                    <el-button size="mini" type="danger">注销</el-button>
+                    <el-button @click="$router.push(`${scope.row.kind=='risk'?'risk':''}template/${scope.row.id}`)" size="mini" type="primary">查看 / 编辑</el-button>
+                    <el-button size="mini" type="danger">删除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -72,11 +84,13 @@ export default {
     return {
       search: {
         text: "",
-        state: null
+        state: null,
+        kind: null
       },
       currentSearch: {
         text: "",
-        state: null
+        state: null,
+        kind: null
       },
       templateTable: {
         page: 1,
@@ -98,6 +112,10 @@ export default {
   filters: {
     stateText(state) {
       return state === 1 ? "激活" : "停用";
+    },
+
+    kindText(kind) {
+      return kind === "daily" ? "日常检查" : "全量检查";
     }
   },
 
@@ -122,6 +140,10 @@ export default {
         tableData = tableData.filter(t => t.state === this.currentSearch.state);
       }
 
+      if (this.currentSearch.kind && this.currentSearch.kind != "") {
+        tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
+      }
+
       return tableData;
     },
 
@@ -141,7 +163,8 @@ export default {
     searchReset() {
       this.search = {
         text: "",
-        state: null
+        state: null,
+        kind: null
       };
       this.searchSubmit();
     },

@@ -1,5 +1,5 @@
 <template>
-  <div id="base_singlelaw">
+  <el-row id="base_singlelaw">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/law">基础信息</el-breadcrumb-item>
@@ -22,7 +22,7 @@
         <el-button icon="el-icon-view">预览</el-button>
       </el-row>
     </template>
-  </div>
+  </el-row>
 </template>
 
 <script>

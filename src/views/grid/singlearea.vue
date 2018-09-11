@@ -1,5 +1,5 @@
 <template>
-  <div id="grid_singlearea">
+  <el-row id="grid_singlearea">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/grid/area">网格化管理</el-breadcrumb-item>
@@ -58,7 +58,7 @@
         </router-link>
       </el-col>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

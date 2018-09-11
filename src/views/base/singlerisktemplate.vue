@@ -1,13 +1,13 @@
 <template>
-  <el-row id="base_singletemplate">
+  <el-row id="base_singlerisktemplate">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/template">基础信息</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/template">模板管理</el-breadcrumb-item>
-      <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
+      <el-breadcrumb-item>{{title}} (量化分级)</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{title}}</el-row>
+    <el-row class="title">{{title}} (量化分级)</el-row>
 
     <el-form label-position="left" style="margin-top:20px;" label-width="100px">
       <el-row style="font-size:18px;margin-bottom:15px;" class="section">模板详情</el-row>
@@ -40,7 +40,6 @@
             <el-date-picker disabled style="width:100%" type="date" v-model="currentTemplate.date"></el-date-picker>
           </el-form-item>
         </el-col>
-
         <el-col :span="8">
           <el-form-item prop="date" label="模板类别：">
             <el-tag size="medium">{{currentTemplate.kind=="daily"?"日常检查":"全量检查"}}</el-tag>
@@ -78,10 +77,20 @@
             <td class="tablehead">检查项目</td>
             <td class="tablehead">检查内容</td>
             <td class="tablehead">提供选项</td>
+            <td class="tablehead">特大、大型餐饮权重(%)</td>
+            <td class="tablehead">中、小、微型餐饮权重(%)</td>
+            <td class="tablehead">集体用餐配送、中央厨房权重(%)</td>
+            <td class="tablehead">单位食堂权重(%)</td>
             <td v-if="edit" class="tablehead">操作</td>
           </tr>
+
+          <!-- 普通有内容的行 -->
           <template v-for="(item,index) of currentTemplate.content">
+
+            <!-- 带项目标题的大项 -->
             <tr :key="item.title">
+
+              <!-- 项目标题 -->
               <td :rowspan="item.children.length+(edit?1:0)">
                 <el-tag size="mini">{{index+1}}</el-tag>
                 {{item.title}}
@@ -94,6 +103,7 @@
                 </div>
               </td>
 
+              <!-- 有内容的情况,3个单元格 -->
               <template v-if="item.children&&item.children[0]">
                 <td>
                   <el-tag size="mini" type="info">{{index+1}}.1</el-tag>
@@ -102,18 +112,32 @@
                   </el-tag>
                   {{item.children[0].content}}
                 </td>
-                <td style="min-width:130px;">
-                  <el-tag style="margin-bottom:5px;margin-right:8px;" v-for="result of item.children[0].item" :type="result.check===null?'':(result.check?'success':'danger')" :key="result.label" size="small">
+                <td>
+                  <el-tag style="margin:3px 3px;" v-for="result of item.children[0].item" :type="result.check===null?'':(result.check?'success':'danger')" :key="result.label" size="small">
                     {{result.label}}
                     <strong v-if="result.point!==undefined"> [{{result.point | itemText}}]</strong>
                   </el-tag>
-                  <el-tag v-if="!item.children[0].required" style="margin-bottom:5px;margin-right:8px;" size="small" type="info">留空</el-tag>
+                  <el-tag v-if="!item.children[0].required" style="margin:3px 3px;" size="small" type="info">留空</el-tag>
                 </td>
-                <td v-if="edit" style="min-width:70px;">
+                <!-- <td v-if="edit" style="min-width:70px;">
                   <el-button @click="deleteDetail(index,0)" size="mini" type="danger" icon="el-icon-delete" circle></el-button>
                   <el-button @click="editDetail(index,0)" size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+                </td> -->
+                <td>
+                  <el-tag v-if="item.children[0].risk['特大、大型餐饮']" size="small">{{item.children[0].risk["特大、大型餐饮"]}}</el-tag>
+                </td>
+                <td>
+                  <el-tag v-if="item.children[0].risk['中、小、微型餐饮']" size="small">{{item.children[0].risk["中、小、微型餐饮"]}}</el-tag>
+                </td>
+                <td>
+                  <el-tag v-if="item.children[0].risk['集体用餐配送、中央厨房']" size="small">{{item.children[0].risk["集体用餐配送、中央厨房"]}}</el-tag>
+                </td>
+                <td>
+                  <el-tag v-if="item.children[0].risk['单位食堂']" size="small">{{item.children[0].risk["单位食堂"]}}</el-tag>
                 </td>
               </template>
+
+              <!-- 添加按钮 -->
               <template v-else>
                 <td colspan="4">
                   <el-button @click="editDetail(index)" v-if="edit" icon="el-icon-plus" size="mini" type="primary" round>添加一项</el-button>
@@ -122,6 +146,7 @@
               </template>
             </tr>
 
+            <!-- 不带有标题格的小项 -->
             <tr :key="detailIndex.label" v-for="(detailItem,detailIndex) of item.children.slice(1)">
               <td>
                 <el-tag size="mini" type="info">
@@ -132,30 +157,47 @@
                 </el-tag>
                 {{detailItem.content}}
               </td>
-              <td style="min-width:130px;">
-                <el-tag style="margin-bottom:5px;margin-right:8px;" v-for="result of detailItem.item" :type="result.check===null?'':(result.check?'success':'danger')" :key="result.label" size="small">
+              <td>
+                <el-tag style="margin:3px 3px;" v-for="result of detailItem.item" :type="result.check===null?'':(result.check?'success':'danger')" :key="result.label" size="small">
                   {{result.label}}
                   <strong v-if="result.point!==undefined"> [{{result.point | itemText}}]</strong>
                 </el-tag>
-                <el-tag v-if="!detailItem.required" style="margin-bottom:5px;margin-right:8px;" size="small" type="info">留空</el-tag>
+                <el-tag v-if="!detailItem.required" style="margin:3px 3px;" size="small" type="info">留空</el-tag>
               </td>
-              <td v-if="edit" style="min-width:70px;">
+              <!-- <td v-if="edit" style="min-width:70px;">
                 <el-button @click="deleteDetail(index,detailIndex+1)" size="mini" type="danger" icon="el-icon-delete" circle></el-button>
                 <el-button @click="editDetail(index,detailIndex+1)" size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+              </td> -->
+
+              <td>
+                <el-tag v-if="detailItem.risk['特大、大型餐饮']" size="small">{{detailItem.risk["特大、大型餐饮"]}}</el-tag>
+              </td>
+              <td>
+                <el-tag v-if="detailItem.risk['中、小、微型餐饮']" size="small">{{detailItem.risk["中、小、微型餐饮"]}}</el-tag>
+              </td>
+              <td>
+                <el-tag v-if="detailItem.risk['集体用餐配送、中央厨房']" size="small">{{detailItem.risk["集体用餐配送、中央厨房"]}}</el-tag>
+              </td>
+              <td>
+                <el-tag v-if="detailItem.risk['单位食堂']" size="small">{{detailItem.risk["单位食堂"]}}</el-tag>
               </td>
             </tr>
 
+            <!-- 添加按钮 -->
             <tr v-if="item.children.length>=1&&edit" :key="item.title+'-add'">
               <td colspan="4">
                 <el-button @click="editDetail(index)" icon="el-icon-plus" size="mini" type="primary" round>添加一项</el-button>
               </td>
             </tr>
           </template>
+
+          <!-- 尾部 大项添加按钮 -->
           <tr v-if="edit">
             <td colspan="4">
               <el-button @click="editItem()" icon="el-icon-plus" size="small" type="primary">添加大项</el-button>
             </td>
           </tr>
+
         </table>
       </el-col>
     </el-row>
@@ -220,8 +262,7 @@
             <el-form-item label="可选项：" required>
               <el-radio-group @change="detailTypeChange" v-model="detailPopupData.type" size="small">
                 <el-radio-button label="shifou">是/否</el-radio-button>
-                <el-radio-button label="fuhe">符合/基本符合/不符合</el-radio-button>
-                <el-radio-button label="pingfen">灵活评分</el-radio-button>
+                <el-radio-button label="pingfen">评分</el-radio-button>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -241,10 +282,10 @@
 
         <el-row v-if="['pingfen'].includes(detailPopupData.type)">
           <el-col :push="3" :span="18">
-            <el-tag style="margin-right:5px;">灵活评分</el-tag>
+            <el-tag style="margin-right:5px;">评分</el-tag>
             <div style="margin-top:20px;">
               设置评分的上下限范围： 当前 [ {{detailPopupData.limit[0]}} - {{detailPopupData.limit[1]}} ]
-              <el-slider v-model="detailPopupData.limit" range show-stops :min="0" :max="20">
+              <el-slider v-model="detailPopupData.limit" range show-stops :min="0" :max="100">
               </el-slider>
             </div>
           </el-col>
@@ -274,7 +315,7 @@
 <script>
 import { uuid, copy } from "@/components/utils";
 export default {
-  name: "base_singletemplate",
+  name: "base_singlerisktemplate",
   data() {
     return {
       title: "",
@@ -297,7 +338,7 @@ export default {
   filters: {
     itemText(t) {
       if (Array.isArray(t)) {
-        return `限评${t[0]}-${t[1]}分值`;
+        return `${t[0]}-${t[1]}分值`;
       } else {
         return `${t}分值`;
       }
@@ -428,7 +469,7 @@ export default {
           title: "",
           tips: "",
           children: [],
-          limit: [0, 10]
+          limit: [0, 100]
         };
       }
 
@@ -503,7 +544,7 @@ export default {
           this.detailPopupData.point = true;
           this.detailPopupData.item = [
             {
-              label: "灵活评分",
+              label: "评分",
               check: true,
               point: 0
             }
