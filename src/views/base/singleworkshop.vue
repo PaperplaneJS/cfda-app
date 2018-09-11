@@ -3,7 +3,7 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/biz">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">小作坊备案</el-breadcrumb-item>
+      <el-breadcrumb-item to="/base/biz">食品小作坊</el-breadcrumb-item>
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
@@ -41,7 +41,7 @@
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="kind" label="个体类型：">
+              <el-form-item prop="kind" label="小作坊类型：">
                 <el-select disabled v-model="currentBizInfo.kind" style="width:100%">
                   <el-option label="食品小作坊" value="食品小作坊"></el-option>
                 </el-select>
@@ -456,7 +456,7 @@ export default {
           name: "",
           state: 1,
           category: "",
-          kind: "",
+          kind: "食品小作坊",
           pos: [null, null],
           address: "",
           area: [],

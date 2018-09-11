@@ -2,11 +2,11 @@
   <el-row id="base_workshop">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">食品小作坊</el-breadcrumb-item>
+      <el-breadcrumb-item to="/base/workshop">基础信息</el-breadcrumb-item>
+      <el-breadcrumb-item to="/base/workshop">食品小作坊</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">食品小作坊无证备案</el-row>
+    <el-row class="title">食品小作坊备案</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="3">
@@ -24,6 +24,7 @@
           <el-option label="快餐店" value="快餐店"></el-option>
           <el-option label="小吃店" value="小吃店"></el-option>
           <el-option label="饮品店" value="饮品店"></el-option>
+          <el-option label="食堂" value="食堂"></el-option>
         </el-select>
       </el-col>
 
@@ -98,17 +99,17 @@ export default {
     return {
       search: {
         text: "",
-        state: null,
-        grid: [],
-        licence: null,
-        category: null
+        category: "",
+        licence: "",
+        state: "",
+        grid: []
       },
       currentSearch: {
         text: "",
+        category: "",
+        licence: "",
         state: "",
-        grid: [],
-        licence: null,
-        category: null
+        grid: []
       },
       bizTable: {
         page: 1,
@@ -142,10 +143,10 @@ export default {
     searchReset() {
       this.search = {
         text: "",
+        category: "",
+        licence: "",
         state: "",
-        grid: [],
-        licence: null,
-        category: null
+        grid: []
       };
       this.searchSubmit();
     }
@@ -153,7 +154,9 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.biz.filter(t => t.type == "workshop");
+      let tableData = this.$store.state.biz.filter(
+        t => t.kind === "食品小作坊"
+      );
 
       if (
         this.currentSearch.text &&
@@ -173,18 +176,22 @@ export default {
         tableData = tableData.filter(t => t.state === this.currentSearch.state);
       }
 
-      if (this.currentSearch.licence) {
-        if (this.currentSearch.licence === true) {
-          tableData = tableData.filter(t => t.licence);
-        } else {
-          tableData = tableData.filter(t => !t.licence);
-        }
+      if (this.currentSearch.kind && this.currentSearch.kind != "") {
+        tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
       }
 
       if (this.currentSearch.category && this.currentSearch.category != "") {
         tableData = tableData.filter(
           t => t.category === this.currentSearch.category
         );
+      }
+
+      if (this.currentSearch.licence !== "") {
+        if (this.currentSearch.licence === true) {
+          tableData = tableData.filter(t => t.licence);
+        } else {
+          tableData = tableData.filter(t => !t.licence && true);
+        }
       }
 
       if (this.currentSearch.grid && this.currentSearch.grid.length > 0) {

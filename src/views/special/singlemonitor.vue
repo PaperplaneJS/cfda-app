@@ -470,7 +470,7 @@ export default {
       this.currentDetail = detail;
     },
 
-    resultSpan({ row, column, rowIndex, columnIndex }) {
+    resultSpan({ row, columnIndex }) {
       if (columnIndex !== 0) {
         return;
       }

@@ -1,191 +1,515 @@
 <template>
-  <el-row id="base_biz">
+  <el-row id="base_singlenetshop">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/biz">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">食品企业</el-breadcrumb-item>
+      <el-breadcrumb-item to="/base/biz">网上商家</el-breadcrumb-item>
+      <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">食品企业管理</el-row>
+    <el-row class="title">{{title}}</el-row>
 
-    <el-row type="flex" :gutter="15">
-      <el-col :span="2">
-        <router-link to="biz/new">
-          <el-button size="small" type="primary" icon="el-icon-plus">新建单位</el-button>
-        </router-link>
-      </el-col>
-      <el-col :span="6">
-        <el-input size="small" v-model="search.text" clearable placeholder="搜索单位名/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
-      </el-col>
+    <el-tabs style="margin-top:30px;" v-model="tab">
+      <el-tab-pane label="基本信息" name="base">
 
-      <el-col :span="3">
-        <el-select size="small" v-model="search.kind" clearable placeholder="选择类别">
-          <el-option value="食品经营">食品经营</el-option>
-          <el-option value="餐饮服务">餐饮服务</el-option>
-        </el-select>
-      </el-col>
+        <el-form :rules="bizRules" ref="currentBizInfo" :model="currentBizInfo" :disabled="!edit" label-position="left" style="margin-top:20px;" label-width="140px">
+          <el-row :gutter="20">
+            <el-col :span="16">
+              <el-form-item prop="name" label="网上商家名称：" required>
+                <el-input v-model="currentBizInfo.name" placeholder="请输入网上商家名称"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-      <el-col :span="3">
-        <el-select size="small" v-model="search.state" clearable placeholder="选择状态">
-          <el-option label="激活" :value="1"></el-option>
-          <el-option label="停用" :value="2"></el-option>
-        </el-select>
-      </el-col>
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item prop="area" label="网格区域：" required>
+                <el-cascader :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentBizInfo.area" :options="$store.state.gridarea.gridarea" placeholder="选择网格区域" style="width:100%;" change-on-select>
+                </el-cascader>
+              </el-form-item>
+            </el-col>
 
-      <el-col :span="5">
-        <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="按网格筛选" change-on-select></el-cascader>
-      </el-col>
+            <el-col :span="8">
+              <el-form-item prop="state" label="激活状态：" required>
+                <el-radio-group v-model="currentBizInfo.state">
+                  <el-radio :label="1">激活</el-radio>
+                  <el-radio :label="2">停用</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="small" round>重置</el-button>
-      </el-col>
-    </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item prop="kind" label="网上商家类型：">
+                <el-select disabled v-model="currentBizInfo.kind" style="width:100%">
+                  <el-option label="网上商家" value="网上商家"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
 
-    <el-row style="margin-top: -10px;">
-      <el-col :span="24">
-        <el-table :data="pageData" size="medium" style="width: 100%;">
-          <el-table-column prop="name" label="企业名称" sortable></el-table-column>
-          <el-table-column prop="kind" label="类型" sortable></el-table-column>
-          <el-table-column label="网格区域" sortable>
-            <template slot-scope="scope">
-              {{$store.state.gridarea.findArea(scope.row.area).name}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="contact" label="联系人" sortable></el-table-column>
-          <el-table-column prop="tel" label="联系电话"></el-table-column>
-          <el-table-column label="许可证编号">
-            <template slot-scope="scope">
-              <span v-if="scope.row.licence">{{scope.row.licence.num}}</span>
-              <el-tag v-else>暂无许可证</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="licence.responsible" label="法人" sortable></el-table-column>
-          <el-table-column label="状态" sortable>
-            <template slot-scope="scope">
-              <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column align="right" prop="action" label="操作" min-width="120px">
-            <template slot-scope="scope">
-              <el-button @click.native="$router.push('biz/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
-              <el-button size="mini" type="danger">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-col>
-    </el-row>
+            <el-col :span="8">
+              <el-form-item prop="kind" label="经营类别：" required>
+                <el-select v-model="currentBizInfo.category" style="width:100%" placeholder="请选择">
+                  <el-option label="餐馆" value="餐馆"></el-option>
+                  <el-option label="快餐店" value="快餐店"></el-option>
+                  <el-option label="小吃店" value="小吃店"></el-option>
+                  <el-option label="饮品店" value="饮品店"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item prop="contact" label="联系人员：">
+                <el-input v-model="currentBizInfo.contact" placeholder="请输入网上商家联系人姓名"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item prop="tel" label="联系电话：">
+                <el-input v-model="currentBizInfo.tel" placeholder="请输入网上商家联系人电话"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="6">
+              <el-form-item prop="posx" label="经度：">
+                <el-input v-model.number="currentBizInfo.pos[0]" placeholder="数值"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6" :push="2">
+              <el-form-item prop="posy" label="纬度：">
+                <el-input v-model.number="currentBizInfo.pos[1]" placeholder="数值"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="16">
+              <el-alert show-icon title="经纬度是指百度地图的坐标值，用于在地图上定位商户的位置" type="info">
+              </el-alert>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="16">
+              <el-form-item prop="address" label="网上商家地址：">
+                <el-input :rows="4" type="textarea" v-model="currentBizInfo.address"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="16">
+              <el-form-item label="许可证：">
+                <el-checkbox v-model="hasLicence" @change="licenceToggle" label="有许可证" border></el-checkbox>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="16">
+              <el-alert show-icon title="如果该网上商家单位有许可证信息，那么勾选上面的「有许可证」复选框，然后在「许可信息」一页输入其许可证内容" type="info">
+              </el-alert>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-tab-pane>
+
+      <el-tab-pane v-if="currentBizInfo.licence" label="许可信息" name="licence">
+
+        <el-form :rules="licenceRules" ref="currentBizInfo.licence" :disabled="!edit" :model="currentBizInfo.licence" label-position="left" style="margin-top:20px;" label-width="130px">
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item prop="name" label="生产者名称:" required>
+                <el-input v-model="currentBizInfo.licence.name" placeholder="请输入生产者名称"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item prop="num" label="许可证号:" required>
+                <el-input v-model="currentBizInfo.licence.num" placeholder="请输许可证号"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item prop="responsible" label="法定代理人:" required>
+                <el-input v-model="currentBizInfo.licence.responsible" placeholder="法定代理人或负责人"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item prop="supervise" label="日常监管机构:" required>
+                <el-input v-model="currentBizInfo.licence.supervise" placeholder="日常监管机构名称"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item prop="socialcode" label="社会信用代码:">
+                <el-input v-model="currentBizInfo.licence.socialcode" placeholder="请输入社会信用代码"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item prop="superviser" label="日常监管人员:" required>
+                <el-input v-model="currentBizInfo.licence.superviser" placeholder="日常监管人员名"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="16">
+              <el-form-item prop="address" label="住所:">
+                <el-input v-model="currentBizInfo.licence.address" placeholder="请输入许可证的住所信息"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="16">
+              <el-form-item prop="productaddr" label="生产地址:">
+                <el-input v-model="currentBizInfo.licence.productaddr" :rows="4" type="textarea" placeholder="请输入网上商家生产地址"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item prop="foodkind" label="类别:" required>
+                <el-input v-model="currentBizInfo.licence.foodkind" placeholder="输入食品类别"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item prop="issue" label="发证机关:" required>
+                <el-input v-model="currentBizInfo.licence.issue" placeholder="输入发证机关"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item prop="licenceissue" label="许可证颁发日期:" required>
+                <el-date-picker style="width:100%" type="date" placeholder="选择颁发日期" v-model="currentBizInfo.licence.licenceissue"></el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item prop="licenceuntil" label="许可证有效期至:" required>
+                <el-date-picker style="width:100%" type="date" placeholder="选择到期日期" v-model="currentBizInfo.licence.licenceuntil"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+        </el-form>
+      </el-tab-pane>
+
+      <el-tab-pane v-if="!isNew" label="检查记录" name="record">
+        <el-row>
+          <el-col :span="24">
+            <el-table :data="getCheckRecord()" size="medium" style="width: 100%;margin-bottom:25px;">
+              <el-table-column prop="date" label="检查时间" sortable></el-table-column>
+              <el-table-column prop="name" label="单位名称" sortable></el-table-column>
+              <el-table-column prop="num" label="许可证编号"></el-table-column>
+              <el-table-column prop="grid" label="所属区域"></el-table-column>
+              <el-table-column prop="officer" label="执法人员"></el-table-column>
+              <el-table-column prop="kind" label="监督检查类别" sortable></el-table-column>
+              <el-table-column prop="checkresult" label="检查结果" sortable></el-table-column>
+              <el-table-column prop="handleresult" label="处理结果" sortable></el-table-column>
+              <el-table-column prop="action" label="操作" width="80px">
+                <template slot-scope="scope">
+                  <el-button size="mini">查看</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+
+      <el-tab-pane v-if="!isNew" label="量化评级" name="risk">
+        <el-row>
+          <el-col :span="24">
+            <el-table :data="getRiskRecord()" size="medium" style="width: 100%;margin-bottom:25px;">
+              <el-table-column prop="year" label="评级年" sortable></el-table-column>
+              <el-table-column prop="name" label="单位名称" sortable></el-table-column>
+              <el-table-column prop="num" label="许可证编号"></el-table-column>
+              <el-table-column prop="grid" label="所属区域"></el-table-column>
+              <el-table-column prop="riskresult" label="评定等级" sortable></el-table-column>
+              <el-table-column prop="riskpoint" label="量化评分" sortable></el-table-column>
+              <el-table-column prop="officer" label="评定人员"></el-table-column>
+              <el-table-column prop="department" label="评定单位"></el-table-column>
+              <el-table-column prop="last" label="最后评定于" sortable></el-table-column>
+              <el-table-column prop="action" label="操作" min-width="80px">
+                <template slot-scope="scope">
+                  <el-button size="mini">查看</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+
+      <el-tab-pane v-if="!isNew" label="行政处罚记录" name="refity">
+        <el-row>
+          <el-col :span="24">
+            <el-table :data="getRectifyRecord()" size="medium" style="width: 100%;margin-bottom:25px;">
+              <el-table-column prop="name" label="单位名称" sortable></el-table-column>
+              <el-table-column prop="num" label="许可证编号"></el-table-column>
+              <el-table-column prop="officer" label="执法人员"></el-table-column>
+              <el-table-column prop="department" label="执法单位"></el-table-column>
+              <el-table-column prop="kind" label="监督检查类别"></el-table-column>
+              <el-table-column prop="isrefity" label="是否整改"></el-table-column>
+              <el-table-column prop="isrecheck" label="是否复查"></el-table-column>
+              <el-table-column prop="state" label="状态"></el-table-column>
+              <el-table-column prop="update" label="更新时间"></el-table-column>
+              <el-table-column prop="result" label="检查结果"></el-table-column>
+              <el-table-column prop="action" label="操作">
+                <template slot-scope="scope">
+                  <el-button size="mini">查看</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+    </el-tabs>
 
     <el-row>
-      <el-pagination :current-page.sync="bizTable.page" :page-size="bizTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
-      </el-pagination>
+      <el-col :span="24">
+        <el-button @click="edit=true" v-if="!edit" icon="el-icon-edit" type="primary">编辑</el-button>
+        <el-button @click="editOK" v-if="edit" icon="el-icon-check" type="primary">{{isNew?"提交审核":"完成编辑"}}</el-button>
+        <el-button @click="editCancel" v-if="edit&&!isNew" icon="el-icon-close">取消并还原</el-button>
+        <router-link to="/base/biz">
+          <el-button style="margin-left:20px;">返回网上商家管理</el-button>
+        </router-link>
+      </el-col>
     </el-row>
   </el-row>
 </template>
 
 <script>
+import { copy } from "@/components/utils";
 export default {
-  name: "base_biz",
+  name: "base_singlenetshop",
   data() {
     return {
-      search: {
-        text: "",
-        kind: "",
-        state: "",
-        grid: []
+      tab: "base",
+      edit: null,
+      isNew: null,
+      kind: null,
+      title: null,
+      hasLicence: null,
+      currentBizInfo: null,
+      originBizInfo: null,
+      bizRules: {
+        name: [
+          {
+            required: true,
+            message: "必须输入网上商家单位名称",
+            trigger: ["blur", "change"]
+          }
+        ],
+        state: [
+          {
+            required: true,
+            message: "必须设置网上商家单位状态",
+            trigger: ["blur", "change"]
+          }
+        ],
+        kind: [
+          {
+            required: true,
+            message: "必须选择网上商家单位类型",
+            trigger: ["blur", "change"]
+          }
+        ],
+        area: [
+          {
+            required: true,
+            message: "必须设置网上商家单位网格区域",
+            trigger: ["blur", "change"]
+          }
+        ]
       },
-      currentSearch: {
-        text: "",
-        kind: "",
-        state: "",
-        grid: []
-      },
-      bizTable: {
-        page: 1,
-        pageSize: 10
+      licenceRules: {
+        name: [
+          {
+            required: true,
+            message: "必须输入许可中的生产者名称",
+            trigger: ["blur", "change"]
+          }
+        ],
+        num: [
+          {
+            required: true,
+            message: "必须输入许可证号码",
+            trigger: ["blur", "change"]
+          }
+        ],
+        responsible: [
+          {
+            required: true,
+            message: "必须输入法定代理人",
+            trigger: ["blur", "change"]
+          }
+        ],
+        supervise: [
+          {
+            required: true,
+            message: "必须输入日常监管机构",
+            trigger: ["blur", "change"]
+          }
+        ],
+        superviser: [
+          {
+            required: true,
+            message: "必须输入日常监管人员",
+            trigger: ["blur", "change"]
+          }
+        ],
+        foodkind: [
+          {
+            required: true,
+            message: "必须输入许可证的类别",
+            trigger: ["blur", "change"]
+          }
+        ],
+        issue: [
+          {
+            required: true,
+            message: "必须输入发证机关",
+            trigger: ["blur", "change"]
+          }
+        ],
+        licenceissue: [
+          {
+            required: true,
+            message: "必须输入许可证颁发日期",
+            trigger: ["blur", "change"]
+          }
+        ],
+        licenceuntil: [
+          {
+            required: true,
+            message: "必须输入许可证有效期限",
+            trigger: ["blur", "change"]
+          }
+        ]
       }
     };
   },
 
-  filters: {
-    stateText(text) {
-      return text == 1 ? "激活" : "停用";
-    }
-  },
-
   methods: {
-    getStateType(state) {
-      switch (state) {
-        case 1:
-          return "success";
-        case 2:
-          return "danger";
-        default:
-          return "info";
+    getRectifyRecord() {
+      return [];
+    },
+    getCheckRecord() {
+      return [];
+    },
+    getRiskRecord() {
+      return [];
+    },
+
+    editOK() {},
+
+    editCancel() {
+      this.currentBizInfo = copy(this.originBizInfo);
+      this.currentBizInfo.licence = copy(this.originBizInfo.licence);
+      this.hasLicence = this.currentBizInfo.licence !== null;
+      this.edit = false;
+    },
+
+    licenceToggle(val) {
+      if (val) {
+        this.currentBizInfo.licence = {};
+        let defaultLincence =
+          this.originBizInfo && this.originBizInfo.licence
+            ? copy(this.originBizInfo.licence)
+            : {
+                name: "",
+                num: "",
+                socialcode: "",
+                supervise: "",
+                superviser: "",
+                responsible: "",
+                address: "",
+                productaddr: "",
+                issue: "",
+                licenceissue: null,
+                licenceuntil: null
+              };
+
+        this.currentBizInfo.licence = defaultLincence;
+      } else {
+        this.currentBizInfo.licence = null;
       }
     },
 
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
+    init() {
+      let bizid = this.$route.params.bizid;
 
-    searchReset() {
-      this.search = {
-        text: "",
-        kind: "",
-        state: "",
-        grid: []
-      };
-      this.searchSubmit();
+      if (bizid.trim() === "new") {
+        this.currentBizInfo = {
+          name: "",
+          state: 1,
+          category: "",
+          kind: "网上商家",
+          pos: [null, null],
+          address: "",
+          area: [],
+          contact: "",
+          tel: "",
+          licence: null
+        };
+
+        this.title = "新增网上商家";
+        this.isNew = true;
+        this.edit = true;
+        this.hasLicence = false;
+      } else {
+        this.currentBizInfo = copy(
+          this.$store.state.biz.find(t => t.id == bizid)
+        );
+
+        this.originBizInfo = copy(
+          this.$store.state.biz.find(t => t.id == bizid)
+        );
+
+        if (this.currentBizInfo.area) {
+          this.currentBizInfo.area = this.$store.state.gridarea.findAreaIDArray(
+            this.currentBizInfo.area
+          );
+        }
+
+        if (this.originBizInfo.area) {
+          this.originBizInfo.area = this.$store.state.gridarea.findAreaIDArray(
+            this.originBizInfo.area
+          );
+        }
+
+        this.title = this.currentBizInfo.name;
+        this.hasLicence = this.currentBizInfo.licence !== null;
+        this.isNew = false;
+        this.edit = false;
+      }
     }
   },
 
-  computed: {
-    tableData() {
-      let tableData = this.$store.state.biz.filter(t => t.type == "biz");
-
-      if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
-      ) {
-        let searchText = this.currentSearch.text;
-        tableData = tableData.filter(
-          t =>
-            t.name.includes(searchText) ||
-            t.kind.includes(searchText) ||
-            t.contact.includes(searchText) ||
-            (t.licence && t.licence.name.includes(searchText))
-        );
-      }
-
-      if (this.currentSearch.state && this.currentSearch.state != "") {
-        tableData = tableData.filter(t => t.state === this.currentSearch.state);
-      }
-
-      if (this.currentSearch.kind && this.currentSearch.kind != "") {
-        tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
-      }
-
-      if (this.currentSearch.grid && this.currentSearch.grid.length > 0) {
-        let gridSearch = this.currentSearch.grid.join(",").trim();
-        tableData = tableData.filter(t =>
-          this.$store.state.gridarea
-            .findAreaIDArray(t.area)
-            .join(",")
-            .trim()
-            .includes(gridSearch)
-        );
-      }
-
-      return tableData;
-    },
-
-    pageData() {
-      return this.tableData.slice(
-        (this.bizTable.page - 1) * this.bizTable.pageSize,
-        this.bizTable.page * this.bizTable.pageSize
-      );
-    }
+  beforeMount() {
+    this.init();
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.el-row {
+  margin-bottom: 0;
+}
+
+.el-alert {
+  margin-bottom: 20px;
+}
+</style>

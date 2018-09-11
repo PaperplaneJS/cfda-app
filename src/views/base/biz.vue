@@ -74,7 +74,7 @@
           <el-table-column label="许可证编号">
             <template slot-scope="scope">
               <span v-if="scope.row.licence">{{scope.row.licence.num}}</span>
-              <el-tag v-else>暂无许可证</el-tag>
+              <el-tag size="small" v-else>暂无许可证</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="licence.responsible" label="法人" sortable></el-table-column>
@@ -166,9 +166,7 @@ export default {
   computed: {
     tableData() {
       let tableData = this.$store.state.biz.filter(
-        t =>
-          t.kind == "餐饮服务" ||
-          (t.kind === "食品经营" && t.kind !== "网上商家")
+        t => t.kind === "餐饮服务" || t.kind === "食品经营"
       );
 
       if (
@@ -199,11 +197,11 @@ export default {
         );
       }
 
-      if (this.currentSearch.licence) {
+      if (this.currentSearch.licence !== "") {
         if (this.currentSearch.licence === true) {
           tableData = tableData.filter(t => t.licence);
         } else {
-          tableData = tableData.filter(t => !t.licence);
+          tableData = tableData.filter(t => !t.licence && true);
         }
       }
 

@@ -2,18 +2,19 @@
   <el-row id="base_netshop">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">网络商家</el-breadcrumb-item>
+      <el-breadcrumb-item to="/base/netshop">基础信息</el-breadcrumb-item>
+      <el-breadcrumb-item to="/base/netshop">网上商家</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">网络商家无证备案</el-row>
+    <el-row class="title">网上商家无证备案</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="3">
         <router-link to="netshop/new">
-          <el-button size="small" type="primary" icon="el-icon-plus">网络商家备案</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus">网上商家备案</el-button>
         </router-link>
       </el-col>
+
       <el-col :span="6">
         <el-input size="small" v-model="search.text" clearable placeholder="搜索名称/联系方式/联系人等" prefix-icon="el-icon-search"></el-input>
       </el-col>
@@ -24,6 +25,7 @@
           <el-option label="快餐店" value="快餐店"></el-option>
           <el-option label="小吃店" value="小吃店"></el-option>
           <el-option label="饮品店" value="饮品店"></el-option>
+          <el-option label="食堂" value="食堂"></el-option>
         </el-select>
       </el-col>
 
@@ -98,17 +100,17 @@ export default {
     return {
       search: {
         text: "",
-        state: null,
-        grid: [],
-        licence: null,
-        category: null
+        category: "",
+        licence: "",
+        state: "",
+        grid: []
       },
       currentSearch: {
         text: "",
+        category: "",
+        licence: "",
         state: "",
-        grid: [],
-        licence: null,
-        category: null
+        grid: []
       },
       bizTable: {
         page: 1,
@@ -142,10 +144,10 @@ export default {
     searchReset() {
       this.search = {
         text: "",
+        category: "",
+        licence: "",
         state: "",
-        grid: [],
-        licence: null,
-        category: null
+        grid: []
       };
       this.searchSubmit();
     }
@@ -153,7 +155,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.biz.filter(t => t.type == "netshop");
+      let tableData = this.$store.state.biz.filter(t => t.kind == "网上商家");
 
       if (
         this.currentSearch.text &&

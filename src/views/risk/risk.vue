@@ -37,11 +37,11 @@
         <el-input size="small" v-model="search.text" clearable placeholder="搜索单位名称/区域/分值/评定单位人员等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
-      <el-col :span="4">
-        <el-select size="small" v-model="search.level" clearable placeholder="选择级别">
-          <el-option value="优秀">优秀</el-option>
-          <el-option value="良好">良好</el-option>
-          <el-option value="一般">一般</el-option>
+      <el-col :span="3">
+        <el-select size="small" v-model="search.level" clearable placeholder="评级结果">
+          <el-option value="优秀">优秀 (90+)</el-option>
+          <el-option value="良好">良好 (75+)</el-option>
+          <el-option value="一般">一般 (60+)</el-option>
           <el-option value="不合格">不合格</el-option>
         </el-select>
       </el-col>
@@ -60,24 +60,21 @@
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%;margin-bottom:20px;">
-          <el-table-column prop="code" label="许可证编号"></el-table-column>
-          <el-table-column prop="bizname" label="单位名称" sortable></el-table-column>
-          <el-table-column prop="kind" label="单位类型" sortable></el-table-column>
-          <el-table-column prop="area" label="所属区域" sortable></el-table-column>
-          <el-table-column label="评级结果" min-width="120px;" sortable>
+          <el-table-column prop="biz.name" label="单位名称" sortable></el-table-column>
+          <el-table-column prop="biz.kind" label="单位类型" sortable></el-table-column>
+          <el-table-column prop="type" label="评级类型" sortable></el-table-column>
+          <el-table-column prop="biz.licence.num" label="许可证编号"></el-table-column>
+          <el-table-column prop="department" label="所属网格" sortable></el-table-column>
+          <el-table-column label="检查结果" sortable>
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.result.lv">{{scope.row.result.lv}}</el-tag>
-              <el-popover style="padding-left:10px;" placement="top-start" title="分值详情" width="200" trigger="hover" :content="`静态: ${scope.row.result.static}  / 动态: ${scope.row.result.active}`">
-                <el-button size="small" slot="reference">风险分值: {{scope.row.result.total}}</el-button>
-              </el-popover>
+              <el-tag size="medium">{{scope.row.level}} | {{scope.row.point}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="staff" label="评定人" sortable></el-table-column>
-          <el-table-column prop="department" label="评定单位" sortable></el-table-column>
+          <el-table-column prop="staffinfo" label="检查人员" sortable></el-table-column>
           <el-table-column prop="date" label="检查时间" sortable></el-table-column>
-          <el-table-column align="right" prop="action" label="操作" min-width="120px">
+          <el-table-column align="right" prop="action" label="操作" min-width="100px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('risk/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
+              <el-button @click.native="$router.push('risk/'+scope.row.id)" size="mini" type="primary">查看</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
@@ -126,47 +123,53 @@ export default {
     },
 
     currentRisk() {
-      return this.$store.state.risk[this.currentYear];
+      let list = this.$store.state.risk[this.currentYear];
+      list.forEach(t => {
+        t.biz = this.$store.state.biz.find(biz => biz.id == t.bizid);
+        t.staffinfo = this.$store.state.gridmember.find(
+          staff => staff.id == t.staff
+        ).name;
+        t.department = this.$store.state.gridarea.findArea(t.biz.area).name;
+      });
+
+      return list;
     },
 
     tableData() {
-      // let tableData = this.$store.state.risk;
+      let tableData = this.currentRisk;
 
-      // if (
-      //   this.currentSearch.text &&
-      //   this.currentSearch.text.trim().length > 0
-      // ) {
-      //   let searchText = this.currentSearch.text;
-      //   tableData = tableData.filter(
-      //     t =>
-      //       t.name.includes(searchText) ||
-      //       t.kind.includes(searchText) ||
-      //       t.contact.includes(searchText) ||
-      //       (t.licence && t.licence.name.includes(searchText))
-      //   );
-      // }
+      if (
+        this.currentSearch.text &&
+        this.currentSearch.text.trim().length > 0
+      ) {
+        let searchText = this.currentSearch.text;
+        tableData = tableData.filter(
+          t =>
+            t.department.includes(searchText) ||
+            t.level.includes(searchText) ||
+            t.type.includes(searchText) ||
+            t.staffinfo.includes(searchText)
+        );
+      }
 
-      // if (this.currentSearch.state && this.currentSearch.state != "") {
-      //   tableData = tableData.filter(t => t.state === this.currentSearch.state);
-      // }
+      if (this.currentSearch.level && this.currentSearch.level != "") {
+        tableData = tableData.filter(t => t.level === this.currentSearch.level);
+      }
 
-      // if (this.currentSearch.kind && this.currentSearch.kind != "") {
-      //   tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
-      // }
+      if (
+        this.currentSearch.daterange &&
+        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+      ) {
+        tableData = tableData.filter(t => {
+          let dt = new Date(t.date);
+          return (
+            dt.getTime() >= this.currentSearch.daterange[0].getTime() &&
+            dt.getTime() <= this.currentSearch.daterange[1].getTime()
+          );
+        });
+      }
 
-      // if (this.currentSearch.grid && this.currentSearch.grid.length > 0) {
-      //   let gridSearch = this.currentSearch.grid.join(",").trim();
-      //   tableData = tableData.filter(t =>
-      //     this.$store.state.gridarea
-      //       .findAreaIDArray(t.area)
-      //       .join(",")
-      //       .trim()
-      //       .includes(gridSearch)
-      //   );
-      // }
-
-      // return tableData;
-      return [];
+      return tableData;
     },
 
     pageData() {

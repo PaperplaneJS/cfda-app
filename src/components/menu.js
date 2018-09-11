@@ -14,7 +14,7 @@ export default [{
         label: "食品小作坊",
         url: "workshop"
       }, {
-        label: "网络商家",
+        label: "网上商家",
         url: "netshop"
       },
       {
