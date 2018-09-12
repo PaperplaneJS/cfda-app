@@ -10,7 +10,7 @@
     <el-row style="margin-bottom:40px;" :gutter="15">
       <el-col :span="10">
         <el-radio-group v-model="currentYear" size="small">
-          <el-radio-button v-for="item of riskYears.slice(-8)" :key="item" :label="item"></el-radio-button>
+          <el-radio-button v-for="item of riskYears.slice(-8).reverse()" :key="item" :label="item"></el-radio-button>
         </el-radio-group>
       </el-col>
 

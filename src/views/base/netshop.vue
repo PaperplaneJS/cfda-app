@@ -6,7 +6,7 @@
       <el-breadcrumb-item to="/base/netshop">网上商家</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">网上商家无证备案</el-row>
+    <el-row class="title">网上商家备案</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="3">

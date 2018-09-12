@@ -23,8 +23,8 @@ export let risk = {
     templateid: "3",
     type: "中、小、微型餐饮",
     date: "2018-07-15 16:30",
-    level: "优秀",
-    point: 94,
+    level: "良好",
+    point: 83.4,
     staff: "12",
     detail: {
       "1.1": {
@@ -33,11 +33,11 @@ export let risk = {
       },
       "2.1": {
         checked: true,
-        point: 75
+        point: 100
       },
       "2.2": {
         checked: true,
-        point: 65
+        point: 86
       },
       "2.3": {
         checked: true,
@@ -45,7 +45,7 @@ export let risk = {
       },
       "3.1": {
         checked: true,
-        point: 75
+        point: 93
       },
       "4.1": {
         checked: true,
@@ -61,11 +61,11 @@ export let risk = {
       },
       "5.1": {
         checked: true,
-        point: 64
+        point: 88
       },
       "5.2": {
         checked: true,
-        point: 32
+        point: 86
       },
       "5.3": {
         checked: true,
@@ -73,7 +73,7 @@ export let risk = {
       },
       "5.4": {
         checked: true,
-        point: 83
+        point: 88
       },
       "6.1": {
         checked: true,
@@ -97,7 +97,7 @@ export let risk = {
       },
       "7.3": {
         checked: true,
-        point: 69
+        point: 70
       },
       "7.4": {
         checked: true,
@@ -117,7 +117,7 @@ export let risk = {
       },
       "8.3": {
         checked: true,
-        point: 38
+        point: 60
       },
       "8.4": {
         checked: true,
@@ -136,7 +136,7 @@ export let risk = {
         point: 89
       },
       "10.1": {
-        point: 80
+        point: 85
       },
       "11.1": {
         point: 78

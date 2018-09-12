@@ -115,13 +115,13 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="选项情况:">
-            <el-tag>已选项/总选项： 4 / 30</el-tag>
-            <el-tag style="margin-left:6px;">实得分/应得分： 76 / 80</el-tag>
+            <el-tag>已选项/总选项： {{itemCount.current}} / {{itemCount.sum}}</el-tag>
+            <el-tag style="margin-left:6px;">实得分/应得分： {{itemCount.currentPoint.toFixed(1)}} / {{itemCount.sumPoint.toFixed(1)}}</el-tag>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="最终得分:">
-            <el-tag>94</el-tag>
+            <el-tag>{{getResultPoint.toFixed(1)}}</el-tag>
           </el-form-item>
         </el-col>
       </el-row>
@@ -192,8 +192,36 @@ export default {
   },
 
   computed: {
-    itemCount(){
-      
+    itemCount() {
+      let sum = 0,
+        sumPoint = 0,
+        current = 0,
+        currentPoint = 0;
+
+      let template = this.currentTemplate.content;
+      for (let i = 0; i < template.length; i++) {
+        for (let j = 0; j < template[i].children.length; j++) {
+          let templateItem = template[i].children[j];
+          if (templateItem.risk[this.currentRisk.type]) {
+            sum++;
+            sumPoint += templateItem.risk[this.currentRisk.type];
+          }
+          if (this.currentRisk.detail[`${i + 1}.${j + 1}`]) {
+            current++;
+            currentPoint +=
+              this.currentRisk.detail[`${i + 1}.${j + 1}`].point *
+              templateItem.risk[this.currentRisk.type] /
+              100;
+          }
+        }
+      }
+
+      return {
+        sum,
+        sumPoint,
+        current,
+        currentPoint
+      };
     },
 
     riskData() {
@@ -221,6 +249,10 @@ export default {
       }
 
       return result;
+    },
+
+    getResultPoint() {
+      return this.itemCount.currentPoint / this.itemCount.sumPoint * 100;
     }
   },
 

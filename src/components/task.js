@@ -669,8 +669,8 @@ export let task = [{
         id: "12",
         department: "13"
       }],
-      result: "基本符合",
-      handle: "通过",
+      result: "不符合",
+      handle: "通知整改",
       checked: true,
       content: {
         "1.1": {
@@ -766,8 +766,8 @@ export let task = [{
           checked: true,
         },
         "3.15": {
-          check: "是",
-          checked: true,
+          check: "否",
+          checked: false,
         },
         "4.1": {
           check: "是",
@@ -790,12 +790,12 @@ export let task = [{
           checked: true,
         },
         "5.1": {
-          check: "是",
-          checked: true,
+          check: "否",
+          checked: false,
         },
         "5.2": {
-          check: "是",
-          checked: true,
+          check: "否",
+          checked: false,
         },
         "5.3": {
           check: "是",
@@ -810,12 +810,12 @@ export let task = [{
           checked: true,
         },
         "5.6": {
-          check: "是",
-          checked: true,
+          check: "否",
+          checked: false,
         },
         "5.7": {
-          check: "是",
-          checked: true,
+          check: "否",
+          checked: false,
         },
         "5.8": {
           check: "是",
@@ -838,8 +838,8 @@ export let task = [{
           checked: true,
         },
         "7.1": {
-          check: "是",
-          checked: true,
+          check: "否",
+          checked: false,
         },
         "7.2": {
           check: "是",
@@ -866,8 +866,8 @@ export let task = [{
           checked: true,
         },
         "8.2": {
-          check: "是",
-          checked: true,
+          check: "否",
+          checked: false,
         },
         "8.3": {
           check: "是",

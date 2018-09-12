@@ -30,6 +30,9 @@ import {
 import {
   risk
 } from "@/components/risk.js";
+import {
+  rectify
+} from "@/components/rectify.js";
 
 Vue.use(Vuex);
 let store = new Vuex.Store({
@@ -44,7 +47,8 @@ let store = new Vuex.Store({
     plan,
     archives,
     task,
-    risk
+    risk,
+    rectify
   }
 });
 

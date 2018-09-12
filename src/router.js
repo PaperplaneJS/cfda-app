@@ -60,6 +60,8 @@ import TraceTrace from '@/views/trace/trace';
 
 import CountCount from '@/views/count/count';
 
+import OptionOption from '@/views/option/option';
+
 Vue.use(Router);
 
 let routes = [{
@@ -250,6 +252,13 @@ let routes = [{
       {
         path: '/count',
         component: CountCount
+      }
+
+      //系统设置
+
+      , {
+        path: '/option',
+        component: OptionOption
       }
     ]
   }

@@ -61,6 +61,7 @@
 <script>
 export default {
   name: "plan_recive",
+  
   data() {
     return {
       search: {
