@@ -1,97 +1,199 @@
 <template>
   <el-row id="index">
     <div id="container">
-      <div id="map">
+      <div id="action">
+        <el-row>
+          <el-col :span="24">
+            <el-radio-group v-model="posKind">
+              <el-radio-button label="全部">全部</el-radio-button>
+              <el-radio-button label="食品经营">食品经营</el-radio-button>
+              <el-radio-button label="食品小作坊">小作坊</el-radio-button>
+              <el-radio-button label="网上商家">网上商家</el-radio-button>
+            </el-radio-group>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-input v-model="posText" placeholder="搜索食品经营个体" clearable>
+              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+            </el-input>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col style="background:rgba(255,255,255,0.7);border-radius:4px;" :span="24">
+            <div style="margin-top:10px;display:flex;justify-content:space-around;">
+              <el-radio-group size="mini" v-model="chartKind">
+                <el-radio-button label="bizCountKind">个体比例</el-radio-button>
+                <el-radio-button label="increaseArea">增长情况</el-radio-button>
+                <el-radio-button label="monthKind">检查合格率</el-radio-button>
+              </el-radio-group>
+            </div>
+            <div style="height:240px;margin:8px;" id="chart"></div>
+          </el-col>
+        </el-row>
       </div>
+      <el-dialog v-if="popup" :title="popupItem.name" :visible.sync="popup" width="50%">
+        <el-form label-width="110px">
+          <el-row :gutter="15">
+            <el-col :span="24">
+              <el-form-item label="经营个体名：">
+                <el-input v-model="popupItem.name" disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="12">
+              <el-form-item label="所属网格区域：">
+                <el-input v-model="$store.state.gridarea.findArea(popupItem.area).name" disabled></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item label="企业类型：">
+                <el-input v-model="popupItem.kind" disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="12">
+              <el-form-item label="联系人员：">
+                <el-input v-model="popupItem.contact" disabled></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item label="联系电话：">
+                <el-input v-model="popupItem.tel" disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="12">
+              <el-form-item label="许可证号：">
+                <el-input v-if="popupItem.licence" v-model="popupItem.licence.num" disabled></el-input>
+                <el-input v-else value="暂无许可证" disabled></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item label="经营类别：">
+                <el-input v-model="popupItem.category" disabled></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="medium" type="primary" @click="$router.push('/base/biz/'+popupItem.id)">前往查看</el-button>
+          <el-button size="medium" @click="()=>{popup=false;popupItem=null;}">关闭</el-button>
+        </span>
+      </el-dialog>
+      <div id="map"></div>
     </div>
   </el-row>
 </template>
 
 <script>
+import { copy } from "@/components/utils.js";
+import { count } from "@/components/count.js";
+import echarts from "echarts";
+
 export default {
   name: "index",
   data() {
     return {
       map: null,
       mappoint: null,
-      mapType: null,
-      bizPosition: {
-        ["食品生产"]: [
-          [120.789824, 31.670542],
-          [120.773223, 31.663657],
-          [120.755688, 31.651117],
-          [120.706533, 31.659232],
-          [120.830786, 31.60592],
-          [120.803191, 31.668882],
-          [120.60542, 31.600507],
-          [120.87448, 31.741629],
-          [120.660037, 31.705263],
-          [120.974515, 31.546854],
-          [120.784218, 31.598539],
-          [120.75346, 31.763429],
-          [120.697119, 31.549993],
-          [120.901789, 31.664149],
-          [120.795429, 31.802718],
-          [121.023096, 31.639558],
-          [120.956406, 31.579529],
-          [120.853496, 31.570669],
-          [120.785943, 31.656281],
-          [120.763234, 31.667837],
-          [120.760072, 31.719209],
-          [120.725864, 31.685661],
-          [120.667079, 31.707413],
-          [120.643795, 31.69451],
-          [120.626404, 31.674967],
-          [120.616918, 31.665133],
-          [120.613468, 31.638821],
-          [120.617349, 31.61533],
-          [120.591622, 31.599461],
-          [120.647388, 31.567347],
-          [120.680302, 31.58802],
-          [120.719684, 31.601799],
-          [120.748286, 31.622833],
-          [120.769414, 31.61041],
-          [120.775882, 31.648535],
-          [121.038331, 31.647059],
-          [120.949219, 31.553562],
-          [121.030282, 31.694756],
-          [120.868731, 31.761587],
-          [120.766971, 31.683448],
-          [120.789393, 31.620496],
-          [120.697406, 31.742918]
-        ],
-        ["食品销售"]: [],
-        ["餐饮服务"]: [],
-        ["保健食品生产"]: [],
-        ["小作坊"]: []
-      }
+      chart: null,
+
+      posKind: null,
+      chartKind: null,
+      posText: "",
+
+      popupItem: null,
+      popup: false
     };
   },
 
   mounted() {
-    this.map = new BMap.Map("map");
-    this.map.centerAndZoom("常熟", 12);
-    this.map.addControl(
-      new BMap.MapTypeControl({
-        mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP]
-      })
-    );
-    let top_left_navigation = new BMap.NavigationControl({
-      anchor: BMAP_ANCHOR_TOP_LEFT,
-      type: BMAP_NAVIGATION_CONTROL_SMALL
-    });
-    this.map.addControl(top_left_navigation);
-    this.map.enableScrollWheelZoom();
-    this.switchDisplay("食品生产");
-    this.area();
+    this.init();
+  },
+
+  computed: {
+    bizPos() {
+      let result = copy(this.$store.state.biz);
+
+      if (this.posKind && this.posKind !== "全部") {
+        result = result.filter(t => t.kind === this.posKind);
+      }
+
+      if (this.posText && this.posText.trim().length > 0) {
+        result = result.filter(t => t.name.includes(this.posText));
+      }
+
+      return result;
+    }
+  },
+
+  watch: {
+    posKind(newVal, oldVal) {
+      this.pointDraw();
+    },
+
+    posText(newVal, oldVal) {
+      this.pointDraw();
+    },
+
+    chartKind(newVal, oldVal) {
+      this.chart.clear();
+      this.chart.setOption(count[newVal]);
+    }
   },
 
   methods: {
-    switchDisplay(typeName) {
+    init() {
+      this.map = new BMap.Map("map");
+      this.map.centerAndZoom("常熟", 12);
+      this.map.addControl(
+        new BMap.MapTypeControl({
+          mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
+          anchor: BMAP_ANCHOR_TOP_LEFT
+        })
+      );
+      let top_left_navigation = new BMap.NavigationControl({
+        anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
+        type: BMAP_NAVIGATION_CONTROL_SMALL
+      });
+      this.map.addControl(top_left_navigation);
+      this.map.enableScrollWheelZoom();
+      this.area();
+      this.posKind = "全部";
+
+      this.chart = echarts.init(document.getElementById("chart"));
+      this.chartKind = "bizCountKind";
+    },
+
+    pointDraw() {
       this.clearMap();
       this.mappoint = [];
-      this.bizPosition[typeName].forEach(([x, y]) => {
-        let point = new BMap.Marker(new BMap.Point(x, y));
+      this.bizPos.forEach(t => {
+        let point = new BMap.Marker(new BMap.Point(t.pos[0], t.pos[1]));
+        point.addEventListener("dblclick", () => {
+          this.popupItem = t;
+          this.popup = true;
+        });
+        point.addEventListener("click", function() {
+          this.openInfoWindow(
+            new BMap.InfoWindow(
+              `<strong>${t.name}</strong><br/>类型：${t.kind}<br/>联系人：${
+                t.contact
+              }<br/>联系电话：${t.tel}`
+            )
+          );
+        });
+
         this.mappoint.push(point);
         this.map.addOverlay(point);
       });
@@ -129,6 +231,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-row {
+  margin-bottom: 8px;
+}
+
+#action {
+  display: inline-block;
+  z-index: 99;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
 #index {
   position: absolute;
   top: 0;
@@ -150,9 +264,5 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-}
-
-#dash {
-  display: inline-block;
 }
 </style>

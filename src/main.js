@@ -4,7 +4,6 @@ import store from './plugins/demo.js';
 import './plugins/element.js';
 
 import "@/assets/style/public.scss";
-
 Vue.config.productionTip = false;
 
 new Vue({

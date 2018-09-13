@@ -56,7 +56,8 @@
           <el-tab-pane label="检查计划与任务" name="plan">
             <el-row>
               <el-col :span="24">
-                <el-table :data="plandata" size="medium">
+                <el-table :data="planData" size="medium">
+                  
                   <el-table-column type="expand">
                     <template slot-scope="scope">
                       <div v-for="task of scope.row.task" :key="task.id" class="task">
@@ -64,9 +65,6 @@
                           <el-tag size="mini">{{task.state}}</el-tag>
                           {{task.title}}</span>
                         <span class="taskdetail">
-                          <span style="width:150px;">
-                            <el-progress :stroke-width="18" :text-inside="true" :percentage="getPrecent(task.current/task.total)"></el-progress>
-                          </span>
                           <span>进度：
                             <el-tag size="mini">{{task.current}}/{{task.total}}</el-tag>
                           </span>
@@ -81,7 +79,7 @@
 
                   <el-table-column prop="title" label="标题" sortable></el-table-column>
                   <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
-                  <el-table-column prop="department" label="指定单位" sortable></el-table-column>
+                  <el-table-column prop="department" label="制定单位" sortable></el-table-column>
                   <el-table-column prop="date" label="制定时间"></el-table-column>
                   <el-table-column prop="limit" label="执行期限"></el-table-column>
                   <el-table-column label="状态" sortable>
@@ -89,7 +87,7 @@
                       <el-tag :type="getPlanType(scope.row.state)">{{scope.row.state}}</el-tag>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作">
+                  <el-table-column align="right" label="操作">
                     <template slot-scope="scope">
                       <el-button size="mini" @click.native="$router.push('/daily/monitor')" type="primary">检查监督</el-button>
                     </template>
@@ -99,7 +97,7 @@
             </el-row>
 
             <el-row>
-              <el-pagination background layout="prev, pager, next" :total="100">
+              <el-pagination background layout="prev, pager, next" :total="1">
               </el-pagination>
             </el-row>
           </el-tab-pane>
@@ -108,7 +106,7 @@
 
             <el-row>
               <el-col :span="24">
-                <el-table :data="riskdata" size="medium" style="width: 100%;margin-bottom:20px;">
+                <el-table :data="riskData" size="medium" style="width: 100%;margin-bottom:20px;">
                   <el-table-column prop="code" label="许可证编号"></el-table-column>
                   <el-table-column prop="bizname" label="单位名称" sortable></el-table-column>
                   <el-table-column prop="kind" label="单位类型" sortable></el-table-column>
@@ -134,7 +132,7 @@
             </el-row>
 
             <el-row>
-              <el-pagination background layout="prev, pager, next" :total="100">
+              <el-pagination background layout="prev, pager, next" :total="1">
               </el-pagination>
             </el-row>
 
@@ -146,6 +144,7 @@
 </template>
 
 <script>
+import { copy } from "@/components/utils.js";
 export default {
   name: "trace_trace",
   data() {
@@ -173,74 +172,22 @@ export default {
         total: 1280,
         current: 1280,
         computed: 530
-      },
-      plandata: [
-        {
-          id: 1,
-          title: "常熟市2018年下半年巡检计划",
-          staff: "张小明",
-          department: "常熟市市局",
-          date: "2018-06-01",
-          limit: "2018-06-01 ~ 2018-12-01",
-          state: "执行中",
-          total: 54,
-          current: 25,
-          task: [
-            {
-              id: 1,
-              title: "食品生产场所检查任务",
-              date: "2018-07-01",
-              limit: ["2018-07-01", "2018-07-31"],
-              template: "食品生产监督检查要点表",
-              staffcount: 5,
-              current: 19,
-              total: 25,
-              state: "执行中..."
-            },
-            {
-              id: 2,
-              title: "餐饮服务检查任务",
-              date: "2018-07-15",
-              limit: ["2018-07-16", "2018-07-31"],
-              template: "餐饮服务监督检查要点表",
-              staffcount: 6,
-              current: 22,
-              total: 29,
-              state: "执行中..."
-            }
-          ]
-        }
-      ],
-      riskdata: [
-        {
-          id: 1,
-          code: "CS-012-552320",
-          bizname: "东南大道麦当劳DT餐厅",
-          kind: "食品生产",
-          area: "虞山镇",
-          staff: "张小明",
-          department: "虞山食药监分局",
-          date: "2018-08-01 12:00",
-          result: {
-            static: 13.5,
-            active: 20,
-            total: 33.5,
-            lv: "B"
-          }
-        }
-      ]
+      }
     };
   },
 
-  methods: {
-    getPrecent(n) {
-      return Number((n * 100).toFixed(2));
+  computed: {
+    planData() {
+      let result = copy(this.$store.state.plan);
+      result.forEach(t => {
+
+      });
     },
 
-    getPlanType(text) {
-      return "";
-    }
-  }
+    riskData() {}
+  },
+
+  methods: {}
 };
 </script>
 

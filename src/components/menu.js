@@ -8,24 +8,24 @@ export default [{
     url: "base",
     icon: "el-icon-tickets",
     group: [{
-        label: "食品企业",
-        url: "biz"
-      }, {
-        label: "食品小作坊",
-        url: "workshop"
-      }, {
-        label: "网上商家",
-        url: "netshop"
-      },
-      {
-        label: "模板管理",
-        url: "template"
-      },
-      {
-        label: "法律法规管理",
-        url: "law"
-      }
-    ]
+      label: "食品企业",
+      url: "biz"
+    }, {
+      label: "食品小作坊",
+      url: "workshop"
+    }, {
+      label: "网上商家",
+      url: "netshop"
+    }, {
+      label: "模板管理",
+      url: "template"
+    }, {
+      label: "法律法规管理",
+      url: "law"
+    }, {
+      label: "信息管理",
+      url: "import"
+    }]
   },
   {
     label: "网格化管理",

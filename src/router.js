@@ -15,6 +15,7 @@ import BaseSingleNetshop from '@/views/base/singlenetshop';
 import BaseSingleTemplate from '@/views/base/singletemplate';
 import BaseSingleRiskTemplate from '@/views/base/singlerisktemplate';
 import BaseSingeLaw from '@/views/base/singlelaw';
+import BaseImport from '@/views/base/import';
 
 import GridArea from '@/views/grid/area';
 import GridMember from '@/views/grid/member';
@@ -111,6 +112,9 @@ let routes = [{
       }, {
         path: '/base/law/:lawid',
         component: BaseSingeLaw
+      }, {
+        path: '/base/import',
+        component: BaseImport
       },
 
       //网格化管理
