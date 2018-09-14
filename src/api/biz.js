@@ -71,8 +71,8 @@ let biz = [{
     productaddr: "北门大街2号",
     foodkind: "小吃店",
     issue: "虞山街道办",
-    licenceissue: "2017-11-9",
-    licenceuntil: "2019-11-9"
+    licenceissue: "2017-11-09",
+    licenceuntil: "2019-11-09"
   }
 }, {
   id: "4",
@@ -159,8 +159,8 @@ let biz = [{
     productaddr: "莫干路28号",
     foodkind: "餐馆",
     issue: "莫城街道办",
-    licenceissue: "2017-11-3",
-    licenceuntil: "2019-11-3"
+    licenceissue: "2017-11-03",
+    licenceuntil: "2019-11-03"
   }
 }, {
   id: "8",

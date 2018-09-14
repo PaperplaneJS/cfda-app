@@ -1,80 +1,90 @@
 let plan = [{
   id: "1",
   title: "虞山镇2018年食品安全检查计划",
-  department: "虞山镇分局",
-  staff: "李小明",
+  department: "2",
+  staff: "3",
+  template: "1",
   kind: "daily",
   date: "2017-11-01 12:00",
   limit: ["2018-01-01", "2018-12-01"],
   state: 1,
   remark: "虞山镇2018年食品安全检查计划，请按照法律法规开展检查",
-  templateid: "1"
+  post: null
 }, {
   id: "2",
   title: "常熟市2018年下半年巡检计划",
-  department: "常熟市",
-  staff: "顾小华",
+  department: "1",
+  staff: "1",
+  template: "1",
   kind: "daily",
   date: "2018-06-01 12:00",
   limit: ["2018-06-01", "2018-12-01"],
   state: 3,
-  post: "2018-05-01 13:00",
-  postdetail: ["2", "3", "4", "5", "6"],
-  remark: "常熟市2018年下半年巡检计划，请按照法律法规开展检查",
-  templateid: "1"
+  post: {
+    date: "2018-05-01 13:00",
+    detail: ["2", "3", "4", "5", "6"],
+    remark: "常熟市2018年下半年巡检计划，请按照法律法规开展检查"
+  }
 }, {
   id: "3",
   title: "常熟市2018年餐饮业检查计划",
-  department: "常熟市",
-  staff: "顾小华",
+  department: "1",
+  staff: "1",
+  template: "1",
   kind: "daily",
   date: "2018-03-01 12:00",
   limit: ["2018-01-01", "2018-10-01"],
   state: 2,
-  post: "2018-05-01 13:00",
-  postdetail: ["2", "3", "10"],
-  remark: "本次检查计划请按照法律法规开展检查",
-  templateid: "1"
+  post: {
+    date: "2018-05-01 13:00",
+    postdetail: ["2", "3", "10"],
+    remark: "本次检查计划请按照法律法规开展检查",
+  }
 }, {
   id: "4",
   title: "东南街道办2018年餐饮服务行业专项检查计划",
-  department: "东南街道办",
-  staff: "吴小明",
+  department: "12",
+  staff: "8",
+  template: "1",
   kind: "special",
   special: "本次专项检查结果上报到市局",
   date: "2018-05-01 12:00",
   limit: ["2018-10-15", "2018-11-01"],
   state: 3,
-  post: "2018-05-01 13:00",
-  postdetail: ["2", "3", "10"],
-  remark: "请按照法律法规开展检查",
-  templateid: "1"
+  post: {
+    date: "2018-05-01 13:00",
+    postdetail: ["2", "3", "10"],
+    remark: "请按照法律法规开展检查"
+  }
 }, {
   id: "5",
   title: "虞山分局2018年食品经营行业检查",
-  department: "虞山镇分局",
-  staff: "李小明",
+  department: "2",
+  staff: "3",
+  template: "1",
   kind: "daily",
   special: "本次专项检查结果上报到市局",
   date: "2018-03-01 12:00",
   limit: ["2018-05-15", "2018-11-01"],
   state: 3,
-  post: "2018-04-01 13:00",
-  postdetail: ["2", "3", "10"],
-  remark: "请按照法律法规开展检查",
-  templateid: "1"
+  post: {
+    date: "2018-04-01 13:00",
+    postdetail: ["2", "3", "10"],
+    remark: "请按照法律法规开展检查"
+  }
 }, {
   id: "6",
   title: "东南街道办2017年餐饮服务行业专项检查计划",
-  department: "东南街道办",
-  staff: "吴小明",
+  department: "12",
+  staff: "8",
   kind: "special",
   special: "本次专项检查结果上报到市局",
   date: "2017-05-01 12:00",
   limit: ["2017-10-15", "2017-11-01"],
   complete: "2017-10-28 10:00",
   state: 5,
-  remark: "请按照法律法规开展检查"
+  remark: "请按照法律法规开展检查",
+  post: null
 }];
 
 /**

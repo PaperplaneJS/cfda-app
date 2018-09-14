@@ -7,15 +7,21 @@
     </el-breadcrumb>
 
     <el-row class="title">食品企业管理</el-row>
-
-    <el-row type="flex" :gutter="15">
-      <el-col :span="2">
+    <el-row class="action" :gutter="15">
+      <el-col :span="3">
         <router-link to="biz/new">
-          <el-button size="small" type="primary" icon="el-icon-plus">新建单位</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus">新建食品企业</el-button>
         </router-link>
       </el-col>
+    </el-row>
+
+    <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input size="small" v-model="search.text" clearable placeholder="搜索名称/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
+        <el-input size="small" v-model="search.text" clearable placeholder="搜索单位名称/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
+      </el-col>
+
+      <el-col :span="4">
+        <el-cascader style="width:100%;" size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="网格区域" change-on-select></el-cascader>
       </el-col>
 
       <el-col :span="3">
@@ -44,13 +50,9 @@
 
       <el-col :span="3">
         <el-select size="small" v-model="search.state" clearable placeholder="状态">
-          <el-option label="激活" :value="1"></el-option>
-          <el-option label="停用" :value="2"></el-option>
+          <el-option label="正常" :value="1"></el-option>
+          <el-option label="关闭" :value="2"></el-option>
         </el-select>
-      </el-col>
-
-      <el-col :span="5">
-        <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="网格区域" change-on-select></el-cascader>
       </el-col>
 
       <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
@@ -94,9 +96,10 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="bizTable.page" :page-size="bizTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background :current-page.sync="bizTable.page" :page-sizes="bizTable.pageSizes" :page-size="bizTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
+
   </el-row>
 </template>
 
@@ -123,14 +126,15 @@ export default {
       },
       bizTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },
 
   filters: {
     stateText(text) {
-      return text == 1 ? "开启" : "关闭";
+      return text == 1 ? "正常" : "关闭";
     }
   },
 

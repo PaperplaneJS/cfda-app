@@ -10,24 +10,33 @@
       <el-col :span="24">
         <div class="grid-content">
           <el-row class="title">检查项目模板管理</el-row>
-          <el-row type="flex" :gutter="15">
+          <el-row class="action" :gutter="15">
             <el-col :span="3">
-              <el-dropdown size="small" split-button type="primary" @click="$router.push('/base/template/new')">
-                新建常规模板
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="$router.push('/base/risktemplate/new')">新建量化分级模板</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+              <router-link to="/base/template/new">
+                <el-button style="width:100%;" size="small" type="primary" icon="el-icon-plus">新建常规检查模板</el-button>
+              </router-link>
             </el-col>
+
+            <el-col :span="3">
+              <router-link to="/base/risktemplate/new">
+                <el-button size="small" type="primary" icon="el-icon-plus">新建量化分级模板</el-button>
+              </router-link>
+            </el-col>
+          </el-row>
+
+          <el-row type="flex" :gutter="15">
             <el-col :span="6">
               <el-input v-model="search.text" size="small" clearable placeholder="搜索模板名/创建人等" prefix-icon="el-icon-search"></el-input>
             </el-col>
 
-            <el-col :span="3">
-              <el-input v-model="search.kind" size="small" clearable placeholder="筛选类别" prefix-icon="el-icon-search"></el-input>
+            <el-col :span="4">
+              <el-select size="small" v-model="search.kind" clearable placeholder="筛选类别">
+                <el-option label="日常检查" value="daily"></el-option>
+                <el-option label="量化评级" value="risk"></el-option>
+              </el-select>
             </el-col>
 
-            <el-col :span="3">
+            <el-col :span="4">
               <el-select size="small" v-model="search.state" clearable placeholder="筛选状态">
                 <el-option label="激活" :value="1"></el-option>
                 <el-option label="停用" :value="2"></el-option>
@@ -51,7 +60,7 @@
                 </el-table-column>
                 <el-table-column prop="department" label="制定部门" sortable></el-table-column>
                 <el-table-column prop="staff" label="制定人" sortable></el-table-column>
-                <el-table-column prop="date" label="创建日期" sortable></el-table-column>
+                <el-table-column prop="date" label="创建日期" align="center" sortable></el-table-column>
                 <el-table-column label="状态">
                   <template slot-scope="scope">
                     <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
@@ -68,7 +77,7 @@
           </el-row>
 
           <el-row>
-            <el-pagination :current-page.sync="templateTable.page" :page-size="templateTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+            <el-pagination background :current-page.sync="templateTable.page" :page-sizes="templateTable.pageSizes" :page-size="templateTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
             </el-pagination>
           </el-row>
         </div>
@@ -94,7 +103,8 @@ export default {
       },
       templateTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       },
       templatedata: [
         {
@@ -115,7 +125,7 @@ export default {
     },
 
     kindText(kind) {
-      return kind === "daily" ? "日常检查" : "全量检查";
+      return kind === "daily" ? "日常检查" : "量化评级";
     }
   },
 

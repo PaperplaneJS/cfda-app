@@ -7,15 +7,21 @@
     </el-breadcrumb>
 
     <el-row class="title">食品小作坊备案</el-row>
-
-    <el-row type="flex" :gutter="15">
+    <el-row class="action" :gutter="15">
       <el-col :span="3">
         <router-link to="workshop/new">
-          <el-button size="small" type="primary" icon="el-icon-plus">小作坊备案</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus">小作坊备案登记</el-button>
         </router-link>
       </el-col>
+    </el-row>
+
+    <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input size="small" v-model="search.text" clearable placeholder="搜索名称/联系方式/联系人等" prefix-icon="el-icon-search"></el-input>
+        <el-input size="small" v-model="search.text" clearable placeholder="搜索小作坊名称/联系方式/联系人等" prefix-icon="el-icon-search"></el-input>
+      </el-col>
+
+      <el-col :span="4">
+        <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="网格区域" change-on-select></el-cascader>
       </el-col>
 
       <el-col :span="3">
@@ -37,13 +43,9 @@
 
       <el-col :span="3">
         <el-select size="small" v-model="search.state" clearable placeholder="状态">
-          <el-option label="开启" :value="1"></el-option>
+          <el-option label="正常" :value="1"></el-option>
           <el-option label="关闭" :value="2"></el-option>
         </el-select>
-      </el-col>
-
-      <el-col :span="3">
-        <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="网格区域" change-on-select></el-cascader>
       </el-col>
 
       <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
@@ -64,10 +66,10 @@
           </el-table-column>
           <el-table-column prop="contact" label="联系人" sortable></el-table-column>
           <el-table-column prop="tel" label="联系电话"></el-table-column>
-          <el-table-column label="许可证编号">
+          <el-table-column label="小作坊登记证">
             <template slot-scope="scope">
               <span v-if="scope.row.licence">{{scope.row.licence.num}}</span>
-              <el-tag size="small" v-else>暂无许可证</el-tag>
+              <el-tag size="small" v-else>暂无登记证</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="状态" sortable>
@@ -86,7 +88,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="bizTable.page" :page-size="bizTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background :current-page.sync="bizTable.page" :page-sizes="bizTable.pageSizes" :page-size="bizTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
@@ -113,14 +115,15 @@ export default {
       },
       bizTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },
 
   filters: {
     stateText(text) {
-      return text == 1 ? "激活" : "停用";
+      return text == 1 ? "正常" : "关闭";
     }
   },
 

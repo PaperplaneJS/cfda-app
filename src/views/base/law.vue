@@ -7,12 +7,15 @@
     </el-breadcrumb>
 
     <el-row class="title">法律法规管理</el-row>
-    <el-row type="flex" :gutter="15">
-      <el-col :span="3">
+    <el-row class="action" :gutter="15">
+      <el-col :span="4">
         <router-link to="law/new">
-          <el-button type="primary" size="small" icon="el-icon-plus">新建法律法规</el-button>
+          <el-button type="primary" size="small" icon="el-icon-plus">新建 / 上传法律法规</el-button>
         </router-link>
       </el-col>
+    </el-row>
+
+    <el-row type="flex" :gutter="15">
       <el-col :span="6">
         <el-input v-model="search.text" size="small" clearable placeholder="搜索法律法规名/编号/单位等" prefix-icon="el-icon-search"></el-input>
       </el-col>
@@ -53,7 +56,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="lawTable.page" :page-size="lawTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background :current-page.sync="lawTable.page" :page-sizes="lawTable.pageSizes" :page-size="lawTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
@@ -74,7 +77,8 @@ export default {
       },
       lawTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

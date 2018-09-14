@@ -7,9 +7,10 @@ body {
 .el-breadcrumb {
   margin-bottom: 10px;
 
-  .el-breadcrumb__inner {
-    color: grey;
-    
+  .el-breadcrumb__inner,
+  .el-breadcrumb__item:last-child {
+    color: #929292 !important;
+    font-weight: 400;
   }
 }
 
@@ -19,7 +20,17 @@ body {
 
 .el-row.title {
   font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.el-row.action {
   margin-bottom: 40px;
+}
+
+
+.el-cascader {
+  position: relative;
+  top: -1px;
 }
 
 h1 {
