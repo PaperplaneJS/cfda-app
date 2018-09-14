@@ -9,7 +9,7 @@
             </div>
 
             <template v-for="menuItem of menuWithRoutePath">
-              <el-menu-item v-if="!menuItem.group" :key="menuItem.id" :index="menuItem.url">
+              <el-menu-item v-if="!menuItem.group" :key="menuItem.id" :index="menuItem.path">
                 <i v-if="menuItem.icon" :class="menuItem.icon"></i>
                 <span slot="title">{{menuItem.label}}</span>
               </el-menu-item>
@@ -20,7 +20,7 @@
                   <span slot="title">{{menuItem.label}}</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item v-for="menuGroupItem of menuItem.group" :key="menuGroupItem.id" :index="menuGroupItem.url">
+                  <el-menu-item v-for="menuGroupItem of menuItem.group" :key="menuGroupItem.id" :index="menuGroupItem.path">
                     {{menuGroupItem.label}}
                   </el-menu-item>
                 </el-menu-item-group>
@@ -33,7 +33,7 @@
       </el-aside>
       <el-container>
         <el-header class="title" height="80px">
-          <span class="titletext">常熟市食药监局管理平台</span>
+          <span class="titletext">常熟市食品生产经营监管信息化平台</span>
           <div id="headmenu">
             <span>
               <el-button icon="el-icon-tickets" circle></el-button>
@@ -62,16 +62,17 @@
 
 <script>
 import { copy, uuid } from "@/components/utils.js";
-import menu from "@/components/menu.js";
+import menu from "@/menu.js";
+
 export default {
   name: "app",
+
   data() {
     return {
       currentMenuPath: null,
       visible: false,
       notice: this.$store.state.current.notice,
-      staff: this.$store.state.current.staff,
-      menu
+      staff: this.$store.state.current.staff
     };
   },
 
@@ -89,44 +90,25 @@ export default {
       let menuPath = "";
       let paths = urlPath.split("/").filter(t => t.trim().length > 0);
 
-      let match = this.menuWithRoutePath.find(m => m.path == paths[0]);
+      let match = this.menuWithRoutePath.find(m => m.url === paths[0]);
       if (match) {
         menuPath += `/${paths[0]}`;
       }
 
       if (match && match.group) {
-        let group = match.group.find(g => g.path == paths[1]);
+        let group = match.group.find(g => g.url == paths[1]);
         if (match) {
           menuPath += `/${paths[1]}`;
         }
       }
-      
+
       this.currentMenuPath = menuPath;
     }
   },
 
   computed: {
     menuWithRoutePath() {
-      let menuWithRoutePath = copy(this.menu);
-      let genPath = function(menuItem, basePath) {
-        let currentPath = `${basePath}/${menuItem.url}`;
-        if (menuItem.url.trim().length <= 0) {
-          currentPath = `${basePath}`;
-        }
-
-        Object.assign(menuItem, {
-          path: menuItem.url,
-          url: currentPath,
-          id: uuid(6, 16)
-        });
-
-        if (menuItem.group) {
-          menuItem.group.forEach(t => genPath(t, currentPath));
-        }
-      };
-
-      menuWithRoutePath.forEach(t => genPath(t, ""));
-      return menuWithRoutePath;
+      return menu.getMenuWithPath();
     }
   }
 };

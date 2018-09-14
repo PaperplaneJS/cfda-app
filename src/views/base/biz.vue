@@ -3,7 +3,7 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/biz">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">食品企业</el-breadcrumb-item>
+      <el-breadcrumb-item>食品企业</el-breadcrumb-item>
     </el-breadcrumb>
 
     <el-row class="title">食品企业管理</el-row>
