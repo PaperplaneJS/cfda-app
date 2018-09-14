@@ -121,7 +121,7 @@ export default {
 
   filters: {
     stateText(text) {
-      return text == 1 ? "激活" : "停用";
+      return text == 1 ? "开启" : "关闭";
     }
   },
 

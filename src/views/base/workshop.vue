@@ -37,8 +37,8 @@
 
       <el-col :span="3">
         <el-select size="small" v-model="search.state" clearable placeholder="状态">
-          <el-option label="激活" :value="1"></el-option>
-          <el-option label="停用" :value="2"></el-option>
+          <el-option label="开启" :value="1"></el-option>
+          <el-option label="关闭" :value="2"></el-option>
         </el-select>
       </el-col>
 
