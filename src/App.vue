@@ -29,8 +29,8 @@
 
           </el-menu>
         </el-col>
-
       </el-aside>
+
       <el-container>
         <el-header class="title" height="80px">
           <span class="titletext">常熟市食品生产经营监管信息化平台</span>
@@ -42,7 +42,7 @@
             </span>
 
             <el-popover placement="bottom" title="通知和消息" width="400" trigger="manual" v-model="visible">
-              <el-alert class="notice" v-for="item of notice" :key="item.id" :title="item.title" :type="item.type" :description="item.content" show-icon>
+              <el-alert @click.native="openNotice(item)" style="cursor:pointer;" class="notice" v-for="item of notice" :key="item.id" :title="item.title" :type="item.type" :description="item.content" show-icon>
               </el-alert>
               <el-badge icon="el-icon-bell" circle slot="reference" :max="99" :value="notice.length" class="item">
                 <el-button icon="el-icon-bell" circle @click="visible = !visible"></el-button>
@@ -91,6 +91,12 @@ export default {
     next();
   },
 
+  computed: {
+    menuWithRoutePath() {
+      return menu.getMenuWithPath();
+    }
+  },
+
   methods: {
     routePathChange(urlPath) {
       let menuPath = "";
@@ -109,12 +115,10 @@ export default {
       }
 
       this.currentMenuPath = menuPath;
-    }
-  },
+    },
 
-  computed: {
-    menuWithRoutePath() {
-      return menu.getMenuWithPath();
+    openNotice(notice) {
+      console.log(123);
     }
   }
 };

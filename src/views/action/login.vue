@@ -28,7 +28,7 @@
 
       <el-row>
         <el-col :push="16" :span="8">
-          <el-button style="width:100%;" size="small" type="primary" icon="el-icon-check">用户登录</el-button>
+          <el-button @click="$router.push('/index')" style="width:100%;" size="small" type="primary" icon="el-icon-check">用户登录</el-button>
         </el-col>
       </el-row>
     </div>
