@@ -96,8 +96,8 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils.js";
-import { count } from "@/components/count.js";
+import { copy } from "@/utils/utils.js";
+import { count } from "@/api/count.js";
 import echarts from "echarts";
 
 export default {

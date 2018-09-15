@@ -7,22 +7,33 @@
     </el-breadcrumb>
 
     <el-row class="title">计划查看与制定</el-row>
-
-    <el-row type="flex" :gutter="15">
+    <el-row class="action" :gutter="15">
       <el-col :span="2">
         <router-link to="list/new">
-          <el-button type="primary" size="small" icon="el-icon-plus">新建计划</el-button>
+          <el-button type="primary" size="small" icon="el-icon-plus">制定新的计划</el-button>
         </router-link>
       </el-col>
+    </el-row>
+
+    <el-row type="flex" :gutter="15">
       <el-col :span="6">
         <el-input clearable size="small" v-model="search.text" placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
+      </el-col>
+
+      <el-col :span="4">
+        <el-select size="small" clearable v-model="search.state" placeholder="按状态筛选">
+          <el-option label="待分发" :value="1"></el-option>
+          <el-option label="已分发" :value="2"></el-option>
+          <el-option label="执行中" :value="3"></el-option>
+          <el-option label="已完成" :value="4"></el-option>
+        </el-select>
       </el-col>
 
       <el-col :span="4">
         <el-select size="small" clearable v-model="search.kind" placeholder="按类别筛选">
           <el-option label="日常检查" value="daily"></el-option>
           <el-option label="专项检查" value="special"></el-option>
-          <el-option label="全量检查(风险评级)" value="risk"></el-option>
+          <el-option label="量化评级" value="risk"></el-option>
         </el-select>
       </el-col>
 
@@ -41,15 +52,15 @@
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" min-width="120px" sortable></el-table-column>
-          <el-table-column label="类别" sortable>
+          <el-table-column label="类别" align="center" sortable>
             <template slot-scope="scope">
-              <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
+              <el-tag :type="getKindType(scope.row.kind)" size="small">{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="staff" label="制定人" sortable></el-table-column>
           <el-table-column prop="department" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="date" label="制定时间"></el-table-column>
-          <el-table-column label="执行期限">
+          <el-table-column prop="date" label="制定日期" sortable align="center"></el-table-column>
+          <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
               <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
@@ -63,7 +74,7 @@
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column align="right" label="操作" min-width="100px">
+          <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
               <el-button @click="$router.push('list/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
@@ -74,7 +85,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="planTable.page" :page-size="planTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination @size-change="t=>planTable.pageSize=t" background :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
@@ -83,21 +94,25 @@
 <script>
 export default {
   name: "plan_list",
+  
   data() {
     return {
       search: {
         text: "",
         kind: "",
+        state: "",
         daterange: []
       },
       currentSearch: {
         text: "",
         kind: "",
+        state: "",
         daterange: []
       },
       planTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },
@@ -153,6 +168,10 @@ export default {
         tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
       }
 
+      if (this.currentSearch.state && this.currentSearch.state != "") {
+        tableData = tableData.filter(t => t.state === this.currentSearch.state);
+      }
+
       if (
         this.currentSearch.daterange &&
         (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
@@ -201,6 +220,7 @@ export default {
       this.search = {
         text: "",
         kind: "",
+        state: "",
         daterange: []
       };
       this.searchSubmit();
@@ -210,6 +230,17 @@ export default {
       return post.postdetail
         .map(t => this.$store.state.gridarea.findArea(t).name)
         .join("， ");
+    },
+
+    getKindType(kind) {
+      switch (kind) {
+        case "daily":
+          return "";
+        case "special":
+          return "warning";
+        default:
+          return "info";
+      }
     }
   }
 };

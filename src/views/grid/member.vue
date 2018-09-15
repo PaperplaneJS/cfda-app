@@ -7,6 +7,14 @@
     </el-breadcrumb>
 
     <el-row class="title">网格人员管理</el-row>
+    <el-row class="action" :gutter="15">
+      <el-col :span="4">
+        <router-link to="/grid/member">
+          <el-button type="primary" size="small" icon="el-icon-sort">对接同步人员信息</el-button>
+        </router-link>
+      </el-col>
+    </el-row>
+
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
         <el-input clearable size="small" v-model="search.text" placeholder="搜索姓名/岗位/单位名等" prefix-icon="el-icon-search"></el-input>
@@ -39,7 +47,12 @@
             </template>
           </el-table-column>
           <el-table-column prop="job" label="职务" sortable></el-table-column>
-          <el-table-column align="right" prop="action" label="操作" min-width="60px">
+          <el-table-column label="状态" align="center" sortabl>
+            <template slot-scope="scope">
+              <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="操作" min-width="60px">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('member/'+scope.row.id)" size="mini" type="primary">查看</el-button>
             </template>
@@ -49,7 +62,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="memberTable.page" :page-size="memberTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination @size-change="t=>memberTable.pageSize=t" background :current-page.sync="memberTable.page" :page-sizes="memberTable.pageSizes" :page-size="memberTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
@@ -58,6 +71,7 @@
 <script>
 export default {
   name: "grid_member",
+  
   data() {
     return {
       search: {
@@ -70,7 +84,8 @@ export default {
       },
       memberTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },
@@ -78,6 +93,9 @@ export default {
   filters: {
     sex(i) {
       return i == 1 ? "男" : "女";
+    },
+    stateText(state) {
+      return state == 1 ? "激活" : "停用";
     }
   },
 
@@ -118,6 +136,15 @@ export default {
   },
 
   methods: {
+    getStateType(state) {
+      switch (state) {
+        case 1:
+          return "success";
+        default:
+          return "danger";
+      }
+    },
+
     searchSubmit() {
       Object.assign(this.currentSearch, this.search);
     },

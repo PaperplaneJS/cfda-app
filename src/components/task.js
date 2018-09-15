@@ -14,17 +14,18 @@ export let task = [{
   recive: "2018-05-01 12:00",
   tasklist: [{
     id: "p5d2t1",
-    title: "食品生产场所检查任务",
+    title: "食品经营场所检查任务",
     limit: ["2018-05-15", "2018-06-15"],
     desc: "本任务请及时完成",
     date: "2018-05-15 8:20",
     progress: [2, 20],
+    checklist: ["3", "4", "5"],
     detail: [{
       id: "p5d2t1r1",
       bizid: "1",
       date: "2018-05-20 9:45",
-      num:"10000001",
-      yearcount:1,
+      num: "10000001",
+      yearcount: 1,
       staff: [{
         id: "11",
         department: "13"
@@ -222,8 +223,8 @@ export let task = [{
       id: "p5d2t1r2",
       bizid: "2",
       date: "2018-05-22 13:25",
-      num:"10000002",
-      yearcount:1,
+      num: "10000002",
+      yearcount: 1,
       staff: [{
         id: "11",
         department: "13"
@@ -444,6 +445,7 @@ export let task = [{
     desc: "本任务请及时完成",
     date: "2018-05-18 8:20",
     progress: [0, 18],
+    checklist: ["1", "2", "3", "4", "5"],
     detail: []
   }]
 }, {
@@ -452,17 +454,18 @@ export let task = [{
   recive: "2018-05-01 12:00",
   tasklist: [{
     id: "p4d2t1",
-    title: "食品生产单位企业专项检查",
+    title: "食品经营个体检查任务",
     limit: ["2018-05-15", "2018-06-15"],
     desc: "本任务请及时完成",
     date: "2018-05-15 8:20",
     progress: [2, 20],
+    checklist: ["3", "4", "5"],
     detail: [{
       id: "p4d2t1r1",
       bizid: "1",
       date: "2018-05-20 9:45",
-      num:"10000001",
-      yearcount:1,
+      num: "10000001",
+      yearcount: 1,
       staff: [{
         id: "11",
         department: "13"
@@ -660,8 +663,8 @@ export let task = [{
       id: "p4d2t1r2",
       bizid: "2",
       date: "2018-05-22 13:25",
-      num:"10000002",
-      yearcount:1,
+      num: "10000002",
+      yearcount: 1,
       staff: [{
         id: "11",
         department: "13"
@@ -882,6 +885,7 @@ export let task = [{
     desc: "本任务请及时完成",
     date: "2018-05-18 8:20",
     progress: [0, 18],
+    checklist: ["3", "4", "5"],
     detail: []
   }]
 }]

@@ -110,9 +110,10 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "plan_singleplan",
+
   data() {
     return {
       title: null,

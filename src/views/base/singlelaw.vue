@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "base_singlelaw",
   data() {

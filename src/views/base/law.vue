@@ -38,14 +38,14 @@
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="num" label="法令法规编号" sortable></el-table-column>
           <el-table-column prop="name" label="法令法规名称" min-width="250px" sortable></el-table-column>
-          <el-table-column prop="department" label="编发主体" sortable></el-table-column>
-          <el-table-column prop="date" label="创建日期" sortable></el-table-column>
-          <el-table-column label="状态" sortable>
+          <el-table-column prop="department" label="创建单位" sortable></el-table-column>
+          <el-table-column prop="date" label="创建日期" align="center" sortable></el-table-column>
+          <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
               <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state | stateText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column align="right" prop="action" label="操作" min-width="120px">
+          <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
               <el-button @click="$router.push('law/'+scope.row.id)" size="mini" type="primary">进入查看</el-button>
               <el-button size="mini" type="danger">删除</el-button>

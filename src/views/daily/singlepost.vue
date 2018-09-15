@@ -131,17 +131,18 @@
       </el-tab-pane>
 
       <el-tab-pane label="选择企业单位" name="biz">
-        <el-form label-position="left" style="margin-top:20px;" label-width="90px">
+        <el-form label-position="left" style="margin-top:10px;" label-width="90px">
+
+          <el-row style="margin-bottom:35px;">
+            <el-tag>
+              <strong>已选择 {{bizSelection?bizSelection.length:0}} 家企业单位</strong>
+            </el-tag>
+          </el-row>
 
           <el-row style="margin-bottom:20px;" :gutter="15">
             <el-col :span="16">
               <el-alert title="请在该次检查任务需检查/抽查的企业单位左侧的复选框打钩。选择完成后点击「确认任务分派」选项卡" type="info" :closable="false" show-icon>
               </el-alert>
-            </el-col>
-            <el-col :span="4">
-              <el-tag>
-                <strong>已选择{{bizSelection?bizSelection.length:0}}家企业单位</strong>
-              </el-tag>
             </el-col>
           </el-row>
 
@@ -150,25 +151,34 @@
               <el-input size="small" v-model="bizSearch.text" clearable placeholder="搜索单位名/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
             </el-col>
 
-            <el-col :span="3">
-              <el-select size="small" v-model="bizSearch.kind" clearable placeholder="选择类别">
-                <el-option value="食品销售">食品销售</el-option>
-                <el-option value="食品生产">食品生产</el-option>
-                <el-option value="餐饮服务">餐饮服务</el-option>
-                <el-option value="保健食品生产">保健食品生产</el-option>
-                <el-option value="小作坊">小作坊</el-option>
-              </el-select>
-            </el-col>
-
-            <el-col :span="3">
-              <el-select size="small" v-model="bizSearch.state" clearable placeholder="选择状态">
-                <el-option label="激活" :value="1"></el-option>
-                <el-option label="停用" :value="2"></el-option>
-              </el-select>
-            </el-col>
-
-            <el-col :span="5">
+            <el-col :span="4">
               <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="bizSearch.grid" :options="$store.state.gridarea.gridarea" placeholder="按网格筛选" change-on-select></el-cascader>
+            </el-col>
+
+            <el-col :span="3">
+              <el-select size="small" v-model="bizSearch.kind" clearable placeholder="类别">
+                <el-option value="食品经营">食品经营</el-option>
+                <el-option value="餐饮服务">餐饮服务</el-option>
+                <el-option value="食品小作坊">食品小作坊</el-option>
+                <el-option value="网上商家">网上商家</el-option>
+              </el-select>
+            </el-col>
+
+            <el-col :span="3">
+              <el-select size="small" v-model="bizSearch.category" clearable placeholder="经营种类">
+                <el-option label="餐馆" value="餐馆"></el-option>
+                <el-option label="快餐店" value="快餐店"></el-option>
+                <el-option label="小吃店" value="小吃店"></el-option>
+                <el-option label="饮品店" value="饮品店"></el-option>
+                <el-option label="食堂" value="食堂"></el-option>
+              </el-select>
+            </el-col>
+
+            <el-col :span="3">
+              <el-select size="small" v-model="bizSearch.state" clearable placeholder="状态">
+                <el-option label="正常" :value="1"></el-option>
+                <el-option label="关闭" :value="2"></el-option>
+              </el-select>
             </el-col>
 
             <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
@@ -206,8 +216,8 @@
             </el-col>
           </el-row>
 
-          <el-row style="margin-top:20px;">
-            <el-pagination :current-page.sync="bizTable.page" :page-size="bizTable.pageSize" background layout="total, prev, pager, next" :total="bizTableData.length">
+          <el-row style="margin-top:10px;">
+            <el-pagination background @size-change="t=>bizTableData.pageSize=t" :current-page.sync="bizTableData.page" :page-sizes="bizTableData.pageSizes" :page-size="bizTableData.pageSize" layout="total, prev, pager, next, sizes" :total="bizPageData.length">
             </el-pagination>
           </el-row>
 
@@ -216,40 +226,6 @@
 
       <el-tab-pane label="确认任务分派" name="confirm">
         <el-form label-position="left" label-width="100px">
-
-          <el-row :gutter="15">
-            <el-col :span="16">
-              <el-form-item label="任务标题：">
-                <el-input disabled v-model="currentTask.title"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="15">
-            <el-col :span="10">
-              <el-form-item label="执行期限：">
-                <el-date-picker v-model="currentTask.limit" type="daterange" range-separator="至" disabled>
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="15">
-            <el-col :span="16">
-              <el-form-item label="详细描述：">
-                <el-input v-model="currentTask.desc" resize="none" disabled :rows="4" type="textarea"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="15">
-            <el-col :span="8">
-              <el-form-item label="分派时间：">
-                <el-date-picker type="datetime" disabled v-model="currentTask.date"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
           <el-row :gutter="15">
             <el-col :span="20">
               <el-form-item label="分派情况：">
@@ -270,9 +246,10 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "daily_singleplan",
+  
   data() {
     return {
       title: null,
@@ -288,24 +265,27 @@ export default {
         text: "",
         kind: "",
         state: "",
+        category: "",
         grid: []
       },
       currentBizSearch: {
         text: "",
         kind: "",
         state: "",
+        category: "",
         grid: []
       },
       bizTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },
 
   filters: {
     bizStateText(text) {
-      return text == 1 ? "激活" : "注销";
+      return text == 1 ? "正常" : "关闭";
     }
   },
 
@@ -340,6 +320,15 @@ export default {
       if (this.currentBizSearch.kind && this.currentBizSearch.kind != "") {
         bizTableData = bizTableData.filter(
           t => t.kind === this.currentBizSearch.kind
+        );
+      }
+
+      if (
+        this.currentBizSearch.category &&
+        this.currentBizSearch.category != ""
+      ) {
+        bizTableData = bizTableData.filter(
+          t => t.category === this.currentBizSearch.category
         );
       }
 
@@ -413,6 +402,7 @@ export default {
         text: "",
         kind: "",
         state: "",
+        category: "",
         grid: []
       };
       this.bizSearchSubmit();

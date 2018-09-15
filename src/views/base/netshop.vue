@@ -72,12 +72,12 @@
               <el-tag size="small" v-else>暂无许可证</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="状态" sortable>
+          <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
               <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column align="right" prop="action" label="操作" min-width="120px">
+          <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('netshop/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
@@ -88,7 +88,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination background :current-page.sync="bizTable.page" :page-sizes="bizTable.pageSizes" :page-size="bizTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
+      <el-pagination @size-change="t=>bizTable.pageSize=t" background :current-page.sync="bizTable.page" :page-sizes="bizTable.pageSizes" :page-size="bizTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>

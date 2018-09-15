@@ -62,9 +62,10 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "sms_singlesms",
+
   data() {
     return {
       title: null,

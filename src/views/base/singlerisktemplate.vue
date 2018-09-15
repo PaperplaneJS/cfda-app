@@ -313,7 +313,7 @@
 </template>
 
 <script>
-import { uuid, copy } from "@/components/utils";
+import { uuid, copy } from "@/utils/utils.js";
 export default {
   name: "base_singlerisktemplate",
   data() {

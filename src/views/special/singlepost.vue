@@ -139,7 +139,13 @@
       </el-tab-pane>
 
       <el-tab-pane label="选择企业单位" name="biz">
-        <el-form label-position="left" style="margin-top:20px;" label-width="90px">
+        <el-form label-position="left" style="margin-top:10px;" label-width="90px">
+
+          <el-row style="margin-bottom:35px;">
+            <el-tag>
+              <strong>已选择 {{bizSelection?bizSelection.length:0}} 家企业单位</strong>
+            </el-tag>
+          </el-row>
 
           <el-row style="margin-bottom:20px;" :gutter="15">
             <el-col :span="14">
@@ -154,12 +160,21 @@
             </el-col>
 
             <el-col :span="3">
-              <el-select size="small" v-model="bizSearch.kind" clearable placeholder="选择类别">
-                <el-option value="食品销售">食品销售</el-option>
-                <el-option value="食品生产">食品生产</el-option>
+              <el-select size="small" v-model="bizSearch.kind" clearable placeholder="类别">
+                <el-option value="食品经营">食品经营</el-option>
                 <el-option value="餐饮服务">餐饮服务</el-option>
-                <el-option value="保健食品生产">保健食品生产</el-option>
-                <el-option value="小作坊">小作坊</el-option>
+                <el-option value="食品小作坊">食品小作坊</el-option>
+                <el-option value="网上商家">网上商家</el-option>
+              </el-select>
+            </el-col>
+
+            <el-col :span="3">
+              <el-select size="small" v-model="bizSearch.category" clearable placeholder="经营种类">
+                <el-option label="餐馆" value="餐馆"></el-option>
+                <el-option label="快餐店" value="快餐店"></el-option>
+                <el-option label="小吃店" value="小吃店"></el-option>
+                <el-option label="饮品店" value="饮品店"></el-option>
+                <el-option label="食堂" value="食堂"></el-option>
               </el-select>
             </el-col>
 
@@ -209,8 +224,8 @@
             </el-col>
           </el-row>
 
-          <el-row style="margin-top:20px;">
-            <el-pagination :current-page.sync="bizTable.page" :page-size="bizTable.pageSize" background layout="total, prev, pager, next" :total="bizTableData.length">
+          <el-row style="margin-top:10px;">
+            <el-pagination background @size-change="t=>bizTableData.pageSize=t" :current-page.sync="bizTableData.page" :page-sizes="bizTableData.pageSizes" :page-size="bizTableData.pageSize" layout="total, prev, pager, next, sizes" :total="bizPageData.length">
             </el-pagination>
           </el-row>
 
@@ -280,39 +295,6 @@
         <el-form label-position="left" label-width="100px">
 
           <el-row :gutter="15">
-            <el-col :span="16">
-              <el-form-item label="任务标题：">
-                <el-input disabled v-model="currentTask.title"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="15">
-            <el-col :span="10">
-              <el-form-item label="执行期限：">
-                <el-date-picker v-model="currentTask.limit" type="daterange" range-separator="至" disabled>
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="15">
-            <el-col :span="16">
-              <el-form-item label="详细描述：">
-                <el-input v-model="currentTask.desc" resize="none" disabled :rows="4" type="textarea"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="15">
-            <el-col :span="8">
-              <el-form-item label="分派时间：">
-                <el-date-picker type="datetime" disabled v-model="currentTask.date"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="15">
             <el-col :span="20">
               <el-form-item label="分派情况：">
                 <el-table :data="confirmData" :row-key="'id'" size="medium" border style="width: 100%;">
@@ -339,9 +321,10 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "special_singleplan",
+
   data() {
     return {
       title: null,
@@ -359,24 +342,27 @@ export default {
         text: "",
         kind: "",
         state: "",
-        grid: []
+        grid: [],
+        category: ""
       },
       currentBizSearch: {
         text: "",
         kind: "",
         state: "",
-        grid: []
+        grid: [],
+        category: ""
       },
       bizTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },
 
   filters: {
     bizStateText(text) {
-      return text == 1 ? "激活" : "注销";
+      return text == 1 ? "正常" : "关闭";
     }
   },
 
@@ -411,6 +397,15 @@ export default {
       if (this.currentBizSearch.kind && this.currentBizSearch.kind != "") {
         bizTableData = bizTableData.filter(
           t => t.kind === this.currentBizSearch.kind
+        );
+      }
+
+      if (
+        this.currentBizSearch.category &&
+        this.currentBizSearch.category != ""
+      ) {
+        bizTableData = bizTableData.filter(
+          t => t.category === this.currentBizSearch.category
         );
       }
 
@@ -530,7 +525,8 @@ export default {
         text: "",
         kind: "",
         state: "",
-        grid: []
+        grid: [],
+        category: ""
       };
       this.bizSearchSubmit();
     },

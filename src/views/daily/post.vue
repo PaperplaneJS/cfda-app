@@ -6,15 +6,15 @@
       <el-breadcrumb-item>任务分派</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">任务分派</el-row>
+    <el-row class="title action">任务分派</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
         <el-input size="small" v-model="search.text" clearable placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
-      <el-col :span="3">
-        <el-select size="small" v-model="search.state" clearable placeholder="选择状态">
+      <el-col :span="4">
+        <el-select size="small" v-model="search.state" clearable placeholder="按状态筛选">
           <el-option label="未分派任务" :value="2"></el-option>
           <el-option label="已分派任务" :value="3"></el-option>
         </el-select>
@@ -35,15 +35,15 @@
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" min-width="160px" sortable></el-table-column>
-          <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
+          <el-table-column prop="staff" label="制定人" sortable></el-table-column>
           <el-table-column prop="department" label="制定单位" sortable></el-table-column>
-          <el-table-column label="执行期限">
+          <el-table-column prop="post" label="接收日期" sortable align="center"></el-table-column>
+          <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
               <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="post" label="下发日期"></el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
               <el-tag size="small">{{originTask(scope.row)?`已分派${originTask(scope.row)}任务`:'待分派'}}</el-tag>
@@ -60,7 +60,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="planTable.page" :page-size="planTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background @size-change="t=>planTable.pageSize=t" :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
@@ -69,6 +69,7 @@
 <script>
 export default {
   name: "daily_post",
+  
   data() {
     return {
       search: {
@@ -83,7 +84,8 @@ export default {
       },
       planTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

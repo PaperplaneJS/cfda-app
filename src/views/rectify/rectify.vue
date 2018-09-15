@@ -5,10 +5,10 @@
       <el-breadcrumb-item to="/rectify">行政处罚</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">行政处罚</el-row>
+    <el-row class="title action">行政处罚</el-row>
 
     <el-row type="flex" :gutter="15">
-      <el-col :span="4">
+      <el-col :span="6">
         <el-input v-model="search.text" size="small" clearable placeholder="搜索单位名称/区域/评定单位人员等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
@@ -34,7 +34,16 @@
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%;margin-bottom:20px;">
           <el-table-column prop="biz.name" label="单位名称" sortable></el-table-column>
-          <el-table-column prop="task.date" label="检查时间" sortable></el-table-column>
+          <el-table-column label="检查计划任务">
+            <template slot-scope="scope">
+              <div>
+                <el-tag size="mini">计划：{{scope.row.plan.title | textLong}}</el-tag>
+              </div>
+              <div>
+                <el-tag size="mini">任务：{{scope.row.taskItem.title | textLong}}</el-tag>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label="执法人员" sortable>
             <template slot-scope="scope">
               <div>
@@ -45,17 +54,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="所属检查计划任务">
-            <template slot-scope="scope">
-              <div>
-                <el-tag size="mini">计划：{{scope.row.plan.title | textLong}}</el-tag>
-              </div>
-              <div>
-                <el-tag size="mini">任务：{{scope.row.taskItem.title | textLong}}</el-tag>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="date" label="行政处罚时间" sortable></el-table-column>
+          <el-table-column prop="task.date" label="检查日期" align="center" sortable></el-table-column>
           <el-table-column label="检查结果">
             <template slot-scope="scope">
               <el-tag :type="getResultType(scope.row.task.result)" size="small">{{scope.row.task.result}}</el-tag>
@@ -66,9 +65,10 @@
               <el-tag :type="getResultType(scope.row.task.handle)" size="small">{{scope.row.task.handle}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column align="right" label="操作">
+          <el-table-column prop="date" label="处罚日期" align="center" sortable></el-table-column>
+          <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('rectify/'+scope.row.id)" size="mini" type="primary">进入查看</el-button>
+              <el-button @click.native="$router.push('rectify/'+scope.row.id)" size="mini" type="primary">查看详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -76,14 +76,14 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="rectifyTable.page" :page-size="rectifyTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background @size-change="t=>rectifyTable.pageSize=t" :current-page.sync="rectifyTable.page" :page-sizes="rectifyTable.pageSizes" :page-size="rectifyTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "rectify_rectify",
 
@@ -101,7 +101,8 @@ export default {
       },
       rectifyTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

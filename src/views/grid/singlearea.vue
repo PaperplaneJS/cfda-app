@@ -41,7 +41,7 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="所属层级:" required>
-            <el-cascader :disabled="!edit" :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentArea.lv" :options="$store.state.gridarea.gridarea" placeholder="选择网格所属层级" change-on-select></el-cascader>
+            <el-cascader :disabled="!edit" :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentArea.lv" :options="$store.state.gridarea.gridarea" placeholder="选择网格属于的层级" change-on-select></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
@@ -62,9 +62,10 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "grid_singlearea",
+
   data() {
     return {
       title: null,

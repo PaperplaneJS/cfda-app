@@ -6,7 +6,7 @@
       <el-breadcrumb-item>检查报告</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">日常检查报告</el-row>
+    <el-row class="title action">日常检查报告</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
@@ -28,17 +28,13 @@
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="title" label="计划标题" min-width="140px" sortable></el-table-column>
-          <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
-          <el-table-column prop="task.recive" label="接受时间" sortable></el-table-column>
-          <el-table-column label="执行期限" width="140px">
+          <el-table-column prop="staff" label="制定人" sortable></el-table-column>
+          <el-table-column prop="department" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="task.recive" label="接收日期" align="center" sortable></el-table-column>
+          <el-table-column label="执行期限" align="center" width="140px">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
               <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="任务" width="80px" sortable>
-            <template slot-scope="scope">
-              <el-tag size="mini">{{scope.row.task.tasklist.length}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="状态与进度">
@@ -53,11 +49,11 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column align="right" label="操作" min-width="60px">
+          <el-table-column align="center" label="操作" min-width="60px">
             <template slot-scope="scope">
               <el-dropdown>
                 <el-button size="mini" type="primary">
-                  查看记录
+                  选择任务
                   <i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
@@ -73,16 +69,17 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="planTable.page" :page-size="planTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background @size-change="t=>planTable.pageSize=t" :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "daily_report",
+  
   data() {
     return {
       search: {
@@ -95,7 +92,8 @@ export default {
       },
       planTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

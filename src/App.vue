@@ -34,10 +34,13 @@
       <el-container>
         <el-header class="title" height="80px">
           <span class="titletext">常熟市食品生产经营监管信息化平台</span>
+
           <div id="headmenu">
+
             <span>
               <el-button icon="el-icon-tickets" circle></el-button>
             </span>
+
             <el-popover placement="bottom" title="通知和消息" width="400" trigger="manual" v-model="visible">
               <el-alert class="notice" v-for="item of notice" :key="item.id" :title="item.title" :type="item.type" :description="item.content" show-icon>
               </el-alert>
@@ -45,15 +48,18 @@
                 <el-button icon="el-icon-bell" circle @click="visible = !visible"></el-button>
               </el-badge>
             </el-popover>
+
             <span>
               <el-button round>{{staff.name}}</el-button>
             </span>
 
           </div>
         </el-header>
+
         <el-main class="main">
           <router-view></router-view>
         </el-main>
+
       </el-container>
     </el-container>
   </div>
@@ -61,7 +67,7 @@
 </template>
 
 <script>
-import { copy, uuid } from "@/components/utils.js";
+import { copy, uuid } from "@/utils/utils.js";
 import menu from "@/menu.js";
 
 export default {
@@ -95,7 +101,7 @@ export default {
         menuPath += `/${paths[0]}`;
       }
 
-      if (match && match.group) {
+      if (match && match.group && paths[1]) {
         let group = match.group.find(g => g.url == paths[1]);
         if (match) {
           menuPath += `/${paths[1]}`;

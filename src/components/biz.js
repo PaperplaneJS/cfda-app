@@ -28,7 +28,7 @@ export let biz = [{
     responsible: "王华",
     address: "方塔街琴川农贸市场北门方桥头转弯弄堂言子桥16号",
     productaddr: "方塔街琴川农贸市场北门方桥头转弯弄堂言子桥16号",
-    foodkind: "小吃店",
+    foodkind: "点心类（简易包装）",
     issue: "虞山街道办",
     licenceissue: "2017-11-10",
     licenceuntil: "2019-11-10"

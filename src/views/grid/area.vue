@@ -7,20 +7,27 @@
     </el-breadcrumb>
 
     <el-row class="title">网格区域</el-row>
-
-    <el-row type="flex" :gutter="15">
+    <el-row class="action" :gutter="15">
       <el-col :span="3">
         <router-link to="area/new">
-          <el-button type="primary" size="small" icon="el-icon-plus">新建网格区域</el-button>
+          <el-button style="width:100%;" type="primary" size="small" icon="el-icon-plus">新建网格区域</el-button>
         </router-link>
       </el-col>
+      <el-col :span="3">
+        <router-link to="area/new">
+          <el-button style="width:100%;" type="primary" size="small" icon="el-icon-sort">对接同步网格信息</el-button>
+        </router-link>
+      </el-col>
+    </el-row>
+
+    <el-row type="flex" :gutter="15">
       <el-col :span="6">
         <el-input clearable v-model="search.text" size="small" placeholder="搜索网格名称/代码等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
       <el-col :span="3">
         <el-select v-model="search.state" size="small" clearable placeholder="按状态筛选">
-          <el-option label="正常" :value="1"></el-option>
+          <el-option label="激活" :value="1"></el-option>
           <el-option label="停用" :value="0"></el-option>
         </el-select>
       </el-col>
@@ -36,12 +43,12 @@
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="code" label="主体代码" sortable></el-table-column>
           <el-table-column prop="name" label="网格化主体名称" sortable></el-table-column>
-          <el-table-column label="状态" sortabl>
+          <el-table-column label="状态" align="center" sortabl>
             <template slot-scope="scope">
               <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column align="right" prop="action" label="操作" min-width="100">
+          <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('area/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
@@ -52,7 +59,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="areaTable.page" :page-size="areaTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination @size-change="t=>areaTable.pageSize=t" background :current-page.sync="areaTable.page" :page-sizes="areaTable.pageSizes" :page-size="areaTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
@@ -61,6 +68,7 @@
 <script>
 export default {
   name: "grid_area",
+  
   data() {
     return {
       search: {
@@ -73,7 +81,8 @@ export default {
       },
       areaTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

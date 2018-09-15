@@ -4,6 +4,8 @@ import Router from 'vue-router';
 import App from '@/app';
 import Index from '@/views/index';
 
+import ActionLogin from '@/views/action/login';
+
 import BaseBiz from '@/views/base/biz';
 import BaseWorkshop from '@/views/base/workshop';
 import BaseNetshop from '@/views/base/netshop';
@@ -69,6 +71,14 @@ let routes = [{
     path: '/',
     redirect: '/index'
   },
+  
+  //用户登录
+
+  {
+    path: '/login',
+    component: ActionLogin
+  },
+
   {
     path: '/index',
     component: App,

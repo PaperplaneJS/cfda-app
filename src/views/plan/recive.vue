@@ -6,32 +6,32 @@
       <el-breadcrumb-item>计划接收</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">计划接收</el-row>
+    <el-row class="title action">计划接收</el-row>
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" sortable min-width="180px"></el-table-column>
-          <el-table-column label="计划类别" sortable>
+          <el-table-column label="计划类别" align="center" sortable>
             <template slot-scope="scope">
               <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
           <el-table-column prop="department" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="post" label="下发时间"></el-table-column>
-          <el-table-column label="执行期限">
+          <el-table-column prop="post" label="下发日期" sortable align="center"></el-table-column>
+          <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
               <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="状态" sortable>
+          <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
               <el-tag size="small" :type="getPlanType(scope.row.state)">{{scope.row.state | planStateText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column align="right" label="操作">
+          <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button @click.native="recivePlan(scope.row)" size="mini" type="primary">查看和接收</el-button>
             </template>
@@ -41,7 +41,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="planTable.page" :page-size="planTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background @size-change="t=>planTable.pageSize=t" :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
 
@@ -104,9 +104,9 @@
         </el-row>
 
         <el-row :gutter="15">
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="执行期限:">
-              <el-date-picker v-model="popupItem.limit" disabled type="daterange" range-separator="至">
+              <el-date-picker style="width:100%;" v-model="popupItem.limit" disabled type="daterange" range-separator="至">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -132,13 +132,15 @@
 <script>
 export default {
   name: "plan_recive",
+  
   data() {
     return {
       isPopup: false,
       popupItem: null,
       planTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

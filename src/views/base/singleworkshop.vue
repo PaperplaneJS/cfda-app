@@ -105,67 +105,46 @@
 
           <el-row :gutter="15">
             <el-col :span="16">
-              <el-form-item label="许可证：">
-                <el-checkbox v-model="hasLicence" @change="licenceToggle" label="有许可证" border></el-checkbox>
+              <el-form-item label="登记证证：">
+                <el-checkbox v-model="hasLicence" @change="licenceToggle" label="有食品小作坊登记证" border></el-checkbox>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="15">
             <el-col :span="16">
-              <el-alert show-icon title="如果该小作坊单位有许可证信息，那么勾选上面的「有许可证」复选框，然后在「许可信息」一页输入其许可证内容" type="info">
+              <el-alert show-icon title="如果该小作坊单位有小作坊登记证，那么勾选上面的「有小作坊登记证」复选框，然后在「证书信息」一页输入其证书内容" type="info">
               </el-alert>
             </el-col>
           </el-row>
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane v-if="currentBizInfo.licence" label="许可信息" name="licence">
+      <el-tab-pane v-if="currentBizInfo.licence" label="小作坊登记证" name="licence">
 
-        <el-form :rules="licenceRules" ref="currentBizInfo.licence" :disabled="!edit" :model="currentBizInfo.licence" label-position="left" style="margin-top:20px;" label-width="130px">
+        <el-form :rules="licenceRules" ref="currentBizInfo.licence" :disabled="!edit" :model="currentBizInfo.licence" label-position="left" style="margin-top:20px;" label-width="170px">
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="name" label="生产者名称:" required>
-                <el-input v-model="currentBizInfo.licence.name" placeholder="请输入生产者名称"></el-input>
+              <el-form-item prop="name" label="作坊名称:" required>
+                <el-input v-model="currentBizInfo.licence.name" placeholder="请输入作坊名称"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item prop="num" label="许可证号:" required>
-                <el-input v-model="currentBizInfo.licence.num" placeholder="请输许可证号"></el-input>
+              <el-form-item prop="num" label="证书编号:" required>
+                <el-input v-model="currentBizInfo.licence.num" placeholder="请输入证书编号"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="responsible" label="法定代理人:" required>
+              <el-form-item prop="responsible" label="经营者姓名:" required>
                 <el-input v-model="currentBizInfo.licence.responsible" placeholder="法定代理人或负责人"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item prop="supervise" label="日常监管机构:" required>
-                <el-input v-model="currentBizInfo.licence.supervise" placeholder="日常监管机构名称"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item prop="socialcode" label="社会信用代码:">
-                <el-input v-model="currentBizInfo.licence.socialcode" placeholder="请输入社会信用代码"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item prop="superviser" label="日常监管人员:" required>
-                <el-input v-model="currentBizInfo.licence.superviser" placeholder="日常监管人员名"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="16">
-              <el-form-item prop="address" label="住所:">
-                <el-input v-model="currentBizInfo.licence.address" placeholder="请输入许可证的住所信息"></el-input>
+              <el-form-item prop="socialcode" label="社会信用代码/身份证号:">
+                <el-input v-model="currentBizInfo.licence.socialcode" placeholder="输入社会信用代码或身份证号"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -180,8 +159,8 @@
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="foodkind" label="类别:" required>
-                <el-input v-model="currentBizInfo.licence.foodkind" placeholder="输入食品类别"></el-input>
+              <el-form-item prop="foodkind" label="食品类别/包装形式:" required>
+                <el-input v-model="currentBizInfo.licence.foodkind" placeholder="输入食品类别和包装形式"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -229,7 +208,7 @@
         </el-row>
       </el-tab-pane>
 
-      <el-tab-pane v-if="!isNew" label="量化评级" name="risk">
+      <el-tab-pane v-if="!isNew" label="量化评级记录" name="risk">
         <el-row>
           <el-col :span="24">
             <el-table :data="getRiskRecord()" size="medium" style="width: 100%;margin-bottom:25px;">
@@ -291,7 +270,7 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "base_singleworkshop",
   data() {
@@ -420,6 +399,7 @@ export default {
       this.currentBizInfo.licence = copy(this.originBizInfo.licence);
       this.hasLicence = this.currentBizInfo.licence !== null;
       this.edit = false;
+      this.tab = "base";
     },
 
     licenceToggle(val) {

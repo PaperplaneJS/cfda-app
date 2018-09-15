@@ -8,14 +8,18 @@
       <el-breadcrumb-item>{{title}} (任务)</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{title}}</el-row>
+    <el-row class="title action">{{title}}</el-row>
 
     <el-row type="flex" :gutter="15">
+      <el-col :span="3">
+        <el-checkbox size="small" v-model="currentSearch.onlychecked" label="只显示已检查的" border></el-checkbox>
+      </el-col>
+
       <el-col :span="6">
         <el-input v-model="search.text" size="small" clearable placeholder="搜索单位名称/结果等" prefix-icon="el-icon-search"></el-input>
       </el-col>
 
-      <el-select size="small" v-model="search.kind" clearable placeholder="筛选结果类别">
+      <el-select size="small" v-model="search.kind" clearable placeholder="按检查结果筛选">
         <el-option value="符合">符合</el-option>
         <el-option value="基本符合">基本符合</el-option>
         <el-option value="不符合">不符合</el-option>
@@ -34,34 +38,34 @@
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="pageData" size="medium" style="width: 100%;margin-bottom:20px;">
+        <el-table :data="pageData" :row-class-name="tableRowClassName" size="medium" style="width: 100%;margin-bottom:20px;">
           <el-table-column prop="bizname" label="单位名称" min-width="180px" sortable></el-table-column>
           <el-table-column label="执法人员" sortable>
             <template slot-scope="scope">
-              <div>主检查人：
+              <div v-if="scope.row.staffinfo">主检查人：
                 <el-tag size="mini">{{scope.row.staffinfo[0]}}</el-tag>
               </div>
-              <div>协同检查：
+              <div v-if="scope.row.staffinfo">协同检查：
                 <el-tag size="mini">{{scope.row.staffinfo[1]}}</el-tag>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="date" label="检查时间" sortable></el-table-column>
-          <el-table-column label="检查结果">
+          <el-table-column prop="date" label="检查日期" align="center" sortable></el-table-column>
+          <el-table-column align="center" label="检查结果">
             <template slot-scope="scope">
-              <el-tag size="small" :type="getResultType(scope.row.result)">{{scope.row.result}}</el-tag>
+              <el-tag v-if="scope.row.result" size="small" :type="getResultType(scope.row.result)">{{scope.row.result}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="处理方式">
+          <el-table-column align="center" label="处理方式">
             <template slot-scope="scope">
-              <el-tag size="small" :type="getResultType(scope.row.handle)">{{scope.row.handle}}</el-tag>
+              <el-tag v-if="scope.row.handle" size="small" :type="getResultType(scope.row.handle)">{{scope.row.handle}}</el-tag>
             </template>
           </el-table-column>
 
-          <el-table-column align="right" prop="action" label="操作" min-width="100px">
+          <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看记录</el-button>
-              <el-button size="mini" type="danger">删除</el-button>
+              <el-button v-if="!scope.row.notchecked" @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看记录</el-button>
+              <el-button v-if="!scope.row.notchecked" size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -69,16 +73,17 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="taskDetailTable.page" :page-size="taskDetailTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background @size-change="t=>taskDetailTable.pageSize=t" :current-page.sync="taskDetailTable.page" :page-sizes="taskDetailTable.pageSizes" :page-size="taskDetailTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy, uuid } from "@/utils/utils.js";
 export default {
   name: "daily_monitorlist",
+  
   data() {
     return {
       title: null,
@@ -93,11 +98,13 @@ export default {
       currentSearch: {
         text: "",
         daterange: [],
-        kind: ""
+        kind: "",
+        onlychecked: true
       },
       taskDetailTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },
@@ -118,6 +125,16 @@ export default {
             .name
         ];
       });
+
+      if (!this.currentSearch.onlychecked) {
+        this.currentTask.checklist.forEach(t => {
+          tableData.push({
+            id: uuid(6, 16),
+            bizname: this.$store.state.biz.find(biz => biz.id == t).name,
+            notchecked: true
+          });
+        });
+      }
 
       if (
         this.currentSearch.text &&
@@ -192,6 +209,13 @@ export default {
       this.searchSubmit();
     },
 
+    tableRowClassName({ row }) {
+      if (row.notchecked) {
+        return "notchecked";
+      }
+      return "";
+    },
+
     getResultType(text) {
       switch (text) {
         case "符合":
@@ -210,3 +234,11 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+#daily_monitorlist {
+  .notchecked {
+    background: #f0f9eb !important;
+  }
+}
+</style>

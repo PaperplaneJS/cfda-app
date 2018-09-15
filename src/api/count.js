@@ -1,5 +1,7 @@
 export let count = {
+  // 增长情况（按行业）
   "increaseKind": {
+    color: ["#00D7B7", "#2CABFF", "#FCB22D"],
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -43,6 +45,7 @@ export let count = {
     ]
   },
 
+  // 增长情况（按地区）
   "increaseArea": {
     tooltip: {
       trigger: "axis",
@@ -79,20 +82,13 @@ export let count = {
     },
     series: [{
       data: [37, 23, 10, 12, 9, 27, 15, 10, 20],
-      type: "bar",
-      itemStyle: {
-        normal: {
-          label: {
-            show: true,
-            formatter: "{c}"
-          }
-        }
-      }
+      type: "bar"
     }]
   },
 
+  // 日常检查覆盖率
   "coverDaily": {
-    color: ["#DA2625"],
+    color: ["#2CABFF"],
     tooltip: {
       trigger: "axis",
       formatter: "{c}%",
@@ -147,8 +143,9 @@ export let count = {
     }]
   },
 
+  // 量化评级覆盖率
   "coverRisk": {
-    color: ["#6600FF"],
+    color: ["#00D7B7"],
     tooltip: {
       trigger: "axis",
       formatter: "{c}%",
@@ -203,7 +200,9 @@ export let count = {
     }]
   },
 
+  // 企业个数（按地区）
   "bizCountArea": {
+    color:["#00D7B7","#2CABFF","#FCB22D"],
     legend: {
       data: ["食品经营", "食品小作坊", "网上商家"]
     },
@@ -261,7 +260,9 @@ export let count = {
     ]
   },
 
+  // 企业个数（按行业）
   "bizCountKind": {
+    color: ["#00D7B7", "#2CABFF", "#FCB22D"],
     tooltip: {
       trigger: "item",
       formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -294,7 +295,9 @@ export let count = {
     }]
   },
 
+  // 企业个数（详情行业）
   "bizCountDetail": {
+    color:["#1EA9FF","#FEB309","#00D8B7","#FF7F4C","#73F5B8","#63CA87","#9D7AF4","#F3978D","#5E8AF2"],
     tooltip: {
       trigger: "item",
       formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -345,7 +348,9 @@ export let count = {
     }]
   },
 
+  // 检查汇总统计（合格率）
   "resultQualified": {
+    color:["#FF2510","#3B6F97","#4CDDF2","#FF9164","#7FFEC4","#5BD085","#FF9E03","#E5A28D","#898B97"],
     tooltip: {
       trigger: "axis"
     },
@@ -430,7 +435,9 @@ export let count = {
     ]
   },
 
+  // 检查汇总统计（检查次数）
   "resultCheck": {
+    color:["#FF2510","#3B6F97","#4CDDF2","#FF9164","#7FFEC4","#5BD085","#FF9E03","#E5A28D","#898B97"],
     tooltip: {
       trigger: "axis"
     },
@@ -514,7 +521,9 @@ export let count = {
     ]
   },
 
+  // 检查汇总统计（不合格）
   "resultUnqualified": {
+    color: ["#00D7B7", "#2CABFF", "#FCB22D"],
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -552,49 +561,26 @@ export let count = {
         data: [14, 6, 8, 11, 6, 5, 7, 2, 8],
         type: "bar",
         stack: "总计",
-        barWidth: 50,
-        itemStyle: {
-          normal: {
-            label: {
-              show: true,
-              formatter: "{c}"
-            }
-          }
-        }
+        barWidth: 50
       },
       {
         name: "食品小作坊",
         data: [10, 5, 3, 8, 7, 2, 11, 2, 4],
         type: "bar",
         stack: "总计",
-        barWidth: 50,
-        itemStyle: {
-          normal: {
-            label: {
-              show: true,
-              formatter: "{c}"
-            }
-          }
-        }
+        barWidth: 50
       },
       {
         name: "网上商家",
         data: [6, 7, 2, 3, 5, 7, 6, 6, 4],
         type: "bar",
         stack: "总计",
-        barWidth: 50,
-        itemStyle: {
-          normal: {
-            label: {
-              show: true,
-              formatter: "{c}"
-            }
-          }
-        }
+        barWidth: 50
       }
     ]
   },
 
+  // 本月检查结果（按地区）
   "monthArea": {
     color: ["#0099FF"],
     tooltip: {
@@ -651,8 +637,9 @@ export let count = {
     }]
   },
 
+  // 本月检查结果（按行业）
   "monthKind": {
-    color: ["#00365F", "#006791", "#00ACCB"],
+    color: ["#00D7B7", "#2CABFF", "#FCB22D"],
     tooltip: {
       trigger: "axis",
       axisPointer: {

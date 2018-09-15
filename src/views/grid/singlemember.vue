@@ -73,9 +73,10 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "grid_singlemember",
+
   data() {
     return {
       title: null,

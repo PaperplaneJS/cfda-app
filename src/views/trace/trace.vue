@@ -19,7 +19,7 @@
       </span>
 
       <span>
-        <div class="text">当前任务进度:
+        <div class="text">当前所有任务:
           <span class="bold">{{count.task.computed}} / {{count.task.current}}</span>
         </div>
         <div class="button">
@@ -29,7 +29,7 @@
       </span>
 
       <span class="text">
-        <div>检查企业单位数目:
+        <div>检查经营个体数目:
           <span class="bold">{{count.biz.computed}} / {{count.biz.current}}</span>
         </div>
         <div class="button">
@@ -43,7 +43,7 @@
           <span class="bold">{{count.risk.computed}} / {{count.risk.current}}</span>
         </div>
         <div class="button">
-          <el-button @click.native="$router.push('/risk')" type="text" size="small">前往风险评级</el-button>
+          <el-button @click.native="$router.push('/risk')" type="text" size="small">前往量化评级</el-button>
         </div>
         <el-progress color="#33CC00" :width="count.opt.width" :stroke-width="count.opt.stroke" type="circle" :percentage="getPrecent(count.risk.computed/count.risk.current)"></el-progress>
       </span>
@@ -79,10 +79,10 @@
                   </el-table-column>
 
                   <el-table-column prop="title" label="标题" width="320px" sortable></el-table-column>
-                  <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
+                  <el-table-column prop="staff" label="制定人" sortable></el-table-column>
                   <el-table-column prop="department" label="制定单位" sortable></el-table-column>
-                  <el-table-column prop="date" width="160px" label="制定时间"></el-table-column>
-                  <el-table-column label="执行期限">
+                  <el-table-column prop="date" width="160px" label="制定日期" align="center"></el-table-column>
+                  <el-table-column label="执行期限" align="center">
                     <template slot-scope="scope">
                       <div>
                         <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
@@ -92,12 +92,12 @@
                       </div>
                     </template>
                   </el-table-column>
-                  <el-table-column label="状态" sortable>
+                  <el-table-column label="状态" align="center" sortable>
                     <template slot-scope="scope">
                       <el-tag size="small">{{scope.row | stateText}}</el-tag>
                     </template>
                   </el-table-column>
-                  <el-table-column align="right" label="操作">
+                  <el-table-column align="center" label="操作">
                     <template slot-scope="scope">
                       <el-button size="mini" @click.native="$router.push('/daily/monitor')" type="primary">检查监督</el-button>
                     </template>
@@ -107,7 +107,7 @@
             </el-row>
 
             <el-row>
-              <el-pagination :current-page.sync="planPageTable.page" :page-size="planPageTable.pageSize" background layout="total, prev, pager, next" :total="planData.length">
+              <el-pagination background @size-change="t=>planPageTable.pageSize=t" :current-page.sync="planPageTable.page" :page-sizes="planPageTable.pageSizes" :page-size="planPageTable.pageSize" layout="total, prev, pager, next, sizes" :total="planPageData.length">
               </el-pagination>
             </el-row>
           </el-tab-pane>
@@ -118,17 +118,17 @@
               <el-col :span="24">
                 <el-table :data="riskPageData" size="medium" style="width: 100%;margin-bottom:20px;">
                   <el-table-column prop="biz.name" label="单位名称" sortable></el-table-column>
-                  <el-table-column prop="biz.kind" label="单位类型" sortable></el-table-column>
+                  <el-table-column prop="areaName" label="网格区域" sortable></el-table-column>
+                  <el-table-column prop="biz.kind" label="个体类型" sortable></el-table-column>
                   <el-table-column prop="code" label="许可证编号"></el-table-column>
-                  <el-table-column prop="areaName" label="所属区域" sortable></el-table-column>
                   <el-table-column label="评级结果" min-width="120px;" sortable>
                     <template slot-scope="scope">
                       <el-tag size="small">{{scope.row.level}} | {{scope.row.point}}</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column prop="staffName" label="评定人" sortable></el-table-column>
-                  <el-table-column prop="date" label="评定时间" sortable></el-table-column>
-                  <el-table-column prop="action" label="操作" min-width="100px">
+                  <el-table-column prop="date" label="评定日期" align="center" sortable></el-table-column>
+                  <el-table-column align="center" label="操作" min-width="60px">
                     <template slot-scope="scope">
                       <el-button @click.native="$router.push('risk/'+scope.row.id)" size="mini" type="primary">检查监督</el-button>
                     </template>
@@ -138,7 +138,7 @@
             </el-row>
 
             <el-row>
-              <el-pagination :current-page.sync="riskPageTable.page" :page-size="riskPageTable.pageSize" background layout="total, prev, pager, next" :total="riskPageData.length">
+              <el-pagination background @size-change="t=>riskPageTable.pageSize=t" :current-page.sync="riskPageTable.page" :page-sizes="riskPageTable.pageSizes" :page-size="riskPageTable.pageSize" layout="total, prev, pager, next, sizes" :total="riskPageData.length">
               </el-pagination>
             </el-row>
 
@@ -150,9 +150,10 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils.js";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "trace_trace",
+  
   data() {
     return {
       tab: "plan",
@@ -181,12 +182,14 @@ export default {
 
       planPageTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       },
 
       riskPageTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

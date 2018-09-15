@@ -292,7 +292,7 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "base_singlebiz",
   data() {
@@ -421,6 +421,7 @@ export default {
       this.currentBizInfo.licence = copy(this.originBizInfo.licence);
       this.hasLicence = this.currentBizInfo.licence !== null;
       this.edit = false;
+      this.tab = "base";
     },
 
     licenceToggle(val) {
@@ -447,6 +448,7 @@ export default {
       } else {
         this.currentBizInfo.licence = null;
       }
+      this.tab = "base";
     },
 
     init() {

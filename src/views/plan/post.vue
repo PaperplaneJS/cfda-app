@@ -6,7 +6,7 @@
       <el-breadcrumb-item>计划分发</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">计划分发</el-row>
+    <el-row class="title action">计划分发</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
@@ -17,7 +17,7 @@
         <el-select size="small" clearable v-model="search.kind" placeholder="按类别筛选">
           <el-option label="日常检查" value="daily"></el-option>
           <el-option label="专项检查" value="special"></el-option>
-          <el-option label="全量检查(风险评级)" value="risk"></el-option>
+          <el-option label="量化评级" value="risk"></el-option>
         </el-select>
       </el-col>
 
@@ -36,26 +36,26 @@
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" min-width="120px" sortable></el-table-column>
-          <el-table-column label="类别" sortable>
+          <el-table-column label="类别" align="center" sortable>
             <template slot-scope="scope">
               <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="staff" label="制定人" sortable></el-table-column>
           <el-table-column prop="department" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="date" label="制定时间"></el-table-column>
-          <el-table-column label="执行期限">
+          <el-table-column prop="date" label="制定时间" align="center" sortable></el-table-column>
+          <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
               <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="状态" sortable>
+          <el-table-column align="center" label="状态" sortable>
             <template slot-scope="scope">
               <el-tag size="small" :type="getPlanType(scope.row.state)">{{scope.row.state | planStateText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column align="right" label="操作" min-width="60px">
+          <el-table-column align="center" label="操作" min-width="60px">
             <template slot-scope="scope">
               <el-button @click="$router.push('post/'+scope.row.id)" size="mini" type="primary">分发计划</el-button>
             </template>
@@ -65,7 +65,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="planTable.page" :page-size="planTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background @size-change="t=>planTable.pageSize=t" :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
@@ -74,6 +74,7 @@
 <script>
 export default {
   name: "plan_post",
+  
   data() {
     return {
       search: {
@@ -88,7 +89,8 @@ export default {
       },
       planTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

@@ -7,7 +7,7 @@
 
     <el-row class="title">量化评级 ({{currentYear}}年度)</el-row>
 
-    <el-row style="margin-bottom:40px;" :gutter="15">
+    <el-row class="action">
       <el-col :span="10">
         <el-radio-group v-model="currentYear" size="small">
           <el-radio-button v-for="item of riskYears.slice(-8).reverse()" :key="item" :label="item"></el-radio-button>
@@ -25,9 +25,11 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
+    </el-row>
 
-      <el-col :span="12">
-        <el-alert title="餐饮服务行业每个年度需要进行全量检查，评定风险等级后，结果将汇总在本页" type="info" :closable="false" show-icon>
+    <el-row style="margin-bottom:10px;" :gutter="15">
+      <el-col :span="24">
+        <el-alert title="餐饮服务行业每年度如进行量化评级检查，检查完成后，结果将汇总在本页" type="info" :closable="false" show-icon>
         </el-alert>
       </el-col>
     </el-row>
@@ -61,18 +63,18 @@
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%;margin-bottom:20px;">
           <el-table-column prop="biz.name" label="单位名称" sortable></el-table-column>
+          <el-table-column prop="department" label="网格区域" sortable></el-table-column>
           <el-table-column prop="biz.kind" label="单位类型" sortable></el-table-column>
-          <el-table-column prop="type" label="评级类型" sortable></el-table-column>
           <el-table-column prop="biz.licence.num" label="许可证编号"></el-table-column>
-          <el-table-column prop="department" label="所属网格" sortable></el-table-column>
+          <el-table-column prop="type" label="评级类型" sortable></el-table-column>
           <el-table-column label="检查结果" sortable>
             <template slot-scope="scope">
               <el-tag size="medium">{{scope.row.level}} | {{scope.row.point}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="staffinfo" label="检查人员" sortable></el-table-column>
-          <el-table-column prop="date" label="检查时间" sortable></el-table-column>
-          <el-table-column align="right" prop="action" label="操作" min-width="100px">
+          <el-table-column prop="date" label="检查时间" align="center" sortable></el-table-column>
+          <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('risk/'+scope.row.id)" size="mini" type="primary">查看</el-button>
               <el-button size="mini" type="danger">删除</el-button>
@@ -83,7 +85,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="riskTable.page" :page-size="riskTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background @size-change="t=>riskTable.pageSize=t" :current-page.sync="riskTable.page" :page-sizes="riskTable.pageSizes" :page-size="riskTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
@@ -108,7 +110,8 @@ export default {
       },
       riskTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

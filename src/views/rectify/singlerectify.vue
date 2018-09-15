@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "rectify_singlerectify",
 

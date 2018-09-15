@@ -66,7 +66,7 @@
 
     <el-row>
       <el-col :span="24">
-        <el-button type="primary">发布消息</el-button>
+        <el-button type="primary" icon="el-icon-check">发布消息</el-button>
         <router-link style="margin-left:20px;" to="/sms/list">
           <el-button>返回消息列表</el-button>
         </router-link>
@@ -79,6 +79,7 @@
 <script>
 export default {
   name: "sms_post",
+  
   data() {
     return {};
   },

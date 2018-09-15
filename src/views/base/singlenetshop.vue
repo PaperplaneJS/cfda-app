@@ -291,7 +291,7 @@
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "base_singlenetshop",
   data() {
@@ -420,6 +420,7 @@ export default {
       this.currentBizInfo.licence = copy(this.originBizInfo.licence);
       this.hasLicence = this.currentBizInfo.licence !== null;
       this.edit = false;
+      this.tab = "base";
     },
 
     licenceToggle(val) {

@@ -6,11 +6,19 @@
       <el-breadcrumb-item>计划归档</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">计划归档</el-row>
+    <el-row class="title action">计划归档</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
         <el-input clearable size="small" v-model="search.text" placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
+      </el-col>
+
+      <el-col :span="4">
+        <el-select size="small" clearable v-model="search.kind" placeholder="按类别筛选">
+          <el-option label="日常检查" value="daily"></el-option>
+          <el-option label="专项检查" value="special"></el-option>
+          <el-option label="量化评级" value="risk"></el-option>
+        </el-select>
       </el-col>
 
       <el-col :span="6">
@@ -33,16 +41,16 @@
               <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
-          <el-table-column prop="department" label="所属单位" sortable></el-table-column>
-          <el-table-column prop="date" label="制定时间"></el-table-column>
-          <el-table-column prop="complete" label="完成时间"></el-table-column>
-          <el-table-column label="状态">
+          <el-table-column prop="staff" label="制定人" sortable></el-table-column>
+          <el-table-column prop="department" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="date" align="center" label="制定日期"></el-table-column>
+          <el-table-column prop="complete" align="center" label="完成日期"></el-table-column>
+          <el-table-column label="状态" align="center">
             <template slot-scope="scope">
               <el-tag size="small" type="success">已归档</el-tag>
             </template>
           </el-table-column>
-          <el-table-column align="right" label="操作">
+          <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button size="mini" type="primary">查看记录</el-button>
             </template>
@@ -52,7 +60,7 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="planTable.page" :page-size="planTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background @size-change="t=>planTable.pageSize=t" :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
@@ -61,20 +69,23 @@
 <script>
 export default {
   name: "plan_recive",
-  
+
   data() {
     return {
       search: {
         text: "",
-        daterange: []
+        daterange: [],
+        kind: ""
       },
       currentSearch: {
         text: "",
-        daterange: []
+        daterange: [],
+        kind: ""
       },
       planTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },
@@ -111,6 +122,10 @@ export default {
         );
       }
 
+      if (this.currentSearch.kind && this.currentSearch.kind != "") {
+        tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
+      }
+
       if (
         this.currentSearch.daterange &&
         (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
@@ -143,7 +158,8 @@ export default {
     searchReset() {
       this.search = {
         text: "",
-        daterange: []
+        daterange: [],
+        kind: ""
       };
       this.searchSubmit();
     }

@@ -8,7 +8,7 @@
       <el-breadcrumb-item>{{title}} (任务)</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{title}}</el-row>
+    <el-row class="title action">{{title}}</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
@@ -46,19 +46,19 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="date" label="检查时间" sortable></el-table-column>
-          <el-table-column label="检查结果">
+          <el-table-column prop="date" label="检查时间" align="center" sortable></el-table-column>
+          <el-table-column align="center" label="检查结果">
             <template slot-scope="scope">
               <el-tag size="small" :type="getResultType(scope.row.result)">{{scope.row.result}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="处理方式">
+          <el-table-column align="center" label="处理方式">
             <template slot-scope="scope">
               <el-tag size="small" :type="getResultType(scope.row.handle)">{{scope.row.handle}}</el-tag>
             </template>
           </el-table-column>
 
-          <el-table-column align="right" prop="action" label="操作" min-width="100px">
+          <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
               <el-button @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看报告</el-button>
               <el-button size="mini" type="primary">打印</el-button>
@@ -69,16 +69,17 @@
     </el-row>
 
     <el-row>
-      <el-pagination :current-page.sync="taskDetailTable.page" :page-size="taskDetailTable.pageSize" background layout="total, prev, pager, next" :total="tableData.length">
+      <el-pagination background @size-change="t=>taskDetailTable.pageSize=t" :current-page.sync="taskDetailTable.page" :page-sizes="taskDetailTable.pageSizes" :page-size="taskDetailTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
       </el-pagination>
     </el-row>
   </el-row>
 </template>
 
 <script>
-import { copy } from "@/components/utils";
+import { copy } from "@/utils/utils.js";
 export default {
   name: "daily_reportlist",
+  
   data() {
     return {
       title: null,
@@ -97,7 +98,8 @@ export default {
       },
       taskDetailTable: {
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pageSizes: [10, 25, 50, 100]
       }
     };
   },

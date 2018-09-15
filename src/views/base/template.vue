@@ -30,14 +30,14 @@
             </el-col>
 
             <el-col :span="4">
-              <el-select size="small" v-model="search.kind" clearable placeholder="筛选类别">
+              <el-select size="small" v-model="search.kind" clearable placeholder="按类别筛选">
                 <el-option label="日常检查" value="daily"></el-option>
                 <el-option label="量化评级" value="risk"></el-option>
               </el-select>
             </el-col>
 
             <el-col :span="4">
-              <el-select size="small" v-model="search.state" clearable placeholder="筛选状态">
+              <el-select size="small" v-model="search.state" clearable placeholder="按状态筛选">
                 <el-option label="激活" :value="1"></el-option>
                 <el-option label="停用" :value="2"></el-option>
               </el-select>
@@ -61,12 +61,12 @@
                 <el-table-column prop="department" label="制定部门" sortable></el-table-column>
                 <el-table-column prop="staff" label="制定人" sortable></el-table-column>
                 <el-table-column prop="date" label="创建日期" align="center" sortable></el-table-column>
-                <el-table-column label="状态">
+                <el-table-column label="状态" align="center">
                   <template slot-scope="scope">
                     <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column align="right" prop="action" label="操作" min-width="90px">
+                <el-table-column align="center" label="操作" min-width="90px">
                   <template slot-scope="scope">
                     <el-button @click="$router.push(`${scope.row.kind=='risk'?'risk':''}template/${scope.row.id}`)" size="mini" type="primary">查看 / 编辑</el-button>
                     <el-button size="mini" type="danger">删除</el-button>
