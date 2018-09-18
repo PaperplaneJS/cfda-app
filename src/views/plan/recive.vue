@@ -17,9 +17,9 @@
               <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="staff" label="制定人员" sortable></el-table-column>
-          <el-table-column prop="department" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="post" label="下发日期" sortable align="center"></el-table-column>
+          <el-table-column prop="stf" label="制定人员" sortable></el-table-column>
+          <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="post.date" label="下发日期" sortable align="center"></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
@@ -58,13 +58,13 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="制定科室:">
-              <el-input v-model="popupItem.department" disabled></el-input>
+              <el-input v-model="popupItem.dep" disabled></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="制定人员:">
-              <el-input v-model="popupItem.staff" disabled></el-input>
+              <el-input v-model="popupItem.stf" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -89,13 +89,13 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="下发日期:">
-              <el-date-picker style="width:100%;" disabled type="date" v-model="popupItem.post"></el-date-picker>
+              <el-date-picker style="width:100%;" disabled type="date" v-model="popupItem.post.date"></el-date-picker>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="使用模板：">
-              <el-select disabled style="width:100%;" v-model="popupItem.templateid">
+              <el-select disabled style="width:100%;" v-model="popupItem.template">
                 <el-option v-for="item of taskTemplate" :key="item.id" :label="item.name" :value="item.id">
                 </el-option>
               </el-select>
@@ -115,7 +115,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注:">
-              <el-input v-model="popupItem.remark" resize="none" :rows="4" type="textarea" disabled></el-input>
+              <el-input v-model="popupItem.post.remark" resize="none" :rows="4" type="textarea" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -130,9 +130,14 @@
 </template>
 
 <script>
+import department from "@/api/old_area.js";
+import { getPlans } from "@/api/old_plan.js";
+import { getTemplates } from "@/api/old_template.js";
+import { getStaffByID } from "@/api/old_staff.js";
+
 export default {
   name: "plan_recive",
-  
+
   data() {
     return {
       isPopup: false,
@@ -177,7 +182,12 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.plan.filter(t => t.state === 2);
+      let tableData = getPlans(2);
+
+      tableData.forEach(t => {
+        t.dep = department.getAreaByID(t.department).name;
+        t.stf = getStaffByID(t.staff).name;
+      });
 
       return tableData;
     },
@@ -190,7 +200,7 @@ export default {
     },
 
     taskTemplate() {
-      return this.$store.state.template.map(t => {
+      return getTemplates().map(t => {
         return { id: t.id, name: t.name };
       });
     }

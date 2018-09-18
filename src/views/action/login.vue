@@ -1,8 +1,7 @@
 <template>
   <div id="action_login">
     <div class="title_bar">
-      <span class="title">常熟市食品生产经营监管信息化平台</span>
-      <span></span>
+      常熟市食品生产经营监管信息化平台
     </div>
 
     <div class="login_bar">
@@ -12,33 +11,88 @@
         </el-col>
       </el-row>
 
-      <el-row>
-        <el-col :span="24">
-          账户：
-          <el-input size="small" style="width:240px;" placeholder="请输入用户账户"></el-input>
-        </el-col>
-      </el-row>
+      <el-form @submit.native="handelSubmit" :rules="rules" ref="form" :model="form" label-width="70px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item prop="account" label="账户：" required>
+              <el-input v-model="form.account" size="small" style="width:100%;" placeholder="请输入用户账户"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-      <el-row>
-        <el-col :span="24">
-          密码：
-          <el-input type="password" size="small" style="width:240px;" placeholder="请输入登录密码"></el-input>
-        </el-col>
-      </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item prop="pwd" label="密码：" required>
+              <el-input v-model="form.pwd" type="password" size="small" style="width:100%;" placeholder="请输入登录密码"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-      <el-row>
-        <el-col :push="16" :span="8">
-          <el-button @click="$router.push('/index')" style="width:100%;" size="small" type="primary" icon="el-icon-check">用户登录</el-button>
-        </el-col>
-      </el-row>
+        <el-row>
+          <el-col :push="14" :span="10">
+            <el-button @click="handelSubmit" style="width:100%;" size="small" type="primary" icon="el-icon-check">用户登录</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
     </div>
 
   </div>
 </template>
 
 <script>
+import Login from "@/api/login.js";
+import { getAreaByID } from "@/api/old_area.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import qs from "qs";
+
 export default {
-  name: "action_login"
+  name: "action_login",
+
+  data() {
+    return {
+      form: {
+        account: "",
+        pwd: ""
+      },
+      rules: {
+        account: [
+          {
+            required: true,
+            message: "必须输入用户账户！",
+            trigger: ["blur", "change"]
+          }
+        ],
+        pwd: [
+          {
+            required: true,
+            message: "必须输入密码！",
+            trigger: ["blur", "change"]
+          }
+        ]
+      }
+    };
+  },
+
+  methods: {
+    handelSubmit() {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          Login({
+            usr_account: this.form.account,
+            usr_password: this.form.pwd
+          }).then(data => {
+            if (data.success) {
+              this.$store.state.currentUser = data.data;
+              sessionStorage.setItem("currentUser", JSON.stringify(data.data));
+              this.$router.push("/index");
+            } else {
+              this.$message.error(`登录失败 ${data.message}`);
+            }
+          });
+        }
+      });
+    }
+  }
 };
 </script>
 
@@ -53,35 +107,35 @@ export default {
   background-position: center;
   background-size: cover;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   .title_bar {
     width: 100%;
     height: 80px;
     box-shadow: 0 4px 3px 0px rgba(0, 21, 41, 0.08);
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.2);
+    position: absolute;
+    top: 0;
 
-    .title {
-      margin-left: 30px;
-      font-weight: 400;
-      font-size: 30px;
-      line-height: 80px;
-      color: #383838;
-    }
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 80px;
+    color: #fff;
+    text-align: center;
   }
 
   .login_bar {
     color: #383838;
-    margin-left: 50px;
-    margin-top: 50px;
-    display: inline-block;
     padding: 15px;
-    background: rgba(255, 255, 255, 0.8);
+    background: #fff;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 0 25px #404040;
     border-radius: 4px;
+    flex-grow: 0;
 
     .el-row {
-      margin-bottom: 10px;
-    }
-
-    .el-row:last-of-type {
       margin-bottom: 0;
     }
   }

@@ -888,9 +888,13 @@ let task = [{
   ]
 }];
 
+import {
+  copy
+} from "@/utils/utils.js";
+
 function getTaskDetailByID(id) {
   let result = null;
-  task.forEach(t => {
+  copy(task).forEach(t => {
 
     t.tasklist.forEach(task => {
       if (result) {
@@ -906,22 +910,25 @@ function getTaskDetailByID(id) {
   return result;
 }
 
-function getTaskItemsByPlanID(planid) {
-  return task.find(t => t.planid === planid);
-}
+function getTaskItems(planid = null, departmentid = null) {
+  let tasks = copy(task);
+  if (planid) {
+    tasks = tasks.filter(t => t.planid === planid);
+  }
 
-function getTaskItemsByDepartment(departmentid) {
-  return task.find(t => t.department === departmentid);
+  if (departmentid) {
+    tasks = tasks.filter(t => t.department === departmentid);
+  }
+
+  return tasks;
 }
 
 export {
   getTaskDetailByID,
-  getTaskItemsByPlanID,
-  getTaskItemsByDepartment
+  getTaskItems
 }
 
 export default {
   getTaskDetailByID,
-  getTaskItemsByPlanID,
-  getTaskItemsByDepartment
+  getTaskItems
 }

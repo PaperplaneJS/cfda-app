@@ -66,7 +66,7 @@
       <el-row :gutter="15">
         <el-col :span="8">
           <el-form-item label="使用模板：" required>
-            <el-select :disabled="!edit" style="width:100%;" v-model="currentPlan.templateid">
+            <el-select :disabled="!edit" style="width:100%;" v-model="currentPlan.template">
               <el-option v-for="item of taskTemplate" :key="item.id" :label="item.name" :value="item.id">
               </el-option>
             </el-select>
@@ -77,7 +77,7 @@
       <el-row :gutter="15">
         <el-col :span="16">
           <el-form-item label="备注:">
-            <el-input :disabled="!edit" :rows="4" v-model="currentPlan.remark" type="textarea" placeholder="选填,工作备注"></el-input>
+            <el-input :disabled="!edit" :rows="4" v-model="currentPlan.post.remark" type="textarea" placeholder="选填,工作备注"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -120,6 +120,11 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getAreaByID } from "@/api/old_area.js";
+import { getPlanByID } from "@/api/old_plan.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import { getTemplates } from "@/api/old_template.js";
+
 export default {
   name: "plan_singleplan",
 
@@ -139,7 +144,7 @@ export default {
 
   computed: {
     taskTemplate() {
-      let list = copy(this.$store.state.template);
+      let list = copy(getTemplates());
 
       if (
         this.currentPlan.kind == "daily" ||
@@ -165,8 +170,8 @@ export default {
       if (planid.trim() === "new") {
         this.currentPlan = {
           title: "",
-          department: this.$store.state.current.staff.department,
-          staff: this.$store.state.current.staff.name,
+          department: getAreaByID(this.$store.state.currentUser.area).name,
+          staff: this.$store.state.currentUser.usr_name,
           kind: null,
           date: null,
           limit: [],
@@ -180,10 +185,13 @@ export default {
         this.isNew = true;
         this.edit = true;
       } else {
-        let plan = this.$store.state.plan.find(t => t.id == planid);
+        let plan = getPlanByID(planid);
         if (!plan.special) {
           plan.special = "";
         }
+        plan.department = getAreaByID(plan.department).name;
+        plan.staff = getStaffByID(plan.staff).name;
+
         this.currentPlan = plan;
         this.originPlan = copy(this.currentPlan);
 

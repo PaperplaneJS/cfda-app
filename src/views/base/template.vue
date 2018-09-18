@@ -87,8 +87,11 @@
 </template>
 
 <script>
+import { getTemplates } from "@/api/old_template.js";
+
 export default {
   name: "base_template",
+
   data() {
     return {
       search: {
@@ -105,17 +108,7 @@ export default {
         page: 1,
         pageSize: 10,
         pageSizes: [10, 25, 50, 100]
-      },
-      templatedata: [
-        {
-          id: 1,
-          name: "食品生产日常监督检查要点表",
-          state: 1,
-          department: "常熟市食药监局",
-          staff: "张小明",
-          date: "2017-12-31"
-        }
-      ]
+      }
     };
   },
 
@@ -131,7 +124,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.template;
+      let tableData = getTemplates();
 
       if (
         this.currentSearch.text &&

@@ -1,21 +1,21 @@
-# shipinjuweb
+# 食药监局Web端演示demo
 
-## Project setup
+## 进入项目根目录后，执行以下语句来安装环境与依赖
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 安装完毕后，可以开启测试服务器
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 构建发布包
 ```
 npm run build
 ```
 
-### Lints and fixes files
+### 检查错误
 ```
 npm run lint
 ```

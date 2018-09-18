@@ -31,13 +31,13 @@
       <el-row :gutter="15">
         <el-col :span="6">
           <el-form-item label="发布机构：">
-            <el-input disabled v-model="$store.state.current.staff.name"></el-input>
+            <el-input disabled v-model="$store.state.currentUser.usr_name"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :push="2" :span="6">
           <el-form-item label="发布人：">
-            <el-input disabled v-model="$store.state.current.staff.department"></el-input>
+            <el-input disabled :value="department.getAreaByID($store.state.currentUser.area).name"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -51,9 +51,6 @@
                 <span>
                   <el-button v-if="!node.isLeaf" type="text" size="mini" @click="node.checked=true">
                     单个选中
-                  </el-button>
-                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="setChildren(node,false)">
-                    清空
                   </el-button>
                 </span>
               </span>
@@ -77,24 +74,26 @@
 </template>
 
 <script>
+import department from "@/api/old_area.js";
+
 export default {
   name: "sms_post",
-  
+
   data() {
-    return {};
+    return { department };
   },
 
   computed: {
     treeData() {
-      return this.$store.state.gridarea.gridarea;
+      return department.getArea();
     }
   },
 
   methods: {
     checkChange(data) {
       let node = this.$refs.tree.getNode(data);
+      this.setChildren(node, node.checked);
       if (node.checked) {
-        this.setChildren(node, node.checked);
         node.expanded = true;
       }
     },

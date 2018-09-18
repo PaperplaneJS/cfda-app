@@ -66,9 +66,11 @@
 </template>
 
 <script>
+import area from "@/api/old_area.js";
+
 export default {
   name: "grid_area",
-  
+
   data() {
     return {
       search: {
@@ -95,7 +97,7 @@ export default {
 
   computed: {
     areaData() {
-      let areas = this.$store.state.gridarea.gridarea;
+      let areas = area.getArea();
       let areasArray = [];
 
       let getAreas = function(item) {

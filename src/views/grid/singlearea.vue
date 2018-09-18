@@ -41,7 +41,7 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="所属层级:" required>
-            <el-cascader :disabled="!edit" :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentArea.lv" :options="$store.state.gridarea.gridarea" placeholder="选择网格属于的层级" change-on-select></el-cascader>
+            <el-cascader :disabled="!edit" :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentArea.lv" :options="department.getArea()" placeholder="选择网格属于的层级" change-on-select></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
@@ -63,11 +63,15 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import department from "@/api/old_area.js";
+
 export default {
   name: "grid_singlearea",
 
   data() {
     return {
+      department,
+
       title: null,
       isNew: null,
       edit: null,
@@ -96,8 +100,8 @@ export default {
         this.edit = true;
         this.title = "新建网格区域";
       } else {
-        let area = copy(this.$store.state.gridarea.findArea(areaid));
-        area.lv = copy(this.$store.state.gridarea.findAreaIDArray(areaid));
+        let area = copy(department.getAreaByID(areaid));
+        area.lv = copy(department.getAreaIDArray(areaid));
         area.lv.pop();
 
         this.currentArea = area;

@@ -22,7 +22,7 @@ let plan = [{
   state: 3,
   post: {
     date: "2018-05-01 13:00",
-    detail: ["2", "3", "4", "5", "6"],
+    postdetail: ["2", "3", "4", "5", "6"],
     remark: "常熟市2018年下半年巡检计划，请按照法律法规开展检查"
   }
 }, {
@@ -83,7 +83,6 @@ let plan = [{
   limit: ["2017-10-15", "2017-11-01"],
   complete: "2017-10-28 10:00",
   state: 5,
-  remark: "请按照法律法规开展检查",
   post: null
 }];
 
@@ -94,21 +93,30 @@ let plan = [{
  * 根据state自动区分是否已归档
  */
 
+import {
+  copy
+} from "@/utils/utils.js";
+
 function getPlanByID(id) {
-  return plan.find(t => t.id == id && t.state !== 5);
+  return copy(plan).find(t => t.id == id && t.state !== 5);
 }
 
 function getPlans(state = null) {
-  let plans = plan;
+  let plans = copy(plan).filter(t => t.state !== 5);
+
   if (state) {
-    plans = plan.filter(t => t.state === state && t.state !== 5);
+    if (Array.isArray(state)) {
+      plans = plans.filter(t => state.includes[t.state]);
+    } else if (Number.isInteger(state)) {
+      plans = plans.filter(t => t.state === state);
+    }
   }
 
   return plans;
 }
 
 function getArchives() {
-  return plan.filter(t => t.state === 5);
+  return copy(plan).filter(t => t.state === 5);
 }
 
 export {

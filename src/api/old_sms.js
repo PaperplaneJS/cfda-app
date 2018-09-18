@@ -1,5 +1,5 @@
 let sms = [{
-    id: 1,
+    id: "1",
     title: "关于餐饮行业加强检查工作的通知",
     department: "虞山分局",
     staff: "顾小华",
@@ -8,7 +8,7 @@ let sms = [{
     content: "消息正文 (测试用)"
   },
   {
-    id: 2,
+    id: "2",
     title: "关于新的法律法规下发工作的通知",
     department: "虞山分局",
     staff: "顾小华",
@@ -18,20 +18,24 @@ let sms = [{
   }
 ];
 
-function getSMS() {
-  return sms;
+import {
+  copy
+} from "@/utils/utils.js";
+
+function getAllSMS() {
+  return copy(sms);
 }
 
 function getSMSByID(id) {
-  return sms.find(t => t.id === id);
+  return copy(sms).find(t => t.id === id);
 }
 
 export {
-  getSMS,
+  getAllSMS,
   getSMSByID
 }
 
 export default {
-  getSMS,
+  getAllSMS,
   getSMSByID
 }

@@ -136,6 +136,12 @@ let area = [{
   }]
 }];
 
+
+import {
+  copy
+} from "@/utils/utils.js";
+
+
 function getAreaByID(id) {
   let result = null;
   let find = function (item) {
@@ -147,7 +153,7 @@ function getAreaByID(id) {
     }
   };
 
-  area.forEach(t => find(t));
+  copy(area).forEach(t => find(t));
   return result;
 }
 
@@ -165,13 +171,13 @@ function getAreaIDArray(id) {
     }
   };
 
-  area.forEach(t => find(t, []));
+  copy(area).forEach(t => find(t, []));
 
   return result;
 }
 
 function getArea() {
-  return area;
+  return copy(area);
 }
 
 function getAllAreas() {
@@ -183,7 +189,7 @@ function getAllAreas() {
     }
   };
 
-  area.forEach(t => find(t));
+  copy(area).forEach(t => find(t));
   return result;
 }
 

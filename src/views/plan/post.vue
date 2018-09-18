@@ -41,8 +41,8 @@
               <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="staff" label="制定人" sortable></el-table-column>
-          <el-table-column prop="department" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="stf" label="制定人" sortable></el-table-column>
+          <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
           <el-table-column prop="date" label="制定时间" align="center" sortable></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
@@ -72,9 +72,13 @@
 </template>
 
 <script>
+import department from "@/api/old_area.js";
+import { getPlans } from "@/api/old_plan.js";
+import { getStaffByID } from "@/api/old_staff.js";
+
 export default {
   name: "plan_post",
-  
+
   data() {
     return {
       search: {
@@ -121,7 +125,12 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.plan.filter(t => t.state === 1);
+      let tableData = getPlans(1);
+
+      tableData.forEach(t => {
+        t.dep = department.getAreaByID(t.department).name;
+        t.stf = getStaffByID(t.staff).name;
+      });
 
       if (
         this.currentSearch.text &&
@@ -131,8 +140,8 @@ export default {
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
-            t.department.includes(searchText) ||
-            t.staff.includes(searchText)
+            t.dep.includes(searchText) ||
+            t.stf.includes(searchText)
         );
       }
 

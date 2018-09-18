@@ -1,4 +1,4 @@
-let staff = [{
+let staffs = [{
   id: "1",
   area: "1",
   name: "顾小华",
@@ -105,26 +105,24 @@ let staff = [{
   job: "副局长"
 }];
 
-function getStaffs() {
-  return staff;
+import {
+  copy
+} from "@/utils/utils.js";
+
+function getAllStaffs() {
+  return copy(staffs);
 }
 
 function getStaffByID(id) {
-  return staff.find(t => t.id === id);
-}
-
-function getStaffsByArea(area) {
-  return staff.filter(t => t.area === area);
+  return copy(staffs).find(t => t.id == id);
 }
 
 export {
-  getStaffs,
-  getStaffByID,
-  getStaffsByArea
+  getAllStaffs,
+  getStaffByID
 }
 
 export default {
-  getStaffs,
-  getStaffByID,
-  getStaffsByArea
+  getAllStaffs,
+  getStaffByID
 }

@@ -2591,8 +2591,12 @@ let template = [{
   }
 ];
 
+import {
+  copy
+} from "@/utils/utils.js";
+
 function getTemplates(kind = false) {
-  let list = template;
+  let list = copy(template);
   if (kind) {
     list = list.filter(t => t.kind === kind);
   }
@@ -2600,7 +2604,7 @@ function getTemplates(kind = false) {
 }
 
 function getTemplateByID(id) {
-  return template.find(t => t.id === id);
+  return copy(template).find(t => t.id === id);
 }
 
 export default {

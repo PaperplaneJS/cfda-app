@@ -63,6 +63,8 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getSMSByID } from "@/api/old_sms.js";
+
 export default {
   name: "sms_singlesms",
 
@@ -80,7 +82,7 @@ export default {
   methods: {
     init() {
       let smsid = this.$route.params.smsid;
-      this.currentSMS = copy(this.$store.state.sms.find(t => t.id == smsid));
+      this.currentSMS = copy(getSMSByID(smsid));
       this.title = this.currentSMS.title;
     }
   }

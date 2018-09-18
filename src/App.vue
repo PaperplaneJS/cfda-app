@@ -2,6 +2,7 @@
   <div id="app">
     <el-container>
       <el-aside class="aside" width="240px">
+        <img id="logoimg" src="@/assets/img/logo.png" />
 
         <el-col :span="24">
           <el-menu ref="menu" :default-active="currentMenuPath" :unique-opened="true" class="aside-menu" :router="true" background-color="#383838" text-color="#fff" active-text-color="#ffd04b">
@@ -50,7 +51,12 @@
             </el-popover>
 
             <span>
-              <el-button round>{{staff.name}}</el-button>
+              <el-dropdown>
+                <el-button round>{{staff.usr_name}}</el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="logout">注销登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </span>
 
           </div>
@@ -77,8 +83,8 @@ export default {
     return {
       currentMenuPath: null,
       visible: false,
-      notice: this.$store.state.current.notice,
-      staff: this.$store.state.current.staff
+      notice: [],
+      staff: this.$store.state.currentUser
     };
   },
 
@@ -109,7 +115,7 @@ export default {
 
       if (match && match.group && paths[1]) {
         let group = match.group.find(g => g.url == paths[1]);
-        if (match) {
+        if (group) {
           menuPath += `/${paths[1]}`;
         }
       }
@@ -117,14 +123,24 @@ export default {
       this.currentMenuPath = menuPath;
     },
 
-    openNotice(notice) {
-      console.log(123);
+    openNotice(notice) {},
+
+    logout() {
+      this.$store.state.currentUser = null;
+      sessionStorage.removeItem("currentUser");
+      this.$router.push("/login");
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
+#logoimg {
+  width: 40%;
+  margin: 25px 0;
+  margin-left: 65px;
+}
+
 .is-active {
   background-color: #409eff !important;
   color: #fff !important;

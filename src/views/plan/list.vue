@@ -57,8 +57,8 @@
               <el-tag :type="getKindType(scope.row.kind)" size="small">{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="staff" label="制定人" sortable></el-table-column>
-          <el-table-column prop="department" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="stf" label="制定人" sortable></el-table-column>
+          <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
           <el-table-column prop="date" label="制定日期" sortable align="center"></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
@@ -69,7 +69,7 @@
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
               <el-tag size="small" :type="getPlanType(scope.row.state)">{{scope.row.state | planStateText}}</el-tag>
-              <el-popover style="margin-left:5px;" v-if="scope.row.state!==1" placement="top-start" title="分发情况" width="300" trigger="hover" :content="postDetail(scope.row)">
+              <el-popover style="margin-left:5px;" v-if="scope.row.state!==1 && scope.row.post" placement="top-start" title="分发情况" width="300" trigger="hover" :content="postDetail(scope.row)">
                 <el-button type="text" size="small" slot="reference">分发情况</el-button>
               </el-popover>
             </template>
@@ -92,9 +92,13 @@
 </template>
 
 <script>
+import department from "@/api/old_area.js";
+import { getPlans } from "@/api/old_plan.js";
+import { getStaffByID } from "@/api/old_staff.js";
+
 export default {
   name: "plan_list",
-  
+
   data() {
     return {
       search: {
@@ -149,7 +153,12 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.plan;
+      let tableData = getPlans();
+
+      tableData.forEach(t => {
+        t.dep = department.getAreaByID(t.department).name;
+        t.stf = getStaffByID(t.staff).name;
+      });
 
       if (
         this.currentSearch.text &&
@@ -159,8 +168,8 @@ export default {
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
-            t.department.includes(searchText) ||
-            t.staff.includes(searchText)
+            t.dep.includes(searchText) ||
+            t.stf.includes(searchText)
         );
       }
 
@@ -227,8 +236,8 @@ export default {
     },
 
     postDetail(post) {
-      return post.postdetail
-        .map(t => this.$store.state.gridarea.findArea(t).name)
+      return post.post.postdetail
+        .map(t => department.getAreaByID(t).name)
         .join("， ");
     },
 

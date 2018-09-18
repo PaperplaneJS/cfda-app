@@ -301,7 +301,7 @@
     <el-row>
       <el-col :span="24">
         <el-button v-if="edit" @click="editOK" icon="el-icon-check" type="primary">{{isNew?"完成创建":"完成编辑"}}</el-button>
-        <el-button v-if="!edit" @click="edit=true" icon="el-icon-edit-outline" type="primary">编辑模板</el-button>
+        <el-button v-if="!edit" icon="el-icon-edit-outline" type="primary">编辑模板</el-button>
         <el-button v-if="edit && !isNew" @click="editCancel" style="margin-left:20px;" icon="el-icon-refresh">取消并还原</el-button>
         <router-link to="/base/template">
           <el-button style="margin-left:20px;">返回模板管理</el-button>
@@ -314,8 +314,12 @@
 
 <script>
 import { uuid, copy } from "@/utils/utils.js";
+import { getTemplateByID } from "@/api/old_template.js";
+import department from "@/api/old_area.js";
+
 export default {
   name: "base_singlerisktemplate",
+
   data() {
     return {
       title: "",
@@ -359,8 +363,9 @@ export default {
           name: "",
           state: 1,
           content: [],
-          staff: this.$store.state.current.staff.name,
-          department: this.$store.state.current.staff.department,
+          staff: this.$store.state.currentUser.usr_name,
+          department: department.getAreaByID($store.state.currentUser.area)
+            .name,
           date: this.today(),
           tips: ""
         };
@@ -368,9 +373,7 @@ export default {
         this.isNew = true;
         this.edit = true;
       } else {
-        this.currentTemplate = copy(
-          this.$store.state.template.find(t => t.id == tid)
-        );
+        this.currentTemplate = copy(getTemplateByID(tid));
         this.originTemplate = copy(this.currentTemplate);
         this.title = this.currentTemplate.name;
         this.isNew = false;

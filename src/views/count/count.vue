@@ -12,73 +12,6 @@
       <el-col :span="8">
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
-            <span class="table_title">地区检查覆盖率</span>
-            <el-radio-group style="float:right;" v-model="cover" size="mini">
-              <el-radio-button label="coverDaily">日常检查</el-radio-button>
-              <el-radio-button label="coverRisk">量化评级</el-radio-button>
-            </el-radio-group>
-          </div>
-          <div class="count" id="cover"></div>
-        </el-card>
-      </el-col>
-
-      <el-col :span="8">
-        <el-card :body-style="{padding:'10px'}" class="count_item">
-          <div slot="header">
-            <span class="table_title">食品行业分布情况</span>
-            <el-radio-group style="float:right;" v-model="bizCount" size="mini">
-              <el-radio-button label="bizCountKind">大类别</el-radio-button>
-              <el-radio-button label="bizCountDetail">详细类别</el-radio-button>
-              <el-radio-button label="bizCountArea">按地区</el-radio-button>
-            </el-radio-group>
-          </div>
-          <div class="count" id="bizCount"></div>
-        </el-card>
-      </el-col>
-
-      <el-col :span="8">
-        <el-card :body-style="{padding:'10px'}" class="count_item">
-          <div slot="header">
-            <span class="table_title">近3个月内的商家增长</span>
-            <el-radio-group style="float:right;" v-model="increase" size="mini">
-              <el-radio-button label="increaseKind">按行业</el-radio-button>
-              <el-radio-button label="increaseArea">按地区</el-radio-button>
-            </el-radio-group>
-          </div>
-          <div class="count" id="increase"></div>
-        </el-card>
-      </el-col>
-
-      <el-col :span="16">
-        <el-card :body-style="{padding:'10px'}" class="count_item">
-          <div slot="header">
-            <span class="table_title">检查结果汇总统计</span>
-            <el-radio-group style="float:right;" v-model="result" size="mini">
-              <el-radio-button label="resultQualified">合格率趋势图</el-radio-button>
-              <el-radio-button label="resultCheck">检查次数趋势图</el-radio-button>
-              <el-radio-button label="resultUnqualified">不合格情况分布</el-radio-button>
-            </el-radio-group>
-          </div>
-          <div class="count" id="result"></div>
-        </el-card>
-      </el-col>
-
-      <el-col :span="8">
-        <el-card :body-style="{padding:'10px'}" class="count_item">
-          <div slot="header">
-            <span class="table_title">检查结果合格率</span>
-            <el-radio-group style="float:right;" v-model="month" size="mini">
-              <el-radio-button label="monthKind">按行业</el-radio-button>
-              <el-radio-button label="monthArea">按地区</el-radio-button> 
-            </el-radio-group>
-          </div>
-          <div class="count" id="month"></div>
-        </el-card>
-      </el-col>
-
-      <el-col :span="8">
-        <el-card :body-style="{padding:'10px'}" style="height:230px;" class="count_item">
-          <div slot="header">
             <span class="table_title">频繁出现的问题项目</span>
           </div>
           <div class="list">
@@ -160,6 +93,73 @@
         </el-card>
       </el-col>
 
+      <el-col :span="8">
+        <el-card :body-style="{padding:'10px'}" class="count_item">
+          <div slot="header">
+            <span class="table_title">地区检查覆盖率</span>
+            <el-radio-group style="float:right;" v-model="cover" size="mini">
+              <el-radio-button label="coverDaily">日常检查</el-radio-button>
+              <el-radio-button label="coverRisk">量化评级</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="count" id="cover"></div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="8">
+        <el-card :body-style="{padding:'10px'}" class="count_item">
+          <div slot="header">
+            <span class="table_title">食品行业分布情况</span>
+            <el-radio-group style="float:right;" v-model="bizCount" size="mini">
+              <el-radio-button label="bizCountKind">大类别</el-radio-button>
+              <el-radio-button label="bizCountDetail">详细类别</el-radio-button>
+              <el-radio-button label="bizCountArea">按地区</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="count" id="bizCount"></div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="8">
+        <el-card :body-style="{padding:'10px'}" class="count_item">
+          <div slot="header">
+            <span class="table_title">近3个月内的商家增长</span>
+            <el-radio-group style="float:right;" v-model="increase" size="mini">
+              <el-radio-button label="increaseArea">按地区</el-radio-button>
+              <el-radio-button label="increaseKind">按行业</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="count" id="increase"></div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="16">
+        <el-card :body-style="{padding:'10px'}" class="count_item">
+          <div slot="header">
+            <span class="table_title">检查结果汇总统计</span>
+            <el-radio-group style="float:right;" v-model="result" size="mini">
+              <el-radio-button label="resultQualified">合格率趋势图</el-radio-button>
+              <el-radio-button label="resultCheck">检查次数趋势图</el-radio-button>
+              <el-radio-button label="resultUnqualified">不合格情况分布</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="count" id="result"></div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="8">
+        <el-card :body-style="{padding:'10px'}" class="count_item">
+          <div slot="header">
+            <span class="table_title">检查结果合格率</span>
+            <el-radio-group style="float:right;" v-model="month" size="mini">
+              <el-radio-button label="monthArea">按地区</el-radio-button>
+              <el-radio-button label="monthKind">按行业</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="count" id="month"></div>
+        </el-card>
+      </el-col>
+
     </el-row>
 
   </div>
@@ -230,11 +230,11 @@ export default {
         month: echarts.init(document.getElementById("month"))
       };
 
-      this.increase = "increaseKind"; //increaseArea  近3月增长量
+      this.increase = "increaseArea"; //increaseKind  近3月增长量
       this.cover = "coverDaily"; //coverRisk          检查覆盖率
       this.bizCount = "bizCountKind"; //bizCountArea,bizCountDetail        个体个数统计
       this.result = "resultQualified"; //resultUnqualified,resultCheck     检查结果汇总统计
-      this.month = "monthKind"; //monthArea                                检查结果比率
+      this.month = "monthArea"; //monthKind                                检查结果比率
 
       this.resize = () => {
         Object.values(this.charts).forEach(t => t.resize());
@@ -274,6 +274,8 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 160px;
+    overflow: hidden;
 
     & > div {
       font-size: 15px;

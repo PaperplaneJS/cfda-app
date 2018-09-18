@@ -41,8 +41,8 @@
               <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="staff" label="制定人" sortable></el-table-column>
-          <el-table-column prop="department" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="stf" label="制定人" sortable></el-table-column>
+          <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
           <el-table-column prop="date" align="center" label="制定日期"></el-table-column>
           <el-table-column prop="complete" align="center" label="完成日期"></el-table-column>
           <el-table-column label="状态" align="center">
@@ -67,6 +67,10 @@
 </template>
 
 <script>
+import department from "@/api/old_area.js";
+import { getArchives } from "@/api/old_plan.js";
+import { getStaffByID } from "@/api/old_staff.js";
+
 export default {
   name: "plan_recive",
 
@@ -107,7 +111,12 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.archives;
+      let tableData = getArchives();
+
+      tableData.forEach(t => {
+        t.dep = department.getAreaByID(t.department).name;
+        t.stf = getStaffByID(t.staff).name;
+      });
 
       if (
         this.currentSearch.text &&

@@ -12,28 +12,28 @@
     <el-tabs style="margin-top:30px;" v-model="tab">
       <el-tab-pane label="基本信息" name="base">
 
-        <el-form :rules="bizRules" ref="currentBizInfo" :model="currentBizInfo" :disabled="!edit" label-position="left" style="margin-top:20px;" label-width="110px">
+        <el-form :model="currentBizInfo" :disabled="!edit" label-position="left" style="margin-top:20px;" label-width="110px">
           <el-row :gutter="20">
             <el-col :span="16">
-              <el-form-item prop="name" label="小作坊名称：" required>
-                <el-input v-model="currentBizInfo.name" placeholder="请输入小作坊名称"></el-input>
+              <el-form-item label="小作坊名称：" required>
+                <el-input v-model="currentBizInfo.com_name" placeholder="请输入小作坊名称"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="area" label="网格区域：" required>
-                <el-cascader :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentBizInfo.area" :options="$store.state.gridarea.gridarea" placeholder="选择网格区域" style="width:100%;" change-on-select>
+              <el-form-item label="网格区域：" required>
+                <el-cascader :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentBizInfo.area" :options="department.getArea()" placeholder="选择网格区域" style="width:100%;" change-on-select>
                 </el-cascader>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
-              <el-form-item prop="state" label="激活状态：" required>
-                <el-radio-group v-model="currentBizInfo.state">
-                  <el-radio :label="1">开启</el-radio>
-                  <el-radio :label="2">关闭</el-radio>
+              <el-form-item label="激活状态：" required>
+                <el-radio-group v-model="currentBizInfo.com_state">
+                  <el-radio :label="'1'">开启</el-radio>
+                  <el-radio :label="'0'">关闭</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -41,16 +41,16 @@
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="kind" label="小作坊类型：">
-                <el-select disabled v-model="currentBizInfo.kind" style="width:100%">
-                  <el-option label="食品小作坊" value="食品小作坊"></el-option>
+              <el-form-item label="小作坊类型：">
+                <el-select disabled v-model="currentBizInfo.com_kind" style="width:100%">
+                  <el-option label="食品小作坊" value="2"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
-              <el-form-item prop="kind" label="经营类别：" required>
-                <el-select v-model="currentBizInfo.category" style="width:100%" placeholder="请选择">
+              <el-form-item label="经营类别：" required>
+                <el-select v-model="currentBizInfo.com_category" style="width:100%" placeholder="请选择">
                   <el-option label="餐馆" value="餐馆"></el-option>
                   <el-option label="快餐店" value="快餐店"></el-option>
                   <el-option label="小吃店" value="小吃店"></el-option>
@@ -62,27 +62,35 @@
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="contact" label="联系人员：">
-                <el-input v-model="currentBizInfo.contact" placeholder="请输入小作坊联系人姓名"></el-input>
+              <el-form-item label="联系人员：">
+                <el-input v-model="currentBizInfo.com_contact" placeholder="请输入小作坊联系人姓名"></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
-              <el-form-item prop="tel" label="联系电话：">
-                <el-input v-model="currentBizInfo.tel" placeholder="请输入小作坊联系人电话"></el-input>
+              <el-form-item label="联系电话：">
+                <el-input v-model="currentBizInfo.com_contactphone" placeholder="请输入小作坊联系人电话"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="固定电话：">
+                <el-input v-model="currentBizInfo.com_tel" placeholder="请输入小作坊的固定电话"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="6">
-              <el-form-item prop="posx" label="经度：">
+              <el-form-item label="经度：">
                 <el-input v-model.number="currentBizInfo.pos[0]" placeholder="数值"></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="6" :push="2">
-              <el-form-item prop="posy" label="纬度：">
+              <el-form-item label="纬度：">
                 <el-input v-model.number="currentBizInfo.pos[1]" placeholder="数值"></el-input>
               </el-form-item>
             </el-col>
@@ -97,8 +105,8 @@
 
           <el-row :gutter="20">
             <el-col :span="16">
-              <el-form-item prop="address" label="小作坊地址：">
-                <el-input :rows="4" type="textarea" v-model="currentBizInfo.address"></el-input>
+              <el-form-item label="小作坊地址：">
+                <el-input :rows="4" type="textarea" v-model="currentBizInfo.com_address"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -106,7 +114,7 @@
           <el-row :gutter="15">
             <el-col :span="16">
               <el-form-item label="登记证证：">
-                <el-checkbox v-model="hasLicence" @change="licenceToggle" label="有食品小作坊登记证" border></el-checkbox>
+                <el-checkbox v-model="hasLicence" label="有食品小作坊登记证" border></el-checkbox>
               </el-form-item>
             </el-col>
           </el-row>
@@ -120,65 +128,76 @@
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane v-if="currentBizInfo.licence" label="小作坊登记证" name="licence">
+      <el-tab-pane v-if="hasLicence" label="小作坊登记证" name="licence">
 
-        <el-form :rules="licenceRules" ref="currentBizInfo.licence" :disabled="!edit" :model="currentBizInfo.licence" label-position="left" style="margin-top:20px;" label-width="170px">
+        <el-form :model="currentBizInfo.licence" label-position="left" style="margin-top:20px;" label-width="170px">
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="name" label="作坊名称:" required>
-                <el-input v-model="currentBizInfo.licence.name" placeholder="请输入作坊名称"></el-input>
+              <el-form-item label="作坊名称:" required>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_name" placeholder="请输入作坊名称"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item prop="num" label="证书编号:" required>
-                <el-input v-model="currentBizInfo.licence.num" placeholder="请输入证书编号"></el-input>
+              <el-form-item label="证书编号:" required>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_code" placeholder="请输入证书编号"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="responsible" label="经营者姓名:" required>
-                <el-input v-model="currentBizInfo.licence.responsible" placeholder="法定代理人或负责人"></el-input>
+              <el-form-item label="经营者姓名:" required>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_lawer" placeholder="法定代理人或负责人"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item prop="socialcode" label="社会信用代码/身份证号:">
-                <el-input v-model="currentBizInfo.licence.socialcode" placeholder="输入社会信用代码或身份证号"></el-input>
+              <el-form-item label="社会信用代码/身份证号:">
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_socialnum" placeholder="输入社会信用代码或身份证号"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row>
             <el-col :span="16">
-              <el-form-item prop="productaddr" label="生产地址:">
-                <el-input v-model="currentBizInfo.licence.productaddr" :rows="4" type="textarea" placeholder="请输入小作坊生产地址"></el-input>
+              <el-form-item label="生产地址:">
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_business_address" :rows="4" type="textarea" placeholder="请输入小作坊生产地址"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="foodkind" label="食品类别/包装形式:" required>
-                <el-input v-model="currentBizInfo.licence.foodkind" placeholder="输入食品类别和包装形式"></el-input>
+              <el-form-item label="食品类别/包装形式:" required>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_kind" placeholder="输入食品类别和包装形式"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item prop="issue" label="发证机关:" required>
-                <el-input v-model="currentBizInfo.licence.issue" placeholder="输入发证机关"></el-input>
+              <el-form-item label="发证机关:" required>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_send_org" placeholder="输入发证机关"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item prop="licenceissue" label="许可证颁发日期:" required>
-                <el-date-picker style="width:100%" type="date" placeholder="选择颁发日期" v-model="currentBizInfo.licence.licenceissue"></el-date-picker>
+              <el-form-item label="许可证有效期：" required>
+                <el-date-picker :disabled="!edit" style="width:100%" type="daterange" range-separator="至" start-placeholder="生效日期" end-placeholder="截止" v-model="currentBizInfo.daterange"></el-date-picker>
               </el-form-item>
             </el-col>
+
             <el-col :span="8">
-              <el-form-item prop="licenceuntil" label="许可证有效期至:" required>
-                <el-date-picker style="width:100%" type="date" placeholder="选择到期日期" v-model="currentBizInfo.licence.licenceuntil"></el-date-picker>
+              <el-form-item label="许可证颁发日期：" required>
+                <el-date-picker :disabled="!edit" style="width:100%" type="date" placeholder="选择颁发日期" v-model="currentBizInfo.lic_date_send"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="20">
+              <el-form-item label="许可证图片：">
+                <el-button size="small" @click="viewImg" type="primary" icon="el-icon-view">查看</el-button>
+                <el-button :disabled="!edit" size="small" type="primary" icon="el-icon-upload el-icon--right">上传新的图片</el-button>
+                <el-button :disabled="!edit" size="small" type="danger" plain icon="el-icon-delete">删除</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -190,15 +209,13 @@
         <el-row>
           <el-col :span="24">
             <el-table :data="getCheckRecord()" size="medium" style="width: 100%;margin-bottom:25px;">
-              <el-table-column prop="date" label="检查时间" sortable></el-table-column>
-              <el-table-column prop="name" label="单位名称" sortable></el-table-column>
-              <el-table-column prop="num" label="许可证编号"></el-table-column>
-              <el-table-column prop="grid" label="所属区域"></el-table-column>
-              <el-table-column prop="officer" label="执法人员"></el-table-column>
-              <el-table-column prop="kind" label="监督检查类别" sortable></el-table-column>
-              <el-table-column prop="checkresult" label="检查结果" sortable></el-table-column>
-              <el-table-column prop="handleresult" label="处理结果" sortable></el-table-column>
-              <el-table-column prop="action" label="操作" width="80px">
+              <el-table-column label="检查时间" sortable></el-table-column>
+              <el-table-column label="执法人员"></el-table-column>
+              <el-table-column label="执法单位"></el-table-column>
+              <el-table-column label="检查类别" sortable></el-table-column>
+              <el-table-column label="检查结果" sortable></el-table-column>
+              <el-table-column label="处理方式" sortable></el-table-column>
+              <el-table-column label="操作" width="80px">
                 <template slot-scope="scope">
                   <el-button size="mini">查看</el-button>
                 </template>
@@ -212,16 +229,11 @@
         <el-row>
           <el-col :span="24">
             <el-table :data="getRiskRecord()" size="medium" style="width: 100%;margin-bottom:25px;">
-              <el-table-column prop="year" label="评级年" sortable></el-table-column>
-              <el-table-column prop="name" label="单位名称" sortable></el-table-column>
-              <el-table-column prop="num" label="许可证编号"></el-table-column>
-              <el-table-column prop="grid" label="所属区域"></el-table-column>
-              <el-table-column prop="riskresult" label="评定等级" sortable></el-table-column>
-              <el-table-column prop="riskpoint" label="量化评分" sortable></el-table-column>
-              <el-table-column prop="officer" label="评定人员"></el-table-column>
-              <el-table-column prop="department" label="评定单位"></el-table-column>
-              <el-table-column prop="last" label="最后评定于" sortable></el-table-column>
-              <el-table-column prop="action" label="操作" min-width="80px">
+              <el-table-column label="评级时间" sortable></el-table-column>
+              <el-table-column label="评定等级" sortable></el-table-column>
+              <el-table-column label="评定人员"></el-table-column>
+              <el-table-column label="评定单位"></el-table-column>
+              <el-table-column label="操作" min-width="80px">
                 <template slot-scope="scope">
                   <el-button size="mini">查看</el-button>
                 </template>
@@ -235,17 +247,13 @@
         <el-row>
           <el-col :span="24">
             <el-table :data="getRectifyRecord()" size="medium" style="width: 100%;margin-bottom:25px;">
-              <el-table-column prop="name" label="单位名称" sortable></el-table-column>
-              <el-table-column prop="num" label="许可证编号"></el-table-column>
-              <el-table-column prop="officer" label="执法人员"></el-table-column>
-              <el-table-column prop="department" label="执法单位"></el-table-column>
-              <el-table-column prop="kind" label="监督检查类别"></el-table-column>
-              <el-table-column prop="isrefity" label="是否整改"></el-table-column>
-              <el-table-column prop="isrecheck" label="是否复查"></el-table-column>
-              <el-table-column prop="state" label="状态"></el-table-column>
-              <el-table-column prop="update" label="更新时间"></el-table-column>
-              <el-table-column prop="result" label="检查结果"></el-table-column>
-              <el-table-column prop="action" label="操作">
+              <el-table-column label="执法人员"></el-table-column>
+              <el-table-column label="执法单位"></el-table-column>
+              <el-table-column label="处罚时间"></el-table-column>
+              <el-table-column label="检查类别"></el-table-column>
+              <el-table-column label="是否整改"></el-table-column>
+              <el-table-column label="状态"></el-table-column>
+              <el-table-column label="操作">
                 <template slot-scope="scope">
                   <el-button size="mini">查看</el-button>
                 </template>
@@ -266,122 +274,135 @@
         </router-link>
       </el-col>
     </el-row>
+
+    <el-dialog width="35" title="小作坊登记证" v-if="popup" :visible.sync="popup">
+      <img src="@/assets/img/xiaozuofang1.png" />
+      <div slot="footer">
+        <el-button type="primary" size="small" icon="el-icon-printer">打印</el-button>
+        <el-button type="primary" size="small" icon="el-icon-download">下载</el-button>
+        <el-button size="small" @click="popup = false">关闭</el-button>
+      </div>
+    </el-dialog>
   </el-row>
 </template>
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getBizByID } from "@/api/biz.js";
+import department from "@/api/old_area.js";
+
 export default {
   name: "base_singleworkshop",
+
   data() {
     return {
+      department,
       tab: "base",
       edit: null,
       isNew: null,
       kind: null,
       title: null,
       hasLicence: null,
+
       currentBizInfo: null,
       originBizInfo: null,
-      bizRules: {
-        name: [
-          {
-            required: true,
-            message: "必须输入小作坊单位名称",
-            trigger: ["blur", "change"]
-          }
-        ],
-        state: [
-          {
-            required: true,
-            message: "必须设置小作坊单位状态",
-            trigger: ["blur", "change"]
-          }
-        ],
-        kind: [
-          {
-            required: true,
-            message: "必须选择小作坊单位类型",
-            trigger: ["blur", "change"]
-          }
-        ],
-        area: [
-          {
-            required: true,
-            message: "必须设置小作坊单位网格区域",
-            trigger: ["blur", "change"]
-          }
-        ]
-      },
-      licenceRules: {
-        name: [
-          {
-            required: true,
-            message: "必须输入许可中的生产者名称",
-            trigger: ["blur", "change"]
-          }
-        ],
-        num: [
-          {
-            required: true,
-            message: "必须输入许可证号码",
-            trigger: ["blur", "change"]
-          }
-        ],
-        responsible: [
-          {
-            required: true,
-            message: "必须输入法定代理人",
-            trigger: ["blur", "change"]
-          }
-        ],
-        supervise: [
-          {
-            required: true,
-            message: "必须输入日常监管机构",
-            trigger: ["blur", "change"]
-          }
-        ],
-        superviser: [
-          {
-            required: true,
-            message: "必须输入日常监管人员",
-            trigger: ["blur", "change"]
-          }
-        ],
-        foodkind: [
-          {
-            required: true,
-            message: "必须输入许可证的类别",
-            trigger: ["blur", "change"]
-          }
-        ],
-        issue: [
-          {
-            required: true,
-            message: "必须输入发证机关",
-            trigger: ["blur", "change"]
-          }
-        ],
-        licenceissue: [
-          {
-            required: true,
-            message: "必须输入许可证颁发日期",
-            trigger: ["blur", "change"]
-          }
-        ],
-        licenceuntil: [
-          {
-            required: true,
-            message: "必须输入许可证有效期限",
-            trigger: ["blur", "change"]
-          }
-        ]
-      }
+
+      popup: false
     };
   },
 
+  beforeMount() {
+    this.init();
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    this.init();
+    next();
+  },
+
   methods: {
+    async init() {
+      let bizid = this.$route.params.bizid.trim();
+
+      this.currentBizInfo = {
+        com_name: "",
+        com_state: 1,
+        com_category: "",
+        com_kind: "",
+        com_address: "",
+        area: [],
+        com_contact: "",
+        com_contactphone: "",
+        com_tel: "",
+
+        lic_code: "",
+        lic_name: "",
+        lic_socialnum: "",
+        lic_supervise_org: "",
+        lic_supervise_staff: "",
+        lic_send_org: "",
+        lic_business_address: "",
+        lic_register_address: "",
+        lic_kind: "",
+        lic_date_send: "",
+        lic_date_start: "",
+        lic_date_end: "",
+
+        pos: [null, null],
+        daterange: ["", ""]
+      };
+
+      if (bizid === "new") {
+        this.title = "新增小作坊";
+        this.hasLicence = false;
+        this.isNew = true;
+        this.edit = true;
+      } else {
+        let bizInfo = await getBizByID(bizid);
+        bizInfo.pos = [null, null];
+        bizInfo.daterange = ["", ""];
+
+        if (bizInfo.area) {
+          bizInfo.area = department.getAreaIDArray(bizInfo.area);
+        }
+
+        if (bizInfo.com_gps) {
+          let [x, y] = bizInfo.com_gps.split(",");
+          bizInfo.pos = [Number(x.trim()), Number(y.trim())];
+        }
+
+        if (bizInfo.lic_date_start || bizInfo.lic_date_end) {
+          bizInfo.daterange = [bizInfo.lic_date_start, bizInfo.lic_date_end];
+        }
+
+        this.currentBizInfo = bizInfo;
+
+        this.originBizInfo = copy(this.currentBizInfo);
+        this.originBizInfo.area = copy(this.currentBizInfo.area);
+
+        this.title = this.originBizInfo.com_name;
+        this.hasLicence =
+          this.originBizInfo.lic_code && this.originBizInfo.lic_code.length > 0;
+
+        this.isNew = false;
+        this.edit = false;
+      }
+    },
+
+    editOK() {},
+
+    editCancel() {
+      this.currentBizInfo = copy(this.originBizInfo);
+      this.hasLicence =
+        this.originBizInfo.lic_code && this.originBizInfo.lic_code.length > 0;
+      this.edit = false;
+      this.tab = "base";
+    },
+
+    viewImg() {
+      this.popup = true;
+    },
+
     getRectifyRecord() {
       return [];
     },
@@ -390,91 +411,6 @@ export default {
     },
     getRiskRecord() {
       return [];
-    },
-
-    editOK() {},
-
-    editCancel() {
-      this.currentBizInfo = copy(this.originBizInfo);
-      this.currentBizInfo.licence = copy(this.originBizInfo.licence);
-      this.hasLicence = this.currentBizInfo.licence !== null;
-      this.edit = false;
-      this.tab = "base";
-    },
-
-    licenceToggle(val) {
-      if (val) {
-        this.currentBizInfo.licence = {};
-        let defaultLincence =
-          this.originBizInfo && this.originBizInfo.licence
-            ? copy(this.originBizInfo.licence)
-            : {
-                name: "",
-                num: "",
-                socialcode: "",
-                supervise: "",
-                superviser: "",
-                responsible: "",
-                address: "",
-                productaddr: "",
-                issue: "",
-                licenceissue: null,
-                licenceuntil: null
-              };
-
-        this.currentBizInfo.licence = defaultLincence;
-      } else {
-        this.currentBizInfo.licence = null;
-      }
-    },
-
-    init() {
-      let bizid = this.$route.params.bizid;
-
-      if (bizid.trim() === "new") {
-        this.currentBizInfo = {
-          name: "",
-          state: 1,
-          category: "",
-          kind: "食品小作坊",
-          pos: [null, null],
-          address: "",
-          area: [],
-          contact: "",
-          tel: "",
-          licence: null
-        };
-
-        this.title = "新增小作坊";
-        this.isNew = true;
-        this.edit = true;
-        this.hasLicence = false;
-      } else {
-        this.currentBizInfo = copy(
-          this.$store.state.biz.find(t => t.id == bizid)
-        );
-
-        this.originBizInfo = copy(
-          this.$store.state.biz.find(t => t.id == bizid)
-        );
-
-        if (this.currentBizInfo.area) {
-          this.currentBizInfo.area = this.$store.state.gridarea.findAreaIDArray(
-            this.currentBizInfo.area
-          );
-        }
-
-        if (this.originBizInfo.area) {
-          this.originBizInfo.area = this.$store.state.gridarea.findAreaIDArray(
-            this.originBizInfo.area
-          );
-        }
-
-        this.title = this.currentBizInfo.name;
-        this.hasLicence = this.currentBizInfo.licence !== null;
-        this.isNew = false;
-        this.edit = false;
-      }
     }
   },
 

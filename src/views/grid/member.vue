@@ -21,7 +21,7 @@
       </el-col>
 
       <el-col :span="5">
-        <el-cascader clearable :show-all-levels="false" size="small" :props="{label:'name',value:'id'}" v-model="search.grid" :options="$store.state.gridarea.gridarea" placeholder="按网格筛选" change-on-select></el-cascader>
+        <el-cascader clearable :show-all-levels="false" size="small" :props="{label:'name',value:'id'}" v-model="search.grid" :options="department.getArea()" placeholder="按网格筛选" change-on-select></el-cascader>
       </el-col>
 
       <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
@@ -42,8 +42,8 @@
           </el-table-column>
           <el-table-column label="网格名称" sortable>
             <template slot-scope="scope">
-              {{$store.state.gridarea.findArea(scope.row.area).name}}
-              <el-tag size="small">{{$store.state.gridarea.findAreaIDArray(scope.row.area).length}}级网格</el-tag>
+              {{department.getAreaByID(scope.row.area).name}}
+              <el-tag size="small">{{department.getAreaIDArray(scope.row.area).length}}级网格</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="job" label="职务" sortable></el-table-column>
@@ -69,11 +69,15 @@
 </template>
 
 <script>
+import staff from "@/api/old_staff.js";
+import department from "@/api/old_area.js";
+
 export default {
   name: "grid_member",
-  
+
   data() {
     return {
+      department,
       search: {
         text: "",
         grid: []
@@ -101,7 +105,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.gridmember;
+      let tableData = staff.getAllStaffs();
 
       if (
         this.currentSearch.text &&

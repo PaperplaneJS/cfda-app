@@ -27,8 +27,11 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getLawByID } from "@/api/old_law.js";
+
 export default {
   name: "base_singlelaw",
+
   data() {
     return {
       currentLaw: null,
@@ -45,7 +48,7 @@ export default {
       this.title = "新建法律法规";
       this.isnew = true;
     } else {
-      this.currentLaw = copy(this.$store.state.law.find(t => t.id == lid));
+      this.currentLaw = copy(getLawByID(lid));
       this.title = this.currentLaw.name;
       this.isnew = false;
     }

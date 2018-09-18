@@ -7,12 +7,16 @@ let law = [{
   state: 1
 }];
 
+import {
+  copy
+} from "@/utils/utils.js";
+
 function getLawByID(id) {
-  return law.find(t => t.id === id);
+  return copy(law).find(t => t.id === id);
 }
 
 function getLaws() {
-  return law;
+  return copy(law);
 }
 
 export {

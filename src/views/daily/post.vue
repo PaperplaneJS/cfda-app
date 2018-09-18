@@ -67,6 +67,9 @@
 </template>
 
 <script>
+import {} from "@/api/old_task.js";
+import {} from "@/api/old_plan.js";
+
 export default {
   name: "daily_post",
   
@@ -157,7 +160,7 @@ export default {
       let taskItem = this.$store.state.task.find(
         t =>
           t.planid == plan.id &&
-          t.department == this.$store.state.current.staff.departmentid
+          t.department == this.$store.state.currentUser.area
       );
 
       if (taskItem) {

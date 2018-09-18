@@ -64,9 +64,11 @@
 </template>
 
 <script>
+import SMS from "@/api/old_sms.js";
+
 export default {
   name: "sms_list",
-  
+
   data() {
     return {
       search: {
@@ -89,7 +91,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.sms;
+      let tableData = SMS.getAllSMS();
 
       if (this.search.onlyunread) {
         tableData = tableData.filter(t => !t.read);

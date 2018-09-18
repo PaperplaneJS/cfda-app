@@ -52,7 +52,7 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="所属层级:" prop="area">
-            <el-cascader :disabled="!edit" :show-all-levels="false" v-model="currentMember.area" :props="{label:'name',value:'id'}" :options="$store.state.gridarea.gridarea" placeholder="选择层级" change-on-select></el-cascader>
+            <el-cascader :disabled="!edit" :show-all-levels="false" v-model="currentMember.area" :props="{label:'name',value:'id'}" :options="department.getArea()" placeholder="选择层级" change-on-select></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
@@ -74,11 +74,15 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import department from "@/api/old_area.js";
+
 export default {
   name: "grid_singlemember",
 
   data() {
     return {
+      department,
       title: null,
       isNew: null,
       edit: null,
@@ -130,7 +134,7 @@ export default {
 
   methods: {
     init() {
-      let gmid = this.$route.params.gridmemberid;
+      let gmid = this.$route.params.gridmemberid.trim();
 
       if (gmid === "new") {
         this.currentMember = {
@@ -144,7 +148,7 @@ export default {
         this.edit = true;
         this.title = "新的网格人员";
       } else {
-        let member = copy(this.$store.state.gridmember.find(t => t.id == gmid));
+        let member = copy(getStaffByID(gmid));
 
         this.currentMember = {
           id: gmid,
@@ -152,7 +156,7 @@ export default {
           sex: member.sex,
           state: member.state,
           job: member.job,
-          area: this.$store.state.gridarea.findAreaIDArray(member.area)
+          area: department.getAreaIDArray(member.area)
         };
         this.originMemebr = copy(this.currentMember);
 

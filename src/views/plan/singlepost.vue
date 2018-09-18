@@ -50,7 +50,7 @@
       <el-row :gutter="15">
         <el-col :span="16">
           <el-form-item label="选择模板：" required>
-            <el-select disabled style="width:100%;" v-model="currentPlan.templateid">
+            <el-select disabled style="width:100%;" v-model="currentPlan.template">
               <el-option v-for="item of taskTemplate" :key="item.id" :label="item.name" :value="item.id">
               </el-option>
             </el-select>
@@ -85,9 +85,6 @@
                   <el-button v-if="!node.isLeaf" type="text" size="mini" @click="node.checked=true">
                     单个选中
                   </el-button>
-                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="setChildren(node,false)">
-                    清空
-                  </el-button>
                 </span>
               </span>
             </el-tree>
@@ -111,6 +108,10 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getArea } from "@/api/old_area.js";
+import { getPlanByID } from "@/api/old_plan.js";
+import { getTemplates } from "@/api/old_template.js";
+
 export default {
   name: "plan_singleplan",
 
@@ -127,7 +128,7 @@ export default {
 
   computed: {
     treeData() {
-      return this.$store.state.gridarea.gridarea;
+      return getArea();
     },
 
     planDetail() {
@@ -135,7 +136,7 @@ export default {
     },
 
     taskTemplate() {
-      return this.$store.state.template.map(t => {
+      return getTemplates().map(t => {
         return { id: t.id, name: t.name };
       });
     }
@@ -144,14 +145,14 @@ export default {
   methods: {
     init() {
       let planid = this.$route.params.planid;
-      this.currentPlan = copy(this.$store.state.plan.find(t => t.id == planid));
+      this.currentPlan = getPlanByID(planid);
       this.title = this.currentPlan.title;
     },
 
     checkChange(data) {
       let node = this.$refs.tree.getNode(data);
+      this.setChildren(node, node.checked);
       if (node.checked) {
-        this.setChildren(node, node.checked);
         node.expanded = true;
       }
     },

@@ -71,7 +71,7 @@ let routes = [{
     path: '/',
     redirect: '/index'
   },
-  
+
   //用户登录
 
   {
@@ -278,6 +278,8 @@ let routes = [{
   }
 ];
 
-export default new Router({
+let router = new Router({
   routes
 });
+
+export default router;

@@ -63,6 +63,8 @@
 </template>
 
 <script>
+import { getLaws } from "@/api/old_law.js";
+
 export default {
   name: "base_law",
   data() {
@@ -91,7 +93,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.law;
+      let tableData = getLaws();
 
       if (
         this.currentSearch.text &&
