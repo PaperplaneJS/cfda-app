@@ -79,8 +79,8 @@
                   </el-table-column>
 
                   <el-table-column prop="title" label="标题" width="320px" sortable></el-table-column>
-                  <el-table-column prop="staff" label="制定人" sortable></el-table-column>
-                  <el-table-column prop="department" label="制定单位" sortable></el-table-column>
+                  <el-table-column prop="stf" label="制定人" sortable></el-table-column>
+                  <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
                   <el-table-column prop="date" width="160px" label="制定日期" align="center"></el-table-column>
                   <el-table-column label="执行期限" align="center">
                     <template slot-scope="scope">
@@ -117,9 +117,13 @@
             <el-row>
               <el-col :span="24">
                 <el-table :data="riskPageData" size="medium" style="width: 100%;margin-bottom:20px;">
-                  <el-table-column prop="biz.name" label="单位名称" sortable></el-table-column>
+                  <el-table-column prop="biz.com_name" label="单位名称" sortable></el-table-column>
                   <el-table-column prop="areaName" label="网格区域" sortable></el-table-column>
-                  <el-table-column prop="biz.kind" label="个体类型" sortable></el-table-column>
+                  <el-table-column label="个体类型" sortable>
+                    <template slot-scope="scope">
+                      {{scope.row.biz.com_kind | bizKindText}}
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="code" label="许可证编号"></el-table-column>
                   <el-table-column label="评级结果" min-width="120px;" sortable>
                     <template slot-scope="scope">
@@ -151,9 +155,16 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import { getAreaByID } from "@/api/old_area.js";
+import { getBizByID } from "@/api/old_biz.js";
+import { getTaskItems } from "@/api/old_task.js";
+import { getPlans } from "@/api/old_plan.js";
+import { getAllRisks } from "@/api/old_risk.js";
+
 export default {
   name: "trace_trace",
-  
+
   data() {
     return {
       tab: "plan",
@@ -213,15 +224,43 @@ export default {
 
     taskState(state) {
       return "执行中...";
+    },
+
+    planKindText(kind) {
+      switch (kind) {
+        case "daily":
+          return "日常检查";
+        case "special":
+          return "专项检查";
+        case "risk":
+          return "全量检查";
+        default:
+          return kind;
+      }
+    },
+
+    bizKindText(kind) {
+      switch (kind) {
+        case "1":
+          return "食品经营";
+        case "2":
+          return "食品小作坊";
+        case "3":
+          return "网上商家";
+        case "4":
+          return "餐饮服务";
+      }
     }
   },
 
   computed: {
     planData() {
-      let result = copy(this.$store.state.plan);
+      let result = getPlans();
       result.forEach(t => {
+        t.dep = getAreaByID(t.department).name;
+        t.stf = getStaffByID(t.staff).name;
         t.task = [];
-        this.$store.state.task.forEach(task => {
+        getTaskItems().forEach(task => {
           if (task.planid == t.id) {
             task.tasklist.forEach(taskitem => t.task.push(taskitem));
           }
@@ -232,14 +271,12 @@ export default {
     },
 
     riskData() {
-      let result = copy(this.$store.state.risk[new Date().getFullYear() + 1]);
+      let result = getAllRisks()[new Date().getFullYear() + 1];
       result.forEach(t => {
-        t.biz = this.$store.state.biz.find(biz => biz.id == t.bizid);
-        t.code = (t.biz.licence && t.biz.licence.num) || "暂无";
-        t.areaName = this.$store.state.gridarea.findArea(t.biz.area).name;
-        t.staffName = this.$store.state.gridmember.find(
-          staff => staff.id == t.staff
-        ).name;
+        t.biz = getBizByID(t.bizid);
+        t.code = (t.biz.lic_code && t.biz.lic_code) || "暂无";
+        t.areaName = getAreaByID(t.biz.area).name;
+        t.staffName = getStaffByID(t.staff).name;
       });
 
       return result;

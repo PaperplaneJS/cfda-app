@@ -43,7 +43,6 @@
 import Login from "@/api/login.js";
 import { getAreaByID } from "@/api/old_area.js";
 import { getStaffByID } from "@/api/old_staff.js";
-import qs from "qs";
 
 export default {
   name: "action_login",

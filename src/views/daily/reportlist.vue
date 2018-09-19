@@ -77,9 +77,14 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getBizByID } from "@/api/old_biz.js";
+import { getAreaByID } from "@/api/old_area.js";
+import { getTaskItems } from "@/api/old_task.js";
+import { getPlanByID } from "@/api/old_plan.js";
+
 export default {
   name: "daily_reportlist",
-  
+
   data() {
     return {
       title: null,
@@ -112,12 +117,10 @@ export default {
     tableData() {
       let tableData = copy(this.currentTask.detail);
       tableData.forEach(t => {
-        t.bizname = this.$store.state.biz.find(biz => biz.id == t.bizid).name;
+        t.bizname = getBizByID(t.bizid).com_name;
         t.staffinfo = [
-          this.$store.state.gridmember.find(staff => staff.id == t.staff[0].id)
-            .name,
-          this.$store.state.gridmember.find(staff => staff.id == t.staff[1].id)
-            .name
+          getAreaByID(t.staff[0].id).name,
+          getAreaByID(t.staff[1].id).name
         ];
       });
 
@@ -168,13 +171,11 @@ export default {
     init() {
       let taskid = this.$route.params.taskid;
 
-      this.$store.state.task.forEach(t => {
+      getTaskItems().forEach(t => {
         let taskItem = t.tasklist.find(ti => ti.id == taskid);
         if (taskItem) {
           this.currentTask = copy(taskItem);
-          this.plantitle = this.$store.state.plan.find(
-            p => p.id == t.planid
-          ).title;
+          this.plantitle = getPlanByID(t.planid).title;
           return false;
         }
       });

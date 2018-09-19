@@ -19,9 +19,10 @@ let task = [{
     desc: "本任务请及时完成",
     date: "2018-05-15 8:20",
     progress: [2, 20],
+    checklist: ["5286101345b9f5d1c0724c4031864893", "8264527705b9f5dc57c5080076762543", "7554800895b9f5e966767a1074257934"],
     detail: [{
       id: "p5d2t1r1",
-      bizid: "1",
+      bizid: "8363294415b9f5b61301c39032974311",
       date: "2018-05-20 9:45",
       num: "10000001",
       yearcount: 1,
@@ -220,7 +221,7 @@ let task = [{
       }
     }, {
       id: "p5d2t1r2",
-      bizid: "2",
+      bizid: "2212780685b9f5c91e61663035320420",
       date: "2018-05-22 13:25",
       num: "10000002",
       yearcount: 1,
@@ -444,6 +445,7 @@ let task = [{
     desc: "本任务请及时完成",
     date: "2018-05-18 8:20",
     progress: [0, 18],
+    checklist: ["5286101345b9f5d1c0724c4031864893", "8264527705b9f5dc57c5080076762543", "7554800895b9f5e966767a1074257934"],
     detail: []
   }]
 }, {
@@ -457,9 +459,11 @@ let task = [{
       desc: "本任务请及时完成",
       date: "2018-05-15 8:20",
       progress: [2, 20],
+      checklist: ["5286101345b9f5d1c0724c4031864893", "8264527705b9f5dc57c5080076762543", "7554800895b9f5e966767a1074257934"],
       detail: [{
+
         id: "p4d2t1r1",
-        bizid: "1",
+        bizid: "8363294415b9f5b61301c39032974311",
         date: "2018-05-20 9:45",
         num: "10000001",
         yearcount: 1,
@@ -658,7 +662,7 @@ let task = [{
         }
       }, {
         id: "p4d2t1r2",
-        bizid: "2",
+        bizid: "2212780685b9f5c91e61663035320420",
         date: "2018-05-22 13:25",
         num: "10000002",
         yearcount: 1,
@@ -883,6 +887,7 @@ let task = [{
       desc: "本任务请及时完成",
       date: "2018-05-18 8:20",
       progress: [0, 18],
+      checklist: ["5286101345b9f5d1c0724c4031864893", "8264527705b9f5dc57c5080076762543", "7554800895b9f5e966767a1074257934"],
       detail: []
     }
   ]
@@ -891,6 +896,10 @@ let task = [{
 import {
   copy
 } from "@/utils/utils.js";
+
+import {
+  getAreaIDArray
+} from "@/api/old_area.js";
 
 function getTaskDetailByID(id) {
   let result = null;
@@ -923,12 +932,19 @@ function getTaskItems(planid = null, departmentid = null) {
   return tasks;
 }
 
+function getTaskItem(planid, departmentid) {
+  return copy(task).find(t => t.planid === planid && getAreaIDArray(t.department)
+    .includes(departmentid))
+}
+
 export {
   getTaskDetailByID,
-  getTaskItems
+  getTaskItems,
+  getTaskItem
 }
 
 export default {
   getTaskDetailByID,
-  getTaskItems
+  getTaskItems,
+  getTaskItem
 }

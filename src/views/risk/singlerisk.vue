@@ -3,12 +3,12 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/risk">量化分级</el-breadcrumb-item>
-      <el-breadcrumb-item>{{currentRisk.biz.name}} ({{riskYear}}年度记录)</el-breadcrumb-item>
+      <el-breadcrumb-item>{{title}} ({{riskYear}}年度记录)</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{currentRisk.biz.name}} ({{riskYear}}年度记录)</el-row>
+    <el-row class="title">{{title}} ({{riskYear}}年度记录)</el-row>
 
-    <el-form label-position="left" style="margin-top:20px;" label-width="100px">
+    <el-form v-if="currentRisk" label-position="left" style="margin-top:20px;" label-width="100px">
       <el-row style="font-size:18px;margin-bottom:15px;" class="section">企业单位信息
         <router-link :to="`/base/biz/${currentRisk.biz.id}`">
           <el-button type="text" size="mini">前往查看</el-button>
@@ -18,7 +18,7 @@
       <el-row :gutter="20">
         <el-col :span="16">
           <el-form-item label="单位名:">
-            <el-input v-model="currentRisk.biz.name" disabled></el-input>
+            <el-input :value="currentRisk.biz.com_name" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -26,13 +26,13 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="许可证编号:">
-            <el-input v-model="currentRisk.biz.licence.num" disabled></el-input>
+            <el-input :value="currentRisk.biz.lic_code" disabled></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="8">
           <el-form-item label="负责人:">
-            <el-input v-model="currentRisk.biz.licence.responsible" disabled></el-input>
+            <el-input :value="currentRisk.biz.lic_lawer" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -40,13 +40,13 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="单位类型:">
-            <el-input v-model="currentRisk.biz.kind" disabled></el-input>
+            <el-input :value="bizKindText(currentRisk.biz.com_kind)" disabled></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="8">
           <el-form-item label="经营类别:">
-            <el-input v-model="currentRisk.biz.category" disabled></el-input>
+            <el-input :value="currentRisk.biz.com_category" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -54,13 +54,13 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="联系人:">
-            <el-input v-model="currentRisk.biz.contact" disabled></el-input>
+            <el-input :value="currentRisk.biz.com_contact" disabled></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="8">
           <el-form-item label="联系电话:">
-            <el-input v-model="currentRisk.biz.tel" disabled></el-input>
+            <el-input :value="currentRisk.biz.com_contact" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -77,7 +77,7 @@
       <el-row :gutter="20">
         <el-col :span="16">
           <el-form-item label="使用模板:">
-            <el-input v-model="currentTemplate.name" disabled></el-input>
+            <el-input :value="currentTemplate.name" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -85,13 +85,13 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="检查人:">
-            <el-input v-model="currentRisk.staffinfo" disabled></el-input>
+            <el-input :value="currentRisk.staffinfo" disabled></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="8">
           <el-form-item label="检查时间:">
-            <el-input v-model="currentRisk.date" disabled></el-input>
+            <el-input :value="currentRisk.date" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -101,13 +101,13 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="模板名:">
-            <el-input v-model="currentTemplate.name" disabled></el-input>
+            <el-input :value="currentTemplate.name" disabled></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="8">
           <el-form-item label="餐饮服务:">
-            <el-input v-model="currentRisk.type" disabled></el-input>
+            <el-input :value="currentRisk.type" disabled></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -116,12 +116,14 @@
         <el-col :span="8">
           <el-form-item label="选项情况:">
             <el-tag>已选项/总选项： {{itemCount.current}} / {{itemCount.sum}}</el-tag>
-            <el-tag style="margin-left:6px;">实得分/应得分： {{itemCount.currentPoint.toFixed(1)}} / {{itemCount.sumPoint.toFixed(1)}}</el-tag>
+            <el-tag>实得分/应得分： {{itemCount.currentPoint.toFixed(1)}} / {{itemCount.sumPoint.toFixed(1)}}</el-tag>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="最终得分:">
-            <el-tag>{{getResultPoint.toFixed(1)}}</el-tag>
+            <el-tag>
+              <strong>{{getResultPoint.toFixed(1)}}</strong>
+            </el-tag>
           </el-form-item>
         </el-col>
       </el-row>
@@ -166,13 +168,19 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getAllRisks, getRisksByYear } from "@/api/old_risk.js";
+import { getAreaByID } from "@/api/old_area.js";
+import { getAllBizs } from "@/api/biz.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import { getTemplateByID } from "@/api/old_template.js";
+
 export default {
   name: "risk_singlerisk",
 
   data() {
     return {
-      currentRisk: null,
-      currentTemplate: null,
+      riskid: null,
+      bizData: [],
       riskYear: null,
       edit: false
     };
@@ -253,17 +261,18 @@ export default {
 
     getResultPoint() {
       return this.itemCount.currentPoint / this.itemCount.sumPoint * 100;
-    }
-  },
+    },
 
-  methods: {
-    init() {
-      let riskid = this.$route.params.riskid;
+    currentRisk() {
+      if (this.bizData.length <= 0) {
+        return null;
+      }
+
       let risk = null;
 
-      Object.entries(this.$store.state.risk).forEach(([key, value]) => {
+      Object.entries(getAllRisks()).forEach(([key, value]) => {
         value.forEach(t => {
-          if (t.id == riskid) {
+          if (t.id == this.riskid) {
             risk = copy(t);
             this.riskYear = Number(key);
             return false;
@@ -271,15 +280,33 @@ export default {
         });
       });
 
-      risk.biz = this.$store.state.biz.find(biz => biz.id == risk.bizid);
-      risk.department = this.$store.state.gridarea.findArea(risk.biz.area).name;
-      risk.staffinfo = this.$store.state.gridmember.find(
-        staff => staff.id == risk.staff
-      ).name;
-      this.currentTemplate = this.$store.state.template.find(
-        t => t.id == risk.templateid
-      );
-      this.currentRisk = risk;
+      risk.biz = this.bizData.find(biz => biz.com_id == risk.bizid);
+      risk.department = getAreaByID(risk.biz.area).name;
+      risk.staffinfo = getStaffByID(risk.staff).name;
+
+      risk.currentTemplate = getTemplateByID(risk.templateid);
+      return risk;
+    },
+
+    currentTemplate() {
+      if (this.currentRisk) {
+        return this.currentRisk.currentTemplate;
+      }
+      return null;
+    },
+
+    title() {
+      if (this.currentRisk && this.currentRisk.biz) {
+        return this.currentRisk.biz.com_name;
+      }
+      return "";
+    }
+  },
+
+  methods: {
+    async init() {
+      this.riskid = this.$route.params.riskid;
+      this.bizData = await getAllBizs();
     },
 
     getPoint(cent, point) {
@@ -302,6 +329,19 @@ export default {
         colspan: row.rowspan ? 1 : 0,
         rowspan: row.rowspan || 0
       };
+    },
+
+    bizKindText(kind) {
+      switch (kind) {
+        case "1":
+          return "食品经营";
+        case "2":
+          return "食品小作坊";
+        case "3":
+          return "网上商家";
+        case "4":
+          return "餐饮服务";
+      }
     }
   }
 };

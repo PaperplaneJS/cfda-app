@@ -28,8 +28,8 @@
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="title" label="计划标题" min-width="140px" sortable></el-table-column>
-          <el-table-column prop="staff" label="制定人" sortable></el-table-column>
-          <el-table-column prop="department" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="stf" label="制定人" sortable></el-table-column>
+          <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
           <el-table-column prop="task.recive" label="接收日期" align="center" sortable></el-table-column>
           <el-table-column label="执行期限" align="center" width="140px">
             <template slot-scope="scope">
@@ -77,9 +77,15 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getTaskItems } from "@/api/old_task.js";
+import { getPlanByID } from "@/api/old_plan.js";
+import { getAreaIDArray } from "@/api/old_area.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import department from "@/api/old_area.js";
+
 export default {
   name: "daily_report",
-  
+
   data() {
     return {
       search: {
@@ -101,20 +107,26 @@ export default {
   computed: {
     tableData() {
       let tableData = [];
-      this.$store.state.task.forEach(t => {
+
+      getTaskItems().forEach(t => {
         if (
-          t.department == this.$store.state.current.staff.departmentid &&
+          getAreaIDArray(t.department).includes(
+            this.$store.state.currentUser.area
+          ) &&
           t.tasklist.length > 0
         ) {
           let taskItem = copy(t);
-          let planItem = copy(
-            this.$store.state.plan.find(plan => plan.id == t.planid)
-          );
+          let planItem = copy(getPlanByID(t.planid));
           if (planItem.kind == "daily") {
             planItem.task = taskItem;
             tableData.push(planItem);
           }
         }
+      });
+
+      tableData.forEach(t => {
+        t.dep = department.getAreaByID(t.department).name;
+        t.stf = getStaffByID(t.staff).name;
       });
 
       if (
@@ -125,8 +137,8 @@ export default {
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
-            t.department.includes(searchText) ||
-            t.staff.includes(searchText)
+            t.dep.includes(searchText) ||
+            t.stf.includes(searchText)
         );
       }
 

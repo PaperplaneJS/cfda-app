@@ -47,21 +47,21 @@
           <el-row :gutter="15">
             <el-col :span="8">
               <el-form-item label="使用模板：">
-                <el-select disabled style="width:100%;" v-model="plan.templateid">
-                  <el-option v-for="item of $store.state.template.map(t=>({id:t.id,name:t.name}))" :key="item.id" :label="item.name" :value="item.id">
+                <el-select disabled style="width:100%;" v-model="plan.template">
+                  <el-option v-for="item of getTemplates().map(t=>({id:t.id,name:t.name}))" :key="item.id" :label="item.name" :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
-              <el-button @click="$router.push('/base/template/'+plan.templateid)" type="text">查看模板</el-button>
+              <el-button @click="$router.push('/base/template/'+plan.template)" type="text">查看模板</el-button>
             </el-col>
           </el-row>
 
           <el-row :gutter="15">
             <el-col :span="8">
-              <el-form-item label="接收时间：">
+              <el-form-item label="接收日期：">
                 <el-date-picker disabled style="width:100%;" type="datetime" v-model="task.recive"></el-date-picker>
               </el-form-item>
             </el-col>
@@ -152,15 +152,15 @@
             </el-col>
 
             <el-col :span="4">
-              <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="bizSearch.grid" :options="$store.state.gridarea.gridarea" placeholder="按网格筛选" change-on-select></el-cascader>
+              <el-cascader size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="bizSearch.grid" :options="department.getArea()" placeholder="按网格筛选" change-on-select></el-cascader>
             </el-col>
 
             <el-col :span="3">
               <el-select size="small" v-model="bizSearch.kind" clearable placeholder="类别">
-                <el-option value="食品经营">食品经营</el-option>
-                <el-option value="餐饮服务">餐饮服务</el-option>
-                <el-option value="食品小作坊">食品小作坊</el-option>
-                <el-option value="网上商家">网上商家</el-option>
+                <el-option label="食品经营" value="1"></el-option>
+                <el-option label="食品小作坊" value="2"></el-option>
+                <el-option label="网上商家" value="3"></el-option>
+                <el-option label="餐饮服务" value="4"></el-option>
               </el-select>
             </el-col>
 
@@ -176,8 +176,8 @@
 
             <el-col :span="3">
               <el-select size="small" v-model="bizSearch.state" clearable placeholder="状态">
-                <el-option label="正常" :value="1"></el-option>
-                <el-option label="关闭" :value="2"></el-option>
+                <el-option label="正常" value="1"></el-option>
+                <el-option label="关闭" value="0"></el-option>
               </el-select>
             </el-col>
 
@@ -191,25 +191,29 @@
             <el-col :span="24">
               <el-table :row-key="'id'" @selection-change="bizTableSelect" :data="bizPageData" size="medium" style="width: 100%;">
                 <el-table-column :reserve-selection="true" type="selection" width="40px"></el-table-column>
-                <el-table-column prop="name" label="企业名称" sortable></el-table-column>
-                <el-table-column prop="kind" label="类型" sortable></el-table-column>
-                <el-table-column label="网格区域" sortable>
+                <el-table-column prop="com_name" label="企业名称" sortable></el-table-column>
+                <el-table-column label="类型" sortable>
                   <template slot-scope="scope">
-                    {{$store.state.gridarea.findArea(scope.row.area).name}}
+                    {{scope.row.com_kind | bizKindText}}
                   </template>
                 </el-table-column>
-                <el-table-column prop="contact" label="联系人" sortable></el-table-column>
-                <el-table-column prop="tel" label="联系电话"></el-table-column>
+                <el-table-column label="网格区域" sortable>
+                  <template slot-scope="scope">
+                    {{department.getAreaByID(scope.row.area).name}}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="com_contact" label="联系人" sortable></el-table-column>
+                <el-table-column prop="com_contactphone" label="联系电话"></el-table-column>
                 <el-table-column label="许可证编号">
                   <template slot-scope="scope">
-                    <span v-if="scope.row.licence">{{scope.row.licence.num}}</span>
+                    <span v-if="scope.row.lic_code">{{scope.row.lic_code}}</span>
                     <el-tag v-else>暂无许可证</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="licence.responsible" label="法人" sortable></el-table-column>
+                <el-table-column prop="lic_lawer" label="法人" sortable></el-table-column>
                 <el-table-column label="状态" sortable>
                   <template slot-scope="scope">
-                    <el-tag size="small" :type="getBizStateType(scope.row.state)">{{scope.row.state|bizStateText}}</el-tag>
+                    <el-tag size="small" :type="getBizStateType(scope.row.com_state)">{{scope.row.com_state|bizStateText}}</el-tag>
                   </template>
                 </el-table-column>
               </el-table>
@@ -247,17 +251,27 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import department from "@/api/old_area.js";
+import { getTemplates } from "@/api/old_template.js";
+import { getAllBizs } from "@/api/old_biz.js";
+import { getTaskItems, getTaskItem } from "@/api/old_task.js";
+import { getPlanByID } from "@/api/old_plan.js";
+
 export default {
   name: "daily_singleplan",
-  
+
   data() {
     return {
+      department,
+      getTemplates,
       title: null,
       tab: "info",
 
       plan: null,
       task: null,
       currentTask: null,
+
+      bizData: [],
 
       bizSelection: [],
 
@@ -286,6 +300,19 @@ export default {
   filters: {
     bizStateText(text) {
       return text == 1 ? "正常" : "关闭";
+    },
+
+    bizKindText(kind) {
+      switch (kind) {
+        case "1":
+          return "食品经营";
+        case "2":
+          return "食品小作坊";
+        case "3":
+          return "网上商家";
+        case "4":
+          return "餐饮服务";
+      }
     }
   },
 
@@ -295,7 +322,7 @@ export default {
 
   computed: {
     bizTableData() {
-      let bizTableData = this.$store.state.biz;
+      let bizTableData = copy(this.bizData);
 
       if (
         this.currentBizSearch.text &&
@@ -304,22 +331,22 @@ export default {
         let searchText = this.currentBizSearch.text;
         bizTableData = bizTableData.filter(
           t =>
-            t.name.includes(searchText) ||
-            t.kind.includes(searchText) ||
-            t.contact.includes(searchText) ||
-            (t.licence && t.licence.name.includes(searchText))
+            t.com_name.includes(searchText) ||
+            t.com_kind.includes(searchText) ||
+            t.com_contact.includes(searchText) ||
+            (t.lic_code && t.lic_code.includes(searchText))
         );
       }
 
       if (this.currentBizSearch.state && this.currentBizSearch.state != "") {
         bizTableData = bizTableData.filter(
-          t => t.state === this.currentBizSearch.state
+          t => t.com_state === this.currentBizSearch.state
         );
       }
 
       if (this.currentBizSearch.kind && this.currentBizSearch.kind != "") {
         bizTableData = bizTableData.filter(
-          t => t.kind === this.currentBizSearch.kind
+          t => t.com_kind === this.currentBizSearch.kind
         );
       }
 
@@ -328,15 +355,15 @@ export default {
         this.currentBizSearch.category != ""
       ) {
         bizTableData = bizTableData.filter(
-          t => t.category === this.currentBizSearch.category
+          t => t.com_category === this.currentBizSearch.category
         );
       }
 
       if (this.currentBizSearch.grid && this.currentBizSearch.grid.length > 0) {
         let gridSearch = this.currentBizSearch.grid.join(",").trim();
         bizTableData = bizTableData.filter(t =>
-          this.$store.state.gridarea
-            .findAreaIDArray(t.area)
+          department
+            .getAreaIDArray(t.area)
             .join(",")
             .trim()
             .includes(gridSearch)
@@ -355,24 +382,18 @@ export default {
 
     confirmData() {
       return this.bizSelection.map(t => ({
-        id: t.id,
-        name: t.name
+        id: t.com_id,
+        name: t.com_name
       }));
     }
   },
 
   methods: {
     init() {
-      let planid = copy(this.$route.params.postid);
+      let planid = this.$route.params.postid;
 
-      this.plan = copy(this.$store.state.plan.find(t => t.id == planid));
-      this.task = copy(
-        this.$store.state.task.find(
-          t =>
-            t.planid == planid &&
-            t.department == this.$store.state.current.staff.departmentid
-        )
-      );
+      this.plan = getPlanByID(planid);
+      this.task = getTaskItem(planid, this.$store.state.currentUser.area);
       this.currentTask = {
         title: "",
         date: null,
@@ -380,13 +401,17 @@ export default {
         desc: ""
       };
       this.title = this.plan.title;
+
+      this.bizData = getAllBizs();
     },
 
     getBizStateType(state) {
       switch (state) {
+        case "1":
         case 1:
           return "success";
-        case 2:
+        case "0":
+        case 0:
           return "danger";
         default:
           return "info";

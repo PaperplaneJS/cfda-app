@@ -33,7 +33,7 @@
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%;margin-bottom:20px;">
-          <el-table-column prop="biz.name" label="单位名称" sortable></el-table-column>
+          <el-table-column prop="biz.com_name" label="单位名称" sortable></el-table-column>
           <el-table-column label="检查计划任务">
             <template slot-scope="scope">
               <div>
@@ -84,6 +84,12 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getRectifys } from "@/api/old_rectify.js";
+import { getPlanByID } from "@/api/old_plan.js";
+import { getBizByID } from "@/api/old_biz.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import { getTaskItems } from "@/api/old_task.js";
+
 export default {
   name: "rectify_rectify",
 
@@ -115,21 +121,17 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = copy(this.$store.state.rectify);
+      let tableData = copy(getRectifys());
 
       tableData.forEach(t => {
         t.task = this.findTask(t.taskid).taskDetail;
         t.taskItem = this.findTask(t.taskid).taskItem;
-        t.biz = this.$store.state.biz.find(biz => biz.id == t.bizid);
-        t.plan = this.$store.state.plan.find(plan => plan.id == t.planid);
+        t.biz = getBizByID(t.bizid);
+        t.plan = getPlanByID(t.planid);
 
         t.staff = [
-          this.$store.state.gridmember.find(
-            staff => staff.id == t.task.staff[0].id
-          ),
-          this.$store.state.gridmember.find(
-            staff => staff.id == t.task.staff[1].id
-          )
+          getStaffByID(t.task.staff[0].id),
+          getStaffByID(t.task.staff[1].id)
         ];
       });
 
@@ -180,7 +182,7 @@ export default {
       let taskDetail = null,
         taskItem = null;
 
-      this.$store.state.task.forEach(task => {
+      getTaskItems().forEach(task => {
         task.tasklist.forEach(taskitem => {
           taskitem.detail.forEach(detail => {
             if (detail.id == id) {

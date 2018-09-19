@@ -81,11 +81,18 @@
 
 <script>
 import { copy, uuid } from "@/utils/utils.js";
+import { getAllBizs } from "@/api/old_biz.js";
+import { getAreaIDArray } from "@/api/old_area.js";
+import { getTaskItems } from "@/api/old_task.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import { getPlanByID } from "@/api/old_plan.js";
+
 export default {
   name: "daily_monitorlist",
-  
+
   data() {
     return {
+      bizData: [],
       title: null,
       plantitle: null,
       currentTask: null,
@@ -115,14 +122,17 @@ export default {
 
   computed: {
     tableData() {
+      if (!this.currentTask || !this.currentTask.detail) {
+        return [];
+      }
+
       let tableData = copy(this.currentTask.detail);
+
       tableData.forEach(t => {
-        t.bizname = this.$store.state.biz.find(biz => biz.id == t.bizid).name;
+        t.bizname = this.bizData.find(biz => biz.com_id == t.bizid).com_name;
         t.staffinfo = [
-          this.$store.state.gridmember.find(staff => staff.id == t.staff[0].id)
-            .name,
-          this.$store.state.gridmember.find(staff => staff.id == t.staff[1].id)
-            .name
+          getStaffByID(t.staff[0].id).name,
+          getStaffByID(t.staff[1].id).name
         ];
       });
 
@@ -130,7 +140,7 @@ export default {
         this.currentTask.checklist.forEach(t => {
           tableData.push({
             id: uuid(6, 16),
-            bizname: this.$store.state.biz.find(biz => biz.id == t).name,
+            bizname: this.bizData.find(biz => biz.com_id == t).com_name,
             notchecked: true
           });
         });
@@ -181,15 +191,14 @@ export default {
 
   methods: {
     init() {
+      this.bizData = getAllBizs();
       let taskid = this.$route.params.taskid;
 
-      this.$store.state.task.forEach(t => {
+      getTaskItems().forEach(t => {
         let taskItem = t.tasklist.find(ti => ti.id == taskid);
         if (taskItem) {
           this.currentTask = copy(taskItem);
-          this.plantitle = this.$store.state.plan.find(
-            p => p.id == t.planid
-          ).title;
+          this.plantitle = getPlanByID(t.planid).title;
           return false;
         }
       });

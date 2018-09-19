@@ -126,8 +126,8 @@ export default {
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
-            t.department.includes(searchText) ||
-            t.staff.includes(searchText)
+            t.dep.includes(searchText) ||
+            t.stf.includes(searchText)
         );
       }
 

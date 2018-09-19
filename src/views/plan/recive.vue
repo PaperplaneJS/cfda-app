@@ -115,7 +115,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注:">
-              <el-input v-model="popupItem.post.remark" resize="none" :rows="4" type="textarea" disabled></el-input>
+              <el-input v-model="popupItem.remark" resize="none" :rows="4" type="textarea" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>

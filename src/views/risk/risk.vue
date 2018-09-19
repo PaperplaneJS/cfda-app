@@ -62,10 +62,12 @@
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%;margin-bottom:20px;">
-          <el-table-column prop="biz.name" label="单位名称" sortable></el-table-column>
+          <el-table-column prop="biz.com_name" label="单位名称" sortable></el-table-column>
           <el-table-column prop="department" label="网格区域" sortable></el-table-column>
-          <el-table-column prop="biz.kind" label="单位类型" sortable></el-table-column>
-          <el-table-column prop="biz.licence.num" label="许可证编号"></el-table-column>
+          <el-table-column label="单位类型" sortable>
+            <template slot-scope="scope">{{scope.row.biz.com_kind|bizKindText}}</template>
+          </el-table-column>
+          <el-table-column prop="biz.lic_code" label="许可证编号"></el-table-column>
           <el-table-column prop="type" label="评级类型" sortable></el-table-column>
           <el-table-column label="检查结果" sortable>
             <template slot-scope="scope">
@@ -92,12 +94,18 @@
 </template>
 
 <script>
+import { getAllRisks, getRisksByYear } from "@/api/old_risk.js";
+import { getAreaByID } from "@/api/old_area.js";
+import { getAllBizs } from "@/api/old_biz.js";
+import { getStaffByID } from "@/api/old_staff.js";
+
 export default {
   name: "risk_risk",
 
   data() {
     return {
       currentYear: null,
+      bizData: [],
       search: {
         text: "",
         level: null,
@@ -120,19 +128,35 @@ export default {
     this.init();
   },
 
+  filters: {
+    bizKindText(kind) {
+      switch (kind) {
+        case "1":
+          return "食品经营";
+        case "2":
+          return "食品小作坊";
+        case "3":
+          return "网上商家";
+        case "4":
+          return "餐饮服务";
+      }
+    }
+  },
+
   computed: {
     riskYears() {
-      return Object.keys(this.$store.state.risk).map(t => t);
+      return Object.keys(getAllRisks()).map(t => t);
     },
 
     currentRisk() {
-      let list = this.$store.state.risk[this.currentYear];
+      let list = getRisksByYear(this.currentYear);
+      let bizs = this.bizData;
       list.forEach(t => {
-        t.biz = this.$store.state.biz.find(biz => biz.id == t.bizid);
-        t.staffinfo = this.$store.state.gridmember.find(
-          staff => staff.id == t.staff
-        ).name;
-        t.department = this.$store.state.gridarea.findArea(t.biz.area).name;
+        t.biz = bizs.find(biz => biz.com_id == t.bizid);
+        t.staffinfo = getStaffByID(t.staff).name;
+        if (t.biz) {
+          t.department = getAreaByID(t.biz.area).name;
+        }
       });
 
       return list;
@@ -185,6 +209,7 @@ export default {
 
   methods: {
     init() {
+      this.bizData = getAllBizs();
       this.currentYear = `${new Date().getFullYear() + 1}`;
     },
 

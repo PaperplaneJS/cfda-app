@@ -35,9 +35,9 @@
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" min-width="160px" sortable></el-table-column>
-          <el-table-column prop="staff" label="制定人" sortable></el-table-column>
-          <el-table-column prop="department" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="post" label="接收日期" align="center" sortable></el-table-column>
+          <el-table-column prop="stf" label="制定人" sortable></el-table-column>
+          <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="post.date" label="接收日期" align="center" sortable></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
@@ -67,9 +67,14 @@
 </template>
 
 <script>
+import { getPlans } from "@/api/old_plan.js";
+import { getTaskItems } from "@/api/old_task.js";
+import department from "@/api/old_area.js";
+import { getStaffByID } from "@/api/old_staff.js";
+
 export default {
   name: "special_post",
-  
+
   data() {
     return {
       search: {
@@ -94,9 +99,14 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.$store.state.plan.filter(
+      let tableData = getPlans().filter(
         t => t.kind == "special" && (t.state == 2 || t.state == 3)
       );
+
+      tableData.forEach(t => {
+        t.dep = department.getAreaByID(t.department).name;
+        t.stf = getStaffByID(t.staff).name;
+      });
 
       if (
         this.currentSearch.text &&
@@ -106,8 +116,8 @@ export default {
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
-            t.department.includes(searchText) ||
-            t.staff.includes(searchText)
+            t.dep.includes(searchText) ||
+            t.stf.includes(searchText)
         );
       }
 
@@ -154,10 +164,12 @@ export default {
     },
 
     originTask(plan) {
-      let taskItem = this.$store.state.task.find(
+      let taskItem = getTaskItems().find(
         t =>
           t.planid == plan.id &&
-          t.department == this.$store.state.current.staff.departmentid
+          department
+            .getAreaIDArray(t.department)
+            .includes(this.$store.state.currentUser.area)
       );
 
       if (taskItem) {

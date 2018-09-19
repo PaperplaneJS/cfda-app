@@ -3,10 +3,10 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/rectify">行政处罚</el-breadcrumb-item>
-      <el-breadcrumb-item>{{currentRectify.biz.name}}于{{currentRectify.date}}处罚记录</el-breadcrumb-item>
+      <el-breadcrumb-item>{{currentRectify.biz.com_name}}于{{currentRectify.date}}处罚记录</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{currentRectify.biz.name}}</el-row>
+    <el-row class="title">{{currentRectify.biz.com_name}}</el-row>
 
     <el-form label-position="left" style="margin-top:20px;" label-width="120px">
       <el-row style="font-size:18px;margin-bottom:15px;" class="section">所属检查计划</el-row>
@@ -138,6 +138,14 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getRectifyByID } from "@/api/old_rectify.js";
+import { getPlanByID } from "@/api/old_plan.js";
+import { getBizByID } from "@/api/old_biz.js";
+import { getTaskItems } from "@/api/old_task.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import { getTemplateByID } from "@/api/old_template.js";
+import { getAreaByID } from "@/api/old_area.js";
+
 export default {
   name: "rectify_singlerectify",
 
@@ -185,14 +193,12 @@ export default {
   methods: {
     init() {
       let rectifyid = this.$route.params.rectifyid;
-      let rectify = copy(
-        this.$store.state.rectify.find(t => t.id == rectifyid)
-      );
+      let rectify = copy(getRectifyByID(rectifyid));
 
-      rectify.plan = this.$store.state.plan.find(t => t.id == rectify.planid);
-      rectify.biz = this.$store.state.biz.find(t => t.id == rectify.bizid);
+      rectify.plan = getPlanByID(rectify.planid);
+      rectify.biz = getBizByID(rectify.bizid);
 
-      this.$store.state.task.forEach(task => {
+      getTaskItems().forEach(task => {
         task.tasklist.forEach(taskitem => {
           taskitem.detail.forEach(detail => {
             if (detail.id == rectify.taskid) {
@@ -204,25 +210,17 @@ export default {
       });
 
       rectify.staffinfo = [
-        this.$store.state.gridmember.find(
-          t => t.id == rectify.task.staff[0].id
-        ),
-        this.$store.state.gridmember.find(t => t.id == rectify.task.staff[1].id)
+        getStaffByID(rectify.task.staff[0].id),
+        getStaffByID(rectify.task.staff[1].id)
       ];
 
       rectify.departmentinfo = [
-        this.$store.state.gridarea.findArea(
-          t => t.id == rectify.task.staff[0].department
-        ),
-        this.$store.state.gridarea.findArea(
-          t => t.id == rectify.task.staff[1].department
-        )
+        getAreaByID(rectify.task.staff[0].department),
+        getAreaByID(rectify.task.staff[1].department)
       ];
 
       this.currentRectify = rectify;
-      this.currentTemplate = this.$store.state.template.find(
-        t => t.id == rectify.plan.templateid
-      );
+      this.currentTemplate = getTemplateByID(rectify.plan.template);
       this.currentDetail = rectify.task;
     },
 

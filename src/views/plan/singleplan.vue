@@ -77,7 +77,7 @@
       <el-row :gutter="15">
         <el-col :span="16">
           <el-form-item label="备注:">
-            <el-input :disabled="!edit" :rows="4" v-model="currentPlan.post.remark" type="textarea" placeholder="选填,工作备注"></el-input>
+            <el-input :disabled="!edit" :rows="4" v-model="currentPlan.remark" type="textarea" placeholder="选填,工作备注"></el-input>
           </el-form-item>
         </el-col>
       </el-row>

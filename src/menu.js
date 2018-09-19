@@ -110,12 +110,13 @@ let menu = [{
         label: "任务监管",
         url: "monitor",
         promission: [1, 2]
-      },
-      {
-        label: "检查报告",
-        url: "report",
-        promission: [1, 2]
       }
+      // ,
+      // {
+      //   label: "检查报告",
+      //   url: "report",
+      //   promission: [1, 2]
+      // }
     ]
   },
   {
@@ -132,12 +133,13 @@ let menu = [{
         label: "任务监管",
         url: "monitor",
         promission: [1, 2]
-      },
-      {
-        label: "检查报告",
-        url: "report",
-        promission: [1, 2]
       }
+      // ,
+      // {
+      //   label: "检查报告",
+      //   url: "report",
+      //   promission: [1, 2]
+      // }
     ]
   },
   {

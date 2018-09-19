@@ -6,10 +6,10 @@
       <el-breadcrumb-item to="/daily/monitor">检查监督</el-breadcrumb-item>
       <el-breadcrumb-item to="/daily/monitor">{{currentPlan.title}} (计划)</el-breadcrumb-item>
       <el-breadcrumb-item :to="`/daily/monitor/${currentTask.id}`">{{currentTask.title}} (任务)</el-breadcrumb-item>
-      <el-breadcrumb-item>{{currentDetail.biz.name}} (详情)</el-breadcrumb-item>
+      <el-breadcrumb-item>{{currentDetail.biz.com_name}} (详情)</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{currentDetail.biz.name}} (检查详情)</el-row>
+    <el-row class="title">{{currentDetail.biz.com_name}} (检查详情)</el-row>
 
     <el-tabs style="margin-top:30px;" v-model="tab">
       <el-tab-pane label="检查计划与任务" name="info">
@@ -116,7 +116,7 @@
             <el-col :span="8">
               <el-form-item label="使用模板：">
                 <el-select disabled style="width:100%;" v-model="currentTemplate.id">
-                  <el-option v-for="item of $store.state.template.map(t=>({id:t.id,name:t.name}))" :key="item.id" :label="item.name" :value="item.id">
+                  <el-option v-for="item of getTemplates().map(t=>({id:t.id,name:t.name}))" :key="item.id" :label="item.name" :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -164,7 +164,7 @@
 
           <el-row :gutter="20">
             <el-col :span="16">
-              <el-form-item label="生产地址:">
+              <el-form-item label="任务描述:">
                 <el-input v-model="currentTask.desc" :rows="4" type="textarea" disabled></el-input>
               </el-form-item>
             </el-col>
@@ -176,7 +176,7 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="检查单位名：">
-                <el-input v-model="currentDetail.biz.name" disabled></el-input>
+                <el-input v-model="currentDetail.biz.com_name" disabled></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -184,21 +184,21 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="负责人：">
-                <el-input v-model="currentDetail.biz.contact" disabled></el-input>
+                <el-input v-model="currentDetail.biz.com_contact" disabled></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
               <el-form-item label="联系电话：">
-                <el-input v-model="currentDetail.biz.tel" disabled></el-input>
+                <el-input v-model="currentDetail.biz.com_contactphone" disabled></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row :gutter="20" v-if="currentDetail.biz.licence">
+          <el-row :gutter="20" v-if="currentDetail.biz.lic_code">
             <el-col :span="8">
               <el-form-item label="许可证号：">
-                <el-input v-model="currentDetail.biz.licence.num" disabled></el-input>
+                <el-input v-model="currentDetail.biz.lic_code" disabled></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -206,7 +206,7 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="单位地址：">
-                <el-input v-model="currentDetail.biz.address" :rows="4" disabled type="textarea"></el-input>
+                <el-input v-model="currentDetail.biz.com_address" :rows="4" disabled type="textarea"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -253,7 +253,7 @@
       <el-tab-pane label="查看报告" name="report">
         <div id="main">
           <div class="title">
-            <h3>江苏省苏州市常熟市{{$store.state.gridarea.findArea(currentDetail.biz.area).name}}食品药品监督管理局</h3>
+            <h3>江苏省苏州市常熟市{{getAreaByID(currentDetail.biz.area).name}}食品药品监督管理局</h3>
             <h1>食品生产经营日常监督检查结果记录表</h1>
             <p>编号:{{currentDetail.num}}</p>
           </div>
@@ -261,19 +261,19 @@
           <table>
             <tr class="info">
               <td class="label">名称:</td>
-              <td>{{currentDetail.biz.name}}</td>
+              <td>{{currentDetail.biz.com_name}}</td>
               <td class="label">地址:</td>
-              <td>{{currentDetail.biz.address}}</td>
+              <td>{{currentDetail.biz.com_address}}</td>
             </tr>
             <tr class="info">
               <td class="label">联系人:</td>
-              <td>{{currentDetail.biz.contact}}</td>
+              <td>{{currentDetail.biz.com_contact}}</td>
               <td class="label">联系方式:</td>
-              <td>{{currentDetail.biz.tel}}</td>
+              <td>{{currentDetail.biz.com_contactphone}}</td>
             </tr>
             <tr class="info">
               <td class="label">许可证编号:</td>
-              <td>{{currentDetail.biz.licence?currentDetail.biz.licence.num:""}}</td>
+              <td>{{currentDetail.biz.lic_code?currentDetail.biz.lic_code:""}}</td>
               <td class="label">检查次数:</td>
               <td>本年度第{{currentDetail.yearcount}}次检查</td>
             </tr>
@@ -345,11 +345,21 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
+import { getTemplates } from "@/api/old_template.js";
+import { getAreaByID } from "@/api/old_area.js";
+import { getTaskItems } from "@/api/old_task.js";
+import { getPlanByID } from "@/api/old_plan.js";
+import { getBizByID } from "@/api/old_biz.js";
+import { getStaffByID } from "@/api/old_staff.js";
+
 export default {
   name: "daily_singlemonitor",
 
   data() {
     return {
+      getTemplates,
+      getAreaByID,
+
       tab: "info",
       currentPlan: null,
       currentTask: null,
@@ -416,18 +426,13 @@ export default {
 
     staffName() {
       return [
-        this.$store.state.gridmember.find(
-          t => t.id == this.currentDetail.staff[0].id
-        ).name,
-        this.$store.state.gridmember.find(
-          t => t.id == this.currentDetail.staff[1].id
-        ).name
+        getStaffByID(this.currentDetail.staff[0].id).name,
+        getStaffByID(this.currentDetail.staff[1].id).name
       ];
     },
 
     departmentName() {
-      return this.$store.state.gridarea.findArea(this.currentDetail.biz.area)
-        .name;
+      return getAreaByID(this.currentDetail.biz.area).name;
     }
   },
 
@@ -436,35 +441,30 @@ export default {
       let taskid = this.$route.params.taskid;
       let taskrecordid = this.$route.params.taskrecordid;
 
-      this.$store.state.task.forEach(t => {
+      getTaskItems().forEach(t => {
         let taskItem = t.tasklist.find(ti => ti.id == taskid);
         if (taskItem) {
           let task = copy(taskItem);
           task.recive = t.recive;
           this.currentTask = task;
-          this.currentPlan = copy(
-            this.$store.state.plan.find(p => p.id == t.planid)
+          this.currentPlan = getPlanByID(t.planid);
+          this.currentTemplate = getTemplates().find(
+            t => t.id == this.currentPlan.template
           );
-          this.currentTemplate = copy(
-            this.$store.state.template.find(
-              t => t.id == this.currentPlan.templateid
-            )
-          );
+
           return false;
         }
       });
-      let detail = copy(
-        this.currentTask.detail.find(d => d.id == taskrecordid)
-      );
+      let detail = this.currentTask.detail.find(d => d.id == taskrecordid);
 
-      detail.biz = this.$store.state.biz.find(biz => biz.id == detail.bizid);
+      detail.biz = getBizByID(detail.bizid);
       detail.staffinfo = [
-        this.$store.state.gridmember.find(t => t.id == detail.staff[0].id).name,
-        this.$store.state.gridmember.find(t => t.id == detail.staff[1].id).name
+        getStaffByID(detail.staff[0].id).name,
+        getStaffByID(detail.staff[1].id).name
       ];
       detail.departmentinfo = [
-        this.$store.state.gridarea.findArea(detail.staff[0].department).name,
-        this.$store.state.gridarea.findArea(detail.staff[1].department).name
+        getAreaByID(detail.staff[0].department).name,
+        getAreaByID(detail.staff[1].department).name
       ];
 
       this.currentDetail = detail;

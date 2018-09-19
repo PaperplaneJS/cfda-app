@@ -6,11 +6,11 @@
       <el-breadcrumb-item to="/daily/report">检查监督</el-breadcrumb-item>
       <el-breadcrumb-item to="/daily/report">{{planTitle}} (计划)</el-breadcrumb-item>
       <el-breadcrumb-item :to="`/daily/report/${taskID}`">{{taskTitle}} (任务)</el-breadcrumb-item>
-      <el-breadcrumb-item>{{currentDetail.biz.name}} (报告页)</el-breadcrumb-item>
+      <el-breadcrumb-item>{{currentDetail.biz.com_name}} (报告页)</el-breadcrumb-item>
     </el-breadcrumb>
     <div id="main">
       <div class="title">
-        <h3>江苏省苏州市常熟市{{$store.state.gridarea.findArea(currentDetail.biz.area).name}}食品药品监督管理局</h3>
+        <h3>江苏省苏州市常熟市{{getAreaByID(currentDetail.biz.area).name}}食品药品监督管理局</h3>
         <h1>食品生产经营日常监督检查结果记录表</h1>
         <p>编号:{{currentDetail.num}}</p>
       </div>
@@ -18,19 +18,19 @@
       <table>
         <tr class="info">
           <td class="label">名称:</td>
-          <td>{{currentDetail.biz.name}}</td>
+          <td>{{currentDetail.biz.com_name}}</td>
           <td class="label">地址:</td>
-          <td>{{currentDetail.biz.address}}</td>
+          <td>{{currentDetail.biz.com_address}}</td>
         </tr>
         <tr class="info">
           <td class="label">联系人:</td>
-          <td>{{currentDetail.biz.contact}}</td>
+          <td>{{currentDetail.biz.com_contact}}</td>
           <td class="label">联系方式:</td>
-          <td>{{currentDetail.biz.tel}}</td>
+          <td>{{currentDetail.biz.com_contactphone}}</td>
         </tr>
         <tr class="info">
           <td class="label">许可证编号:</td>
-          <td>{{currentDetail.biz.licence?currentDetail.biz.licence.num:""}}</td>
+          <td>{{currentDetail.biz.lic_code?currentDetail.biz.lic_code:""}}</td>
           <td class="label">检查次数:</td>
           <td>本年度第{{currentDetail.yearcount}}次检查</td>
         </tr>
@@ -107,11 +107,19 @@
 </template>
 
 <script>
+import { getAreaByID } from "@/api/old_area.js";
+import { getStaffByID } from "@/api/old_staff.js";
+import { getTaskItems } from "@/api/old_task.js";
+import { getPlanByID } from "@/api/old_plan.js";
+import { getTemplateByID } from "@/api/old_template.js";
+import { getBizByID } from "@/api/old_biz.js";
+
 export default {
   name: "daily_singlereport",
 
   data() {
     return {
+      getAreaByID,
       currentDetail: null,
       currentTemplate: null,
       taskID: null,
@@ -151,18 +159,13 @@ export default {
 
     staffName() {
       return [
-        this.$store.state.gridmember.find(
-          t => t.id == this.currentDetail.staff[0].id
-        ).name,
-        this.$store.state.gridmember.find(
-          t => t.id == this.currentDetail.staff[1].id
-        ).name
+        getAreaByID(this.currentDetail.staff[0].id).name,
+        getAreaByID(this.currentDetail.staff[1].id).name
       ];
     },
 
     departmentName() {
-      return this.$store.state.gridarea.findArea(this.currentDetail.biz.area)
-        .name;
+      return getAreaByID(this.currentDetail.biz.area).name;
     }
   },
 
@@ -171,20 +174,18 @@ export default {
       let taskid = this.$route.params.taskid;
       let taskrecordid = this.$route.params.taskrecordid;
 
-      this.$store.state.task.forEach(t => {
+      getTaskItems().forEach(t => {
         let taskItem = t.tasklist.find(ti => ti.id == taskid);
         if (taskItem) {
           this.taskTitle = taskItem.title;
           this.taskID = taskid;
 
-          let plan = this.$store.state.plan.find(p => p.id == t.planid);
+          let plan = getPlanByID(t.planid);
 
           this.planTitle = plan.title;
-          this.currentTemplate = this.$store.state.template.find(
-            t => t.id == plan.templateid
-          );
+          this.currentTemplate = getTemplateByID(plan.template);
           let detail = taskItem.detail.find(d => d.id == taskrecordid);
-          detail.biz = this.$store.state.biz.find(t => t.id == detail.bizid);
+          detail.biz = getBizByID(detail.bizid);
           this.currentDetail = detail;
 
           return false;
