@@ -186,7 +186,7 @@
             </el-col>
 
             <el-col :span="8">
-              <el-form-item label="许可证颁发日期：" required>
+              <el-form-item label="颁发日期：" required>
                 <el-date-picker :disabled="!edit" style="width:100%" type="date" placeholder="选择颁发日期" v-model="currentBizInfo.lic_date_send"></el-date-picker>
               </el-form-item>
             </el-col>

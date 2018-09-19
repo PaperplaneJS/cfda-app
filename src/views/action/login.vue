@@ -107,16 +107,14 @@ export default {
   background-size: cover;
 
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 
   .title_bar {
     width: 100%;
     height: 80px;
-    box-shadow: 0 4px 3px 0px rgba(0, 21, 41, 0.08);
-    background: rgba(255, 255, 255, 0.2);
-    position: absolute;
-    top: 0;
+    margin-bottom: 10px;
 
     font-weight: 400;
     font-size: 30px;

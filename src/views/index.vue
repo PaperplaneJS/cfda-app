@@ -433,13 +433,13 @@ export default {
         let imgsrc = "";
 
         if (t.com_kind === "1") {
-          imgsrc = "食品经营.png";
+          imgsrc = "jingying.png";
         } else if (t.com_kind === "2") {
-          imgsrc = "小作坊.png";
+          imgsrc = "zuofang.png";
         } else if (t.com_kind === "3") {
-          imgsrc = "网上商家.png";
+          imgsrc = "wangshang.png";
         } else if (t.com_kind === "4") {
-          imgsrc = "餐饮服务.png";
+          imgsrc = "canyin.png";
         }
 
         let [x, y] = t.com_gps.split(",");

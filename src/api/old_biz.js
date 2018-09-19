@@ -213,6 +213,35 @@ let biz = [{
     "lic_date_start": "2017-11-03",
     "lic_date_end": "2019-11-03",
     "lic_lawer": "吴冠霖"
+  }, {
+    "com_id": "8782d89c9a02f38b8d7eeb9097191152",
+    "com_name": "龙门花甲(东南邻里店)",
+    "com_kind": "3",
+    "com_category": "小吃店",
+    "com_state": "1",
+    "com_contact": "李明",
+    "com_contactphone": "13766628190",
+    "com_tel": "13766628190",
+    "com_lawer": "李明",
+    "com_address": "东南邻里中心一楼",
+    "com_gps": "120.750298,31.666915",
+    "area": "12",
+    "lic_code": "CS-332-1357773",
+    "lic_name": "龙门花甲(东南邻里店)",
+    "lic_socialnum": "423673554357371231",
+    "lic_supervise_org": "东南街道办",
+    "lic_supervise_staff": "张小芳",
+    "lic_send_org": "东南街道办",
+    "lic_business_address": "东南邻里中心一楼",
+    "lic_register_address": "东南邻里中心一楼",
+    "lic_kind": "小吃店",
+    "lic_date_send": "2017-06-02",
+    "lic_date_start": "2017-06-02",
+    "lic_date_end": "2019-06-02",
+    "lic_lawer": "吴冠霖",
+    "exception": {
+      "desc": "许可证上的经营地址在：东南邻里中心一楼，而检查人员定位地点在：东湖京华，超出其经营范围"
+    }
   }
 ];
 

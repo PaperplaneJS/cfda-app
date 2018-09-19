@@ -13,6 +13,14 @@
       <el-tab-pane label="基本信息" name="base">
 
         <el-form :model="currentBizInfo" :disabled="!edit" label-position="left" style="margin-top:20px;" label-width="140px">
+
+          <el-row v-if="currentBizInfo.exception" :gutter="20">
+            <el-col :span="16">
+              <el-alert :closable="false" title="超出经营范围" type="error" :description="currentBizInfo.exception.desc" show-icon>
+              </el-alert>
+            </el-col>
+          </el-row>
+
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="网上商家名称：" required>
@@ -209,7 +217,7 @@
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item label="许可证颁发日期：" required>
+              <el-form-item label="颁发日期：" required>
                 <el-date-picker style="width:100%" type="date" placeholder="选择颁发日期" v-model="currentBizInfo.lic_date_send"></el-date-picker>
               </el-form-item>
             </el-col>

@@ -84,7 +84,9 @@
             </template>
           </el-table-column>
           <el-table-column label="异常状况">
-
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.exception" size="small" type="danger">超出经营范围</el-tag>
+            </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
