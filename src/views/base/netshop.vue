@@ -83,6 +83,9 @@
               <el-tag size="small" :type="getStateType(scope.row.com_state)">{{scope.row.com_state|stateText}}</el-tag>
             </template>
           </el-table-column>
+          <el-table-column label="异常状况">
+
+          </el-table-column>
           <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
               <el-button @click.native="$router.push('netshop/'+scope.row.com_id)" size="mini" type="primary">查看 / 编辑</el-button>
@@ -101,7 +104,7 @@
 </template>
 
 <script>
-import { getAllBizs } from "@/api/biz.js";
+import { getAllBizs } from "@/api/old_biz.js";
 import department from "@/api/old_area.js";
 
 export default {
@@ -222,8 +225,8 @@ export default {
   },
 
   methods: {
-    async init() {
-      this.bizData = await getAllBizs();
+    init() {
+      this.bizData = getAllBizs();
     },
 
     getStateType(state) {

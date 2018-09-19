@@ -288,7 +288,7 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
-import { getBizByID } from "@/api/biz.js";
+import { getBizByID } from "@/api/old_biz.js";
 import department from "@/api/old_area.js";
 
 export default {
@@ -321,7 +321,7 @@ export default {
   },
 
   methods: {
-    async init() {
+    init() {
       let bizid = this.$route.params.bizid.trim();
 
       this.currentBizInfo = {
@@ -358,7 +358,7 @@ export default {
         this.isNew = true;
         this.edit = true;
       } else {
-        let bizInfo = await getBizByID(bizid);
+        let bizInfo = getBizByID(bizid);
         bizInfo.pos = [null, null];
         bizInfo.daterange = ["", ""];
 

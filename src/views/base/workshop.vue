@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { getAllBizs } from "@/api/biz.js";
+import { getAllBizs } from "@/api/old_biz.js";
 import department from "@/api/old_area.js";
 
 export default {
@@ -217,8 +217,8 @@ export default {
   },
 
   methods: {
-    async init() {
-      this.bizData = await getAllBizs();
+    init() {
+      this.bizData = getAllBizs();
     },
 
     getStateType(state) {

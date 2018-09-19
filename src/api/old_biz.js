@@ -35,7 +35,7 @@ let biz = [{
     "com_contactphone": "18099281450",
     "com_tel": "13237457819",
     "com_lawer": "高小宇",
-    "com_address": null,
+    "com_address": "湖山路592号一楼",
     "com_gps": "120.780325, 31.599977",
     "area": "12",
     "lic_code": null,

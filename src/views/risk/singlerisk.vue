@@ -170,7 +170,7 @@
 import { copy } from "@/utils/utils.js";
 import { getAllRisks, getRisksByYear } from "@/api/old_risk.js";
 import { getAreaByID } from "@/api/old_area.js";
-import { getAllBizs } from "@/api/biz.js";
+import { getAllBizs } from "@/api/old_biz.js";
 import { getStaffByID } from "@/api/old_staff.js";
 import { getTemplateByID } from "@/api/old_template.js";
 
@@ -304,9 +304,9 @@ export default {
   },
 
   methods: {
-    async init() {
+    init() {
       this.riskid = this.$route.params.riskid;
-      this.bizData = await getAllBizs();
+      this.bizData = getAllBizs();
     },
 
     getPoint(cent, point) {

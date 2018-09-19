@@ -7,7 +7,7 @@
     </el-breadcrumb>
 
     <el-row class="title">食品企业管理</el-row>
-    
+
     <el-row type="flex" class="action" :gutter="15">
       <el-col :span="3">
         <router-link to="biz/new">
@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import { getAllBizs } from "@/api/biz.js";
+import { getAllBizs } from "@/api/old_biz.js";
 import department from "@/api/old_area.js";
 
 export default {
@@ -239,8 +239,8 @@ export default {
   },
 
   methods: {
-    async init() {
-      this.bizData = await getAllBizs();
+    init() {
+      this.bizData = getAllBizs();
     },
 
     getStateType(state) {
