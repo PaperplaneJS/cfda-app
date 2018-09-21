@@ -202,7 +202,7 @@ export let count = {
 
   // 企业个数（按地区）
   "bizCountArea": {
-    color:["#00D7B7","#2CABFF","#FCB22D"],
+    color: ["#00D7B7", "#2CABFF", "#FCB22D"],
     legend: {
       data: ["食品经营", "食品小作坊", "网上商家"]
     },
@@ -297,7 +297,7 @@ export let count = {
 
   // 企业个数（详情行业）
   "bizCountDetail": {
-    color:["#1EA9FF","#FEB309","#00D8B7","#FF7F4C","#73F5B8","#63CA87","#9D7AF4","#F3978D","#5E8AF2"],
+    color: ["#1EA9FF", "#FEB309", "#00D8B7", "#FF7F4C", "#73F5B8", "#63CA87", "#9D7AF4", "#F3978D", "#5E8AF2"],
     tooltip: {
       trigger: "item",
       formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -350,7 +350,7 @@ export let count = {
 
   // 检查汇总统计（合格率）
   "resultQualified": {
-    color:["#FF2510","#3B6F97","#4CDDF2","#FF9164","#7FFEC4","#5BD085","#FF9E03","#E5A28D","#898B97"],
+    color: ["#FF2510", "#3B6F97", "#4CDDF2", "#FF9164", "#7FFEC4", "#5BD085", "#FF9E03", "#E5A28D", "#898B97"],
     tooltip: {
       trigger: "axis"
     },
@@ -437,7 +437,7 @@ export let count = {
 
   // 检查汇总统计（检查次数）
   "resultCheck": {
-    color:["#FF2510","#3B6F97","#4CDDF2","#FF9164","#7FFEC4","#5BD085","#FF9E03","#E5A28D","#898B97"],
+    color: ["#FF2510", "#3B6F97", "#4CDDF2", "#FF9164", "#7FFEC4", "#5BD085", "#FF9E03", "#E5A28D", "#898B97"],
     tooltip: {
       trigger: "axis"
     },
@@ -684,6 +684,149 @@ export let count = {
         name: "网上商家",
         type: "bar",
         data: [76, 79, 80, 80],
+        barWidth: 10
+      }
+    ]
+  },
+
+  // 法律文书使用情况
+  "lawUsed": {
+    color: ["#0099FF"],
+    grid: {
+      bottom: 75,
+      top: 10,
+      left: 45,
+      right: 10
+    },
+    xAxis: {
+      type: "category",
+      data: [
+        "执法告知页",
+        "食品安全检查表",
+        "小作坊检查表",
+        "检查结果告知表",
+        "量化分级表",
+        "行政处罚文书"
+      ],
+      axisLabel: {
+        interval: 0,
+        rotate: 50
+      }
+    },
+    yAxis: {
+      type: "value",
+      show: true
+    },
+    series: [{
+      data: [450, 360, 330, 320, 300, 280],
+      type: "bar",
+      barWidth: 30
+    }]
+  },
+
+  // 许可证发放情况，按地区
+  "licCoverArea": {
+    tooltip: {
+      trigger: "axis",
+      formatter: "{c}%",
+      axisPointer: {
+        type: "shadow"
+      }
+    },
+    grid: {
+      bottom: 45,
+      top: 10,
+      left: 45,
+      right: 10
+    },
+    xAxis: {
+      type: "category",
+      data: [
+        "虞山镇",
+        "梅李镇",
+        "海虞镇",
+        "碧溪新区",
+        "古里镇",
+        "支塘镇",
+        "董浜镇",
+        "尚湖镇",
+        "辛庄镇"
+      ],
+      axisLabel: {
+        interval: 0,
+        rotate: 40
+      }
+    },
+    yAxis: {
+      type: "value",
+      axisLabel: {
+        show: true,
+        interval: "auto",
+        formatter: "{value} %"
+      },
+      show: true
+    },
+    series: [{
+      data: [87, 86, 89, 67, 65, 78, 89, 87, 53],
+      type: "bar",
+      itemStyle: {
+        normal: {
+          label: {
+            show: true,
+            formatter: "{c} %"
+          }
+        }
+      }
+    }]
+  },
+
+  // 许可证发放情况，按行业
+  "licCoverKind": {
+    color: ["#00D7B7", "#2CABFF", "#FCB22D"],
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "shadow",
+        formatter: "{c} %"
+      }
+    },
+    grid: {
+      bottom: 20,
+      top: 30,
+      left: 45,
+      right: 10
+    },
+    legend: {
+      data: ["餐饮经营", "食品小作坊", "网上商家"]
+    },
+    xAxis: [{
+      type: "category",
+      data: ["6月", "7月", "8月", "9月"]
+    }],
+    yAxis: [{
+      type: "value",
+      axisLabel: {
+        show: true,
+        interval: "auto",
+        formatter: "{value} %"
+      }
+    }],
+    series: [{
+        name: "餐饮经营",
+        type: "bar",
+        data: [78, 77, 78, 79],
+        barWidth: 10
+      },
+      {
+        name: "食品小作坊",
+        type: "bar",
+        data: [80, 85, 86, 89],
+        barWidth: 10
+      },
+      {
+        name: "网上商家",
+        type: "bar",
+        data: [60, 67, 68, 70],
         barWidth: 10
       }
     ]

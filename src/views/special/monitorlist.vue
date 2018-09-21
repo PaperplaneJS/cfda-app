@@ -39,7 +39,12 @@
     <el-row>
       <el-col :span="24">
         <el-table :data="pageData" :row-class-name="tableRowClassName" size="medium" style="width: 100%;margin-bottom:20px;">
-          <el-table-column prop="bizname" label="单位名称" min-width="180px" sortable></el-table-column>
+          <el-table-column label="单位名称" min-width="180px" sortable>
+            <template slot-scope="scope">
+              {{scope.row.bizname}}
+              <el-tag v-if="!scope.row.result" type="warning" size="mini">尚未检查</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column label="执法人员" sortable>
             <template slot-scope="scope">
               <div v-if="scope.row.staffinfo">主检查人：

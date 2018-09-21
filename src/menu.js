@@ -149,6 +149,12 @@ let menu = [{
     promission: [1, 2]
   },
   {
+    label: "数据监控",
+    url: "datamonitor",
+    icon: "el-icon-refresh",
+    promission: [2]
+  },
+  {
     label: "行政处罚",
     url: "rectify",
     icon: "el-icon-bell",

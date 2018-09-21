@@ -43,9 +43,9 @@
             </span>
 
             <el-popover placement="bottom" title="通知和消息" width="400" trigger="manual" v-model="visible">
-              <el-alert @click.native="openNotice(item)" style="cursor:pointer;" class="notice" v-for="item of notice" :key="item.id" :title="item.title" :type="item.type" :description="item.content" show-icon>
+              <el-alert @click.native="openNotice(item.id)" @close="closeNotice(item.id)" style="cursor:pointer;" class="notice" v-for="item of notice" :key="item.id" :title="item.title" :type="item.type" :description="item.content" show-icon>
               </el-alert>
-              <el-badge icon="el-icon-bell" circle slot="reference" :max="99" :value="notice.length" class="item">
+              <el-badge icon="el-icon-bell" :hidden="notice.length<=0" circle slot="reference" :max="99" :value="notice.length" class="item">
                 <el-button icon="el-icon-bell" circle @click="visible = !visible"></el-button>
               </el-badge>
             </el-popover>
@@ -75,6 +75,7 @@
 <script>
 import { copy, uuid } from "@/utils/utils.js";
 import menu from "@/menu.js";
+import { notice } from "@/api/old_notice.js";
 
 export default {
   name: "app",
@@ -83,7 +84,7 @@ export default {
     return {
       currentMenuPath: null,
       visible: false,
-      notice: [],
+      notice: this.$store.state.notice,
       staff: this.$store.state.currentUser
     };
   },
@@ -123,7 +124,12 @@ export default {
       this.currentMenuPath = menuPath;
     },
 
-    openNotice(notice) {},
+    openNotice(nid) {},
+
+    closeNotice(nid) {
+      let i = this.$store.state.notice.findIndex(t => t.id === nid);
+      this.$store.state.notice.splice(i, 1);
+    },
 
     logout() {
       this.$store.state.currentUser = null;

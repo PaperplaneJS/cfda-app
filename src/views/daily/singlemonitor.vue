@@ -251,7 +251,13 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="查看报告" name="report">
-        <div id="main">
+        <el-row>
+          <el-col :span="24">
+            <el-button icon="el-icon-printer" size="medium" type="primary">打印报告</el-button>
+          </el-col>
+        </el-row>
+
+        <div id="report_main">
           <div class="title">
             <h3>江苏省苏州市常熟市{{getAreaByID(currentDetail.biz.area).name}}食品药品监督管理局</h3>
             <h1>食品生产经营日常监督检查结果记录表</h1>
@@ -497,7 +503,7 @@ export default {
   margin-bottom: 0;
 }
 
-#main {
+#report_main {
   width: 700px;
   margin-top: 20px;
 

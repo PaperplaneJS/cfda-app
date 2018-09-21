@@ -138,16 +138,16 @@
 
       <el-tab-pane v-if="hasLicence" label="许可信息" name="licence">
 
-        <el-form :disabled="!edit" :model="currentBizInfo.licence" label-position="left" style="margin-top:20px;" label-width="130px">
+        <el-form :model="currentBizInfo.licence" label-position="left" style="margin-top:20px;" label-width="130px">
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="生产者名称:" required>
-                <el-input v-model="currentBizInfo.lic_name" placeholder="请输入生产者名称"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_name" placeholder="请输入生产者名称"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="许可证号:" required>
-                <el-input v-model="currentBizInfo.lic_code" placeholder="请输许可证号"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_code" placeholder="请输许可证号"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -155,12 +155,12 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="法定代理人:" required>
-                <el-input v-model="currentBizInfo.lic_lawer" placeholder="法定代理人或负责人"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_lawer" placeholder="法定代理人或负责人"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="日常监管机构:" required>
-                <el-input v-model="currentBizInfo.lic_supervise_org" placeholder="日常监管机构名称"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_supervise_org" placeholder="日常监管机构名称"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -168,12 +168,12 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="社会信用代码:">
-                <el-input v-model="currentBizInfo.lic_socialnum" placeholder="请输入社会信用代码"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_socialnum" placeholder="请输入社会信用代码"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="日常监管人员:" required>
-                <el-input v-model="currentBizInfo.lic_supervise_staff" placeholder="日常监管人员名"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_supervise_staff" placeholder="日常监管人员名"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -181,7 +181,7 @@
           <el-row>
             <el-col :span="16">
               <el-form-item label="注册地址:">
-                <el-input v-model="currentBizInfo.lic_register_address" placeholder="请输入许可证的住所信息"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_register_address" placeholder="请输入许可证的住所信息"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -189,7 +189,7 @@
           <el-row>
             <el-col :span="16">
               <el-form-item label="生产地址:">
-                <el-input v-model="currentBizInfo.lic_business_address" :rows="4" type="textarea" placeholder="请输入网上商家生产地址"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_business_address" :rows="4" type="textarea" placeholder="请输入网上商家生产地址"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -197,12 +197,12 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="类别:" required>
-                <el-input v-model="currentBizInfo.lic_kind" placeholder="输入食品类别"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_kind" placeholder="输入食品类别"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="发证机关:" required>
-                <el-input v-model="currentBizInfo.lic_send_org" placeholder="输入发证机关"></el-input>
+                <el-input :disabled="!edit" v-model="currentBizInfo.lic_send_org" placeholder="输入发证机关"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -210,7 +210,7 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="许可证有效期：" required>
-                <el-date-picker style="width:100%" type="daterange" range-separator="至" start-placeholder="生效日期" end-placeholder="截止" v-model="currentBizInfo.daterange"></el-date-picker>
+                <el-date-picker :disabled="!edit" style="width:100%" type="daterange" range-separator="至" start-placeholder="生效日期" end-placeholder="截止" v-model="currentBizInfo.daterange"></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
@@ -218,7 +218,17 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="颁发日期：" required>
-                <el-date-picker style="width:100%" type="date" placeholder="选择颁发日期" v-model="currentBizInfo.lic_date_send"></el-date-picker>
+                <el-date-picker :disabled="!edit" style="width:100%" type="date" placeholder="选择颁发日期" v-model="currentBizInfo.lic_date_send"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="20">
+              <el-form-item label="许可证图片：">
+                <el-button size="small" @click="viewImg" type="primary" icon="el-icon-view">查看</el-button>
+                <el-button :disabled="!edit" size="small" type="primary" icon="el-icon-upload el-icon--right">上传新的图片</el-button>
+                <el-button :disabled="!edit" size="small" type="danger" plain icon="el-icon-delete">删除</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -290,11 +300,20 @@
         <el-button @click="edit=true" v-if="!edit" icon="el-icon-edit" type="primary">编辑</el-button>
         <el-button @click="editOK" v-if="edit" icon="el-icon-check" type="primary">{{isNew?"提交审核":"完成编辑"}}</el-button>
         <el-button @click="editCancel" v-if="edit&&!isNew" icon="el-icon-close">取消并还原</el-button>
-        <router-link to="/base/biz">
+        <router-link to="/base/netshop">
           <el-button style="margin-left:20px;">返回网上商家管理</el-button>
         </router-link>
       </el-col>
     </el-row>
+
+    <el-dialog width="35" title="许可证图片" v-if="popup" :visible.sync="popup">
+      <img src="@/assets/img/xiaozuofang1.png" />
+      <div slot="footer">
+        <el-button type="primary" size="small" icon="el-icon-printer">打印</el-button>
+        <el-button type="primary" size="small" icon="el-icon-download">下载</el-button>
+        <el-button size="small" @click="popup = false">关闭</el-button>
+      </div>
+    </el-dialog>
   </el-row>
 </template>
 
@@ -317,7 +336,9 @@ export default {
       hasLicence: null,
 
       currentBizInfo: null,
-      originBizInfo: null
+      originBizInfo: null,
+
+      popup: false
     };
   },
 
@@ -433,6 +454,10 @@ export default {
       } else {
         this.currentBizInfo.licence = null;
       }
+    },
+
+    viewImg() {
+      this.popup = true;
     },
 
     getRectifyRecord() {

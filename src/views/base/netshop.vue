@@ -75,7 +75,7 @@
           <el-table-column label="许可证编号">
             <template slot-scope="scope">
               <span v-if="scope.row.lic_code">{{scope.row.lic_code}}</span>
-              <el-tag size="small" v-else>暂无许可证</el-tag>
+              <el-tag size="small" type="warning" v-else>暂无许可证</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="状态" align="center" sortable>
@@ -199,9 +199,9 @@ export default {
 
       if (this.currentSearch.licence !== "") {
         if (this.currentSearch.licence === true) {
-          tableData = tableData.filter(t => t.lic_code.length > 0);
+          tableData = tableData.filter(t => t.lic_code);
         } else {
-          tableData = tableData.filter(t => t.lic_code.length <= 0);
+          tableData = tableData.filter(t => !t.lic_code);
         }
       }
 

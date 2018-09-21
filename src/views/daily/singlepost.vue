@@ -232,8 +232,16 @@
         <el-form label-position="left" label-width="100px">
           <el-row :gutter="15">
             <el-col :span="20">
-              <el-form-item label="分派情况：">
+              <el-form-item label="检查的个体：">
                 <el-tag size="mini" style="margin-left:5px;margin-bottom:5px;" v-for="item of confirmData" :key="item.id">{{item.name}}</el-tag>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15">
+            <el-col :span="20">
+              <el-form-item label="分派给人员：">
+                <el-tag size="mini" style="margin-left:5px;margin-bottom:5px;" v-for="item of staffData" :key="item.id">{{item.name}}</el-tag>
               </el-form-item>
             </el-col>
           </el-row>
@@ -256,6 +264,7 @@ import { getTemplates } from "@/api/old_template.js";
 import { getAllBizs } from "@/api/old_biz.js";
 import { getTaskItems, getTaskItem } from "@/api/old_task.js";
 import { getPlanByID } from "@/api/old_plan.js";
+import { getAllStaffs } from "@/api/old_staff.js";
 
 export default {
   name: "daily_singleplan",
@@ -385,6 +394,27 @@ export default {
         id: t.com_id,
         name: t.com_name
       }));
+    },
+
+    staffData() {
+      let list = [];
+      getAllStaffs().forEach(t => {
+        let staffAreaArray = department.getAreaIDArray(t.area);
+        let currentAreaArray = department.getAreaIDArray(
+          this.$store.state.currentUser.area
+        );
+        if (
+          staffAreaArray.length > currentAreaArray.length &&
+          staffAreaArray.join(",").includes(currentAreaArray.join(","))
+        ) {
+          list.push({
+            id: t.id,
+            name: t.name
+          });
+        }
+      });
+
+      return list;
     }
   },
 

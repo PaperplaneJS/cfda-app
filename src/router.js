@@ -65,6 +65,8 @@ import CountCount from '@/views/count/count';
 
 import OptionOption from '@/views/option/option';
 
+import DataMonitor from '@/views/datamonitor/datamonitor';
+
 Vue.use(Router);
 
 let routes = [{
@@ -266,6 +268,12 @@ let routes = [{
       {
         path: '/count',
         component: CountCount
+      },
+
+      //数据监控
+      {
+        path: '/datamonitor',
+        component: DataMonitor
       }
 
       //系统设置
