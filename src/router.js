@@ -1,7 +1,7 @@
 import Vue from 'vue/dist/vue';
 import Router from 'vue-router';
 
-import App from '@/app';
+import App from '@/App';
 import Index from '@/views/index';
 
 import ActionLogin from '@/views/action/login';
