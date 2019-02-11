@@ -52,7 +52,7 @@
 
             <span>
               <el-dropdown>
-                <el-button round>{{staff.usr_name}}</el-button>
+                <el-button round>{{staff.name}}</el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="logout">注销登录</el-dropdown-item>
                 </el-dropdown-menu>

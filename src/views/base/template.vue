@@ -18,7 +18,7 @@
             </el-col>
 
             <el-col :span="3">
-              <router-link to="/base/risktemplate/new">
+              <router-link to="/base/template">
                 <el-button size="small" type="primary" icon="el-icon-plus">新建量化分级模板</el-button>
               </router-link>
             </el-col>

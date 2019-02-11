@@ -322,8 +322,8 @@ export default {
           name: "",
           state: 1,
           content: [],
-          staff: this.$store.state.currentUser.usr_name,
-          department: department.getAreaByID($store.state.currentUser.area)
+          staff: this.$store.state.currentUser.name,
+          department: department.getAreaByID(this.$store.state.currentUser.area)
             .name,
           date: this.today(),
           tips: ""

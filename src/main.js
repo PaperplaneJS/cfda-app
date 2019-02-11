@@ -1,6 +1,5 @@
 import Vue from 'vue/dist/vue';
 import store from '@/api/state.js';
-import '@/api/api.js';
 import router from './router';
 import '@/plugins/element.js';
 

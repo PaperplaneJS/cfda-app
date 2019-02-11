@@ -4,9 +4,6 @@
       <img src="@/assets/img/logo.png" alt="">
     </div>
 
-    <!-- <div class="title_bar">
-      
-    </div> -->
     <div class="title_bar" style="margin-bottom: 20px">
       常熟市食品生产经营监管信息化平台
     </div>
