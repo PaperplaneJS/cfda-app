@@ -14,25 +14,38 @@
           <el-button size="small" type="primary" icon="el-icon-plus">新建食品企业</el-button>
         </router-link>
       </el-col>
-
-      <el-col :span="8" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button size="small" icon="el-icon-download" type="primary" plain>导出为Excel</el-button>
-        <el-button size="small" icon="el-icon-upload2" type="primary" plain>导入Excel</el-button>
-      </el-col>
     </el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input size="small" v-model="search.text" clearable placeholder="搜索单位名称/联系方式/许可证号等" prefix-icon="el-icon-search"></el-input>
+        <el-input
+          size="small"
+          v-model="search.text"
+          clearable
+          placeholder="搜索单位名称/联系方式/许可证号等"
+          prefix-icon="el-icon-search"
+        ></el-input>
       </el-col>
 
       <el-col :span="4">
-        <el-cascader style="width:100%;" size="small" clearable :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="search.grid" :options="department.getArea()" placeholder="网格区域" change-on-select></el-cascader>
+        <el-cascader
+          style="width:100%;"
+          size="small"
+          clearable
+          :show-all-levels="false"
+          :props="{label:'name',value:'id'}"
+          v-model="search.grid"
+          :options="department.getArea()"
+          placeholder="网格区域"
+          change-on-select
+        ></el-cascader>
       </el-col>
 
       <el-col :span="3">
         <el-select size="small" v-model="search.kind" clearable placeholder="选择类别">
           <el-option label="食品经营" value="1"></el-option>
+          <el-option label="食品小作坊" value="2"></el-option>
+          <el-option label="网上商家" value="3"></el-option>
           <el-option label="餐饮服务" value="4"></el-option>
         </el-select>
       </el-col>
@@ -60,26 +73,17 @@
           <el-option label="关闭" value="0"></el-option>
         </el-select>
       </el-col>
-
-      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="small" round>重置</el-button>
-      </el-col>
     </el-row>
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%;">
-          <el-table-column prop="com_name" label="企业名称" sortable></el-table-column>
+          <el-table-column prop="com_name" label="企业名称" min-width="110px" sortable></el-table-column>
           <el-table-column label="类型" sortable>
-            <template slot-scope="scope">
-              {{scope.row.com_kind | kindText}}
-            </template>
+            <template slot-scope="scope">{{scope.row.com_kind | kindText}}</template>
           </el-table-column>
           <el-table-column label="网格区域" sortable>
-            <template slot-scope="scope">
-              {{department.getAreaByID(scope.row.area).name}}
-            </template>
+            <template slot-scope="scope">{{department.getAreaByID(scope.row.area).name}}</template>
           </el-table-column>
           <el-table-column prop="com_contact" label="联系人" sortable></el-table-column>
           <el-table-column prop="com_tel" label="联系电话"></el-table-column>
@@ -92,12 +96,19 @@
           <el-table-column prop="lic_lawer" label="法人" sortable></el-table-column>
           <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
-              <el-tag size="small" :type="getStateType(scope.row.com_state)">{{scope.row.com_state|stateText}}</el-tag>
+              <el-tag
+                size="small"
+                :type="getStateType(scope.row.com_state)"
+              >{{scope.row.com_state|stateText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('biz/'+scope.row.com_id)" size="mini" type="primary">查看 / 编辑</el-button>
+              <el-button
+                @click.native="$router.push('biz/'+scope.row.com_id)"
+                size="mini"
+                type="primary"
+              >查看 / 编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
@@ -106,10 +117,16 @@
     </el-row>
 
     <el-row>
-      <el-pagination background @size-change="t=>bizTable.pageSize=t" :current-page.sync="bizTable.page" :page-sizes="bizTable.pageSizes" :page-size="bizTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="t=>bizTable.pageSize=t"
+        :current-page.sync="bizTable.page"
+        :page-sizes="bizTable.pageSizes"
+        :page-size="bizTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
-
   </el-row>
 </template>
 
@@ -125,16 +142,8 @@ export default {
       department,
       search: {
         text: "",
-        kind: "",
         category: "",
-        licence: "",
-        state: "",
-        grid: []
-      },
-      currentSearch: {
-        text: "",
         kind: "",
-        category: "",
         licence: "",
         state: "",
         grid: []
@@ -172,15 +181,10 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = this.bizData.filter(
-        t => t.com_kind == "1" || t.com_kind == "4"
-      );
+      let tableData = this.bizData;
 
-      if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
-      ) {
-        let searchText = this.currentSearch.text;
+      if (this.search.text && this.search.text.trim().length > 0) {
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.com_name.includes(searchText) ||
@@ -191,34 +195,30 @@ export default {
         );
       }
 
-      if (this.currentSearch.state && this.currentSearch.state != "") {
+      if (this.search.state && this.search.state != "") {
+        tableData = tableData.filter(t => t.com_state == this.search.state);
+      }
+
+      if (this.search.kind && this.search.kind != "") {
+        tableData = tableData.filter(t => t.com_kind === this.search.kind);
+      }
+
+      if (this.search.category && this.search.category != "") {
         tableData = tableData.filter(
-          t => t.com_state == this.currentSearch.state
+          t => t.com_category === this.search.category
         );
       }
 
-      if (this.currentSearch.kind && this.currentSearch.kind != "") {
-        tableData = tableData.filter(
-          t => t.com_kind === this.currentSearch.kind
-        );
-      }
-
-      if (this.currentSearch.category && this.currentSearch.category != "") {
-        tableData = tableData.filter(
-          t => t.com_category === this.currentSearch.category
-        );
-      }
-
-      if (this.currentSearch.licence !== "") {
-        if (this.currentSearch.licence === true) {
+      if (this.search.licence !== "") {
+        if (this.search.licence === true) {
           tableData = tableData.filter(t => t.lic_code);
         } else {
           tableData = tableData.filter(t => !t.lic_code);
         }
       }
 
-      if (this.currentSearch.grid && this.currentSearch.grid.length > 0) {
-        let gridSearch = this.currentSearch.grid.join(",");
+      if (this.search.grid && this.search.grid.length > 0) {
+        let gridSearch = this.search.grid.join(",");
         tableData = tableData.filter(t =>
           department
             .getAreaIDArray(t.area)
@@ -252,22 +252,6 @@ export default {
         default:
           return "info";
       }
-    },
-
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
-
-    searchReset() {
-      this.search = {
-        text: "",
-        kind: "",
-        category: "",
-        licence: "",
-        state: "",
-        grid: []
-      };
-      this.searchSubmit();
     }
   }
 };

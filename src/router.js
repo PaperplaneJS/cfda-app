@@ -7,13 +7,9 @@ import Index from '@/views/index';
 import ActionLogin from '@/views/action/login';
 
 import BaseBiz from '@/views/base/biz';
-import BaseWorkshop from '@/views/base/workshop';
-import BaseNetshop from '@/views/base/netshop';
 import BaseTemplate from '@/views/base/template';
 import BaseLaw from '@/views/base/law';
 import BaseSingleBiz from '@/views/base/singlebiz';
-import BaseSingleWorkshop from '@/views/base/singleworkshop';
-import BaseSingleNetshop from '@/views/base/singlenetshop';
 import BaseSingleTemplate from '@/views/base/singletemplate';
 import BaseSingleRiskTemplate from '@/views/base/singlerisktemplate';
 import BaseSingeLaw from '@/views/base/singlelaw';
@@ -95,23 +91,11 @@ let routes = [{
         path: '/base/biz',
         component: BaseBiz
       }, {
-        path: '/base/workshop',
-        component: BaseWorkshop
-      }, {
-        path: '/base/netshop',
-        component: BaseNetshop
-      }, {
         path: '/base/template',
         component: BaseTemplate
       }, {
         path: '/base/biz/:bizid',
         component: BaseSingleBiz
-      }, {
-        path: '/base/workshop/:bizid',
-        component: BaseSingleWorkshop
-      }, {
-        path: '/base/netshop/:bizid',
-        component: BaseSingleNetshop
       }, {
         path: '/base/template/:templateid',
         component: BaseSingleTemplate

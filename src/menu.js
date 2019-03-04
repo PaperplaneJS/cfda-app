@@ -14,14 +14,6 @@ let menu = [{
       url: "biz",
       promission: [1, 2]
     }, {
-      label: "食品小作坊",
-      url: "workshop",
-      promission: [1, 2]
-    }, {
-      label: "网上商家",
-      url: "netshop",
-      promission: [1, 2]
-    }, {
       label: "模板管理",
       url: "template",
       promission: [1, 2]
@@ -30,7 +22,7 @@ let menu = [{
       url: "law",
       promission: [1, 2]
     }, {
-      label: "信息管理",
+      label: "数据导入导出",
       url: "import",
       promission: [1]
     }]
