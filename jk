@@ -22,7 +22,7 @@ pipeline {
                 echo "构建中..."
                 sh 'node -v'
                 sh 'npm install'
-                sh 'npm build'
+                sh 'npm run build'
               
                 echo "构建完成."
                 sh 'cd dist'
