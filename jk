@@ -24,7 +24,7 @@ pipeline {
                 sh 'npm run build'
               
                 echo "构建完成."
-                artifacts: '**/dist/*.*'
+                artifacts: '/dist/*.*'
             }
         }
     }
