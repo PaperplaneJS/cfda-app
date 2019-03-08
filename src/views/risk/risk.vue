@@ -21,7 +21,11 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="item of riskYears.slice(0,-8)" :key="item" @click.native="currentYear=item">{{item}}</el-dropdown-item>
+            <el-dropdown-item
+              v-for="item of riskYears.slice(0,-8)"
+              :key="item"
+              @click.native="currentYear=item"
+            >{{item}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -29,14 +33,19 @@
 
     <el-row style="margin-bottom:10px;" :gutter="15">
       <el-col :span="24">
-        <el-alert title="餐饮服务行业每年度如进行量化评级检查，检查完成后，结果将汇总在本页" type="info" :closable="false" show-icon>
-        </el-alert>
+        <el-alert title="餐饮服务行业每年度如进行量化评级检查，检查完成后，结果将汇总在本页" type="info" :closable="false" show-icon></el-alert>
       </el-col>
     </el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input size="small" v-model="search.text" clearable placeholder="搜索单位名称/区域/分值/评定单位人员等" prefix-icon="el-icon-search"></el-input>
+        <el-input
+          size="small"
+          v-model="search.text"
+          clearable
+          placeholder="搜索单位名称/区域/分值/评定单位人员等"
+          prefix-icon="el-icon-search"
+        ></el-input>
       </el-col>
 
       <el-col :span="3">
@@ -49,13 +58,15 @@
       </el-col>
 
       <el-col :span="10">
-        <el-date-picker v-model="search.daterange" size="small" clearable type="daterange" range-separator="至" start-placeholder="评级日期起" end-placeholder="截止日期">
-        </el-date-picker>
-      </el-col>
-
-      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="small" round>重置</el-button>
+        <el-date-picker
+          v-model="search.daterange"
+          size="small"
+          clearable
+          type="daterange"
+          range-separator="至"
+          start-placeholder="评级日期起"
+          end-placeholder="截止日期"
+        ></el-date-picker>
       </el-col>
     </el-row>
 
@@ -63,7 +74,7 @@
       <el-col :span="24">
         <el-table :data="pageData" size="medium" style="width: 100%;margin-bottom:20px;">
           <el-table-column prop="biz.com_name" label="单位名称" sortable></el-table-column>
-          <el-table-column prop="department" label="网格区域" sortable></el-table-column>
+          <el-table-column prop="department" label="行政区域" sortable></el-table-column>
           <el-table-column label="单位类型" sortable>
             <template slot-scope="scope">{{scope.row.biz.com_kind|bizKindText}}</template>
           </el-table-column>
@@ -78,7 +89,11 @@
           <el-table-column prop="date" label="检查时间" align="center" sortable></el-table-column>
           <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('risk/'+scope.row.id)" size="mini" type="primary">查看</el-button>
+              <el-button
+                @click.native="$router.push('risk/'+scope.row.id)"
+                size="mini"
+                type="primary"
+              >查看</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
@@ -87,8 +102,15 @@
     </el-row>
 
     <el-row>
-      <el-pagination background @size-change="t=>riskTable.pageSize=t" :current-page.sync="riskTable.page" :page-sizes="riskTable.pageSizes" :page-size="riskTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="t=>riskTable.pageSize=t"
+        :current-page.sync="riskTable.page"
+        :page-sizes="riskTable.pageSizes"
+        :page-size="riskTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
   </el-row>
 </template>
@@ -107,11 +129,6 @@ export default {
       currentYear: null,
       bizData: [],
       search: {
-        text: "",
-        level: null,
-        daterange: []
-      },
-      currentSearch: {
         text: "",
         level: null,
         daterange: []
@@ -165,11 +182,8 @@ export default {
     tableData() {
       let tableData = this.currentRisk;
 
-      if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
-      ) {
-        let searchText = this.currentSearch.text;
+      if (this.search.text && this.search.text.trim().length > 0) {
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.department.includes(searchText) ||
@@ -179,19 +193,19 @@ export default {
         );
       }
 
-      if (this.currentSearch.level && this.currentSearch.level != "") {
-        tableData = tableData.filter(t => t.level === this.currentSearch.level);
+      if (this.search.level && this.search.level != "") {
+        tableData = tableData.filter(t => t.level === this.search.level);
       }
 
       if (
-        this.currentSearch.daterange &&
-        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+        this.search.daterange &&
+        (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
           let dt = new Date(t.date);
           return (
-            dt.getTime() >= this.currentSearch.daterange[0].getTime() &&
-            dt.getTime() <= this.currentSearch.daterange[1].getTime()
+            dt.getTime() >= this.search.daterange[0].getTime() &&
+            dt.getTime() <= this.search.daterange[1].getTime()
           );
         });
       }
@@ -211,19 +225,6 @@ export default {
     init() {
       this.bizData = getAllBizs();
       this.currentYear = `${new Date().getFullYear() + 1}`;
-    },
-
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
-
-    searchReset() {
-      this.search = {
-        text: "",
-        level: null,
-        daterange: []
-      };
-      this.searchSubmit();
     }
   }
 };

@@ -13,7 +13,6 @@ import BaseSingleBiz from '@/views/base/singlebiz';
 import BaseSingleTemplate from '@/views/base/singletemplate';
 import BaseSingleRiskTemplate from '@/views/base/singlerisktemplate';
 import BaseSingeLaw from '@/views/base/singlelaw';
-import BaseImport from '@/views/base/import';
 
 import GridArea from '@/views/grid/area';
 import GridMember from '@/views/grid/member';
@@ -27,27 +26,20 @@ import SMSSingleSMS from '@/views/sms/singlesms';
 import PlanList from '@/views/plan/list';
 import PlanPost from '@/views/plan/post';
 import PlanRecive from '@/views/plan/recive';
-import PlanArchives from '@/views/plan/archives';
 import PlanSinglePlan from '@/views/plan/singleplan';
 import PlanSinglePost from '@/views/plan/singlepost';
 
 import DailyPost from '@/views/daily/post';
 import DailyMonitor from '@/views/daily/monitor';
 import DailyMonitorList from '@/views/daily/monitorlist';
-import DailyReport from '@/views/daily/report';
 import DailySinglePost from '@/views/daily/singlepost';
 import DailySingleMonitor from '@/views/daily/singlemonitor';
-import DailySingleReport from '@/views/daily/singlereport';
-import DailyReportList from '@/views/daily/reportlist';
 
 import SpecialPost from '@/views/special/post';
 import SpecialMonitor from '@/views/special/monitor';
 import SpecialMonitorList from '@/views/special/monitorlist';
-import SpecialReport from '@/views/special/report';
 import SpecialSinglePost from '@/views/special/singlepost';
 import SpecialSingleMonitor from '@/views/special/singlemonitor';
-import SpecialSingleReport from '@/views/special/singlereport';
-import SpecialReportList from '@/views/special/reportlist';
 
 import RiskRisk from '@/views/risk/risk';
 import RiskSingleRisk from '@/views/risk/singlerisk';
@@ -58,10 +50,6 @@ import RectifySingleRectify from '@/views/rectify/singlerectify';
 import TraceTrace from '@/views/trace/trace';
 
 import CountCount from '@/views/count/count';
-
-import OptionOption from '@/views/option/option';
-
-import DataMonitor from '@/views/datamonitor/datamonitor';
 
 Vue.use(Router);
 
@@ -108,9 +96,6 @@ let routes = [{
       }, {
         path: '/base/law/:lawid',
         component: BaseSingeLaw
-      }, {
-        path: '/base/import',
-        component: BaseImport
       },
 
       //网格化管理
@@ -159,9 +144,6 @@ let routes = [{
       }, {
         path: '/plan/recive',
         component: PlanRecive
-      }, {
-        path: '/plan/archives',
-        component: PlanArchives
       },
 
       //日常检查
@@ -173,9 +155,6 @@ let routes = [{
         path: '/daily/monitor',
         component: DailyMonitor
       }, {
-        path: '/daily/report',
-        component: DailyReport
-      }, {
         path: '/daily/post/:postid',
         component: DailySinglePost
       }, {
@@ -184,12 +163,6 @@ let routes = [{
       }, {
         path: '/daily/monitor/:taskid/:taskrecordid',
         component: DailySingleMonitor
-      }, {
-        path: '/daily/report/:taskid',
-        component: DailyReportList
-      }, {
-        path: '/daily/report/:taskid/:taskrecordid',
-        component: DailySingleReport
       },
 
       //专项检查
@@ -209,15 +182,6 @@ let routes = [{
       }, {
         path: '/special/monitor/:taskid/:taskrecordid',
         component: SpecialSingleMonitor
-      }, {
-        path: '/special/report',
-        component: SpecialReport
-      }, {
-        path: '/special/report/:taskid',
-        component: SpecialReportList
-      }, {
-        path: '/special/report/:taskid/:taskrecordid',
-        component: SpecialSingleReport
       },
 
       //风险评级
@@ -252,19 +216,6 @@ let routes = [{
       {
         path: '/count',
         component: CountCount
-      },
-
-      //数据监控
-      {
-        path: '/datamonitor',
-        component: DataMonitor
-      }
-
-      //系统设置
-
-      , {
-        path: '/option',
-        component: OptionOption
       }
     ]
   }

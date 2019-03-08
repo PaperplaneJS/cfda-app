@@ -2,12 +2,20 @@
   <div id="app">
     <el-container>
       <el-aside class="aside" width="240px">
-        <img id="logoimg" src="@/assets/img/logo.png" />
+        <img id="logoimg" src="@/assets/img/logo.png">
 
         <el-col :span="24">
-          <el-menu ref="menu" :default-active="currentMenuPath" :unique-opened="true" class="aside-menu" :router="true" background-color="#383838" text-color="#fff" active-text-color="#ffd04b">
-            <div id="aside-logo">
-            </div>
+          <el-menu
+            ref="menu"
+            :default-active="currentMenuPath"
+            :unique-opened="true"
+            class="aside-menu"
+            :router="true"
+            background-color="#383838"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+          >
+            <div id="aside-logo"></div>
 
             <template v-for="menuItem of menuWithRoutePath">
               <el-menu-item v-if="!menuItem.group" :key="menuItem.id" :index="menuItem.path">
@@ -21,13 +29,14 @@
                   <span slot="title">{{menuItem.label}}</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item v-for="menuGroupItem of menuItem.group" :key="menuGroupItem.id" :index="menuGroupItem.path">
-                    {{menuGroupItem.label}}
-                  </el-menu-item>
+                  <el-menu-item
+                    v-for="menuGroupItem of menuItem.group"
+                    :key="menuGroupItem.id"
+                    :index="menuGroupItem.path"
+                  >{{menuGroupItem.label}}</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
             </template>
-
           </el-menu>
         </el-col>
       </el-aside>
@@ -37,15 +46,38 @@
           <span class="titletext">常熟市食品生产经营监管信息化平台</span>
 
           <div id="headmenu">
-
             <span>
               <el-button icon="el-icon-tickets" circle></el-button>
             </span>
 
-            <el-popover placement="bottom" title="通知和消息" width="400" trigger="manual" v-model="visible">
-              <el-alert @click.native="openNotice(item.id)" @close="closeNotice(item.id)" style="cursor:pointer;" class="notice" v-for="item of notice" :key="item.id" :title="item.title" :type="item.type" :description="item.content" show-icon>
-              </el-alert>
-              <el-badge icon="el-icon-bell" :hidden="notice.length<=0" circle slot="reference" :max="99" :value="notice.length" class="item">
+            <el-popover
+              placement="bottom"
+              title="通知和消息"
+              width="400"
+              trigger="manual"
+              v-model="visible"
+            >
+              <el-alert
+                @click.native="openNotice(item.id)"
+                @close="closeNotice(item.id)"
+                style="cursor:pointer;"
+                class="notice"
+                v-for="item of notice"
+                :key="item.id"
+                :title="item.title"
+                :type="item.type"
+                :description="item.content"
+                show-icon
+              ></el-alert>
+              <el-badge
+                icon="el-icon-bell"
+                :hidden="notice.length<=0"
+                circle
+                slot="reference"
+                :max="99"
+                :value="notice.length"
+                class="item"
+              >
                 <el-button icon="el-icon-bell" circle @click="visible = !visible"></el-button>
               </el-badge>
             </el-popover>
@@ -58,18 +90,15 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </span>
-
           </div>
         </el-header>
 
         <el-main class="main">
           <router-view></router-view>
         </el-main>
-
       </el-container>
     </el-container>
   </div>
-
 </template>
 
 <script>
@@ -153,6 +182,7 @@ export default {
 }
 
 .aside {
+  overflow-y: hidden;
   background: #383838;
   border: none;
   min-height: 100vh;

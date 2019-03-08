@@ -10,7 +10,13 @@
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input size="small" v-model="search.text" clearable placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
+        <el-input
+          size="small"
+          v-model="search.text"
+          clearable
+          placeholder="搜索计划内容/标题/来源等"
+          prefix-icon="el-icon-search"
+        ></el-input>
       </el-col>
 
       <el-col :span="4">
@@ -21,13 +27,14 @@
       </el-col>
 
       <el-col :span="8">
-        <el-date-picker size="small" v-model="search.daterange" type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
-        </el-date-picker>
-      </el-col>
-
-      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="small" round>重置</el-button>
+        <el-date-picker
+          size="small"
+          v-model="search.daterange"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="起始日期"
+          end-placeholder="截止日期"
+        ></el-date-picker>
       </el-col>
     </el-row>
 
@@ -51,8 +58,16 @@
           </el-table-column>
           <el-table-column align="right" label="操作" min-width="120px">
             <template slot-scope="scope">
-              <el-button v-if="originTask(scope.row)" @click.native="$router.push('/daily/monitor')" size="mini">查看已分派任务</el-button>
-              <el-button @click.native="$router.push('post/'+scope.row.id)" size="mini" type="primary">分派任务</el-button>
+              <el-button
+                v-if="originTask(scope.row)"
+                @click.native="$router.push('/daily/monitor')"
+                size="mini"
+              >查看已分派任务</el-button>
+              <el-button
+                @click.native="$router.push('post/'+scope.row.id)"
+                size="mini"
+                type="primary"
+              >分派任务</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -60,8 +75,15 @@
     </el-row>
 
     <el-row>
-      <el-pagination background @size-change="t=>planTable.pageSize=t" :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="t=>planTable.pageSize=t"
+        :current-page.sync="planTable.page"
+        :page-sizes="planTable.pageSizes"
+        :page-size="planTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
   </el-row>
 </template>
@@ -78,11 +100,6 @@ export default {
   data() {
     return {
       search: {
-        text: "",
-        daterange: [],
-        state: null
-      },
-      currentSearch: {
         text: "",
         daterange: [],
         state: null
@@ -108,11 +125,8 @@ export default {
         t.stf = getStaffByID(t.staff).name;
       });
 
-      if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
-      ) {
-        let searchText = this.currentSearch.text;
+      if (this.search.text && this.search.text.trim().length > 0) {
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
@@ -121,19 +135,19 @@ export default {
         );
       }
 
-      if (this.currentSearch.state && this.currentSearch.state != "") {
-        tableData = tableData.filter(t => t.state === this.currentSearch.state);
+      if (this.search.state && this.search.state != "") {
+        tableData = tableData.filter(t => t.state === this.search.state);
       }
 
       if (
-        this.currentSearch.daterange &&
-        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+        this.search.daterange &&
+        (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
           let dt = new Date(t.post);
           return (
-            dt.getTime() >= this.currentSearch.daterange[0].getTime() &&
-            dt.getTime() <= this.currentSearch.daterange[1].getTime()
+            dt.getTime() >= this.search.daterange[0].getTime() &&
+            dt.getTime() <= this.search.daterange[1].getTime()
           );
         });
       }
@@ -150,19 +164,6 @@ export default {
   },
 
   methods: {
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
-
-    searchReset() {
-      this.search = {
-        text: "",
-        daterange: [],
-        state: null
-      };
-      this.searchSubmit();
-    },
-
     originTask(plan) {
       let taskItem = getTaskItems().find(
         t =>

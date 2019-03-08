@@ -130,15 +130,23 @@
 
       <el-row :gutter="20">
         <el-col :span="22">
-          <el-table :data="riskData" :span-method="dataSpan" size="medium" border style="width: 100%;margin-bottom:20px;">
+          <el-table
+            :data="riskData"
+            :span-method="dataSpan"
+            size="medium"
+            border
+            style="width: 100%;margin-bottom:20px;"
+          >
             <el-table-column label="评级项目" width="140px">
               <template slot-scope="scope">
-                <el-tag style="margin:4px;" size="mini">{{scope.row.i+1}}</el-tag>{{scope.row.item}}
+                <el-tag style="margin:4px;" size="mini">{{scope.row.i+1}}</el-tag>
+                {{scope.row.item}}
               </template>
             </el-table-column>
             <el-table-column label="项目内容">
               <template slot-scope="scope">
-                <el-tag style="margin:4px;" size="mini">{{scope.row.i+1}}.{{scope.row.j+1}}</el-tag>{{scope.row.detail}}
+                <el-tag style="margin:4px;" size="mini">{{scope.row.i+1}}.{{scope.row.j+1}}</el-tag>
+                {{scope.row.detail}}
               </template>
             </el-table-column>
             <el-table-column label="权重" width="80px">
@@ -148,7 +156,11 @@
             </el-table-column>
             <el-table-column label="评价" width="120px">
               <template slot-scope="scope">
-                <el-tag v-if="scope.row.result" :type="getType(scope.row.result.checked)" size="medium">{{scope.row.result.checked|checkedText}} {{scope.row.result.point}}</el-tag>
+                <el-tag
+                  v-if="scope.row.result"
+                  :type="getType(scope.row.result.checked)"
+                  size="medium"
+                >{{scope.row.result.checked|checkedText}} {{scope.row.result.point}}</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="换算得分" width="120px">
@@ -161,7 +173,6 @@
           </el-table>
         </el-col>
       </el-row>
-
     </el-form>
   </el-row>
 </template>
@@ -217,8 +228,8 @@ export default {
           if (this.currentRisk.detail[`${i + 1}.${j + 1}`]) {
             current++;
             currentPoint +=
-              this.currentRisk.detail[`${i + 1}.${j + 1}`].point *
-              templateItem.risk[this.currentRisk.type] /
+              (this.currentRisk.detail[`${i + 1}.${j + 1}`].point *
+                templateItem.risk[this.currentRisk.type]) /
               100;
           }
         }
@@ -260,7 +271,7 @@ export default {
     },
 
     getResultPoint() {
-      return this.itemCount.currentPoint / this.itemCount.sumPoint * 100;
+      return (this.itemCount.currentPoint / this.itemCount.sumPoint) * 100;
     },
 
     currentRisk() {
@@ -310,7 +321,7 @@ export default {
     },
 
     getPoint(cent, point) {
-      return cent * point / 100.0;
+      return (cent * point) / 100.0;
     },
 
     getType(result) {

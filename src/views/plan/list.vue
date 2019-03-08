@@ -17,7 +17,13 @@
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input clearable size="small" v-model="search.text" placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
+        <el-input
+          clearable
+          size="small"
+          v-model="search.text"
+          placeholder="搜索计划内容/标题/来源等"
+          prefix-icon="el-icon-search"
+        ></el-input>
       </el-col>
 
       <el-col :span="4">
@@ -38,13 +44,15 @@
       </el-col>
 
       <el-col :span="6">
-        <el-date-picker size="small" clearable v-model="search.daterange" type="daterange" range-separator="至" start-placeholder="制定日期范围" end-placeholder="截止">
-        </el-date-picker>
-      </el-col>
-
-      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="small" round>重置</el-button>
+        <el-date-picker
+          size="small"
+          clearable
+          v-model="search.daterange"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="制定日期范围"
+          end-placeholder="截止"
+        ></el-date-picker>
       </el-col>
     </el-row>
 
@@ -54,7 +62,10 @@
           <el-table-column prop="title" label="标题" min-width="120px" sortable></el-table-column>
           <el-table-column label="类别" align="center" sortable>
             <template slot-scope="scope">
-              <el-tag :type="getKindType(scope.row.kind)" size="small">{{scope.row.kind | planKindText}}</el-tag>
+              <el-tag
+                :type="getKindType(scope.row.kind)"
+                size="small"
+              >{{scope.row.kind | planKindText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="stf" label="制定人" sortable></el-table-column>
@@ -68,15 +79,30 @@
           </el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
-              <el-tag size="small" :type="getPlanType(scope.row.state)">{{scope.row.state | planStateText}}</el-tag>
-              <el-popover style="margin-left:5px;" v-if="scope.row.state!==1 && scope.row.post" placement="top-start" title="分发情况" width="300" trigger="hover" :content="postDetail(scope.row)">
+              <el-tag
+                size="small"
+                :type="getPlanType(scope.row.state)"
+              >{{scope.row.state | planStateText}}</el-tag>
+              <el-popover
+                style="margin-left:5px;"
+                v-if="scope.row.state!==1 && scope.row.post"
+                placement="top-start"
+                title="分发情况"
+                width="300"
+                trigger="hover"
+                :content="postDetail(scope.row)"
+              >
                 <el-button type="text" size="small" slot="reference">分发情况</el-button>
               </el-popover>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
-              <el-button @click="$router.push('list/'+scope.row.id)" size="mini" type="primary">查看 / 编辑</el-button>
+              <el-button
+                @click="$router.push('list/'+scope.row.id)"
+                size="mini"
+                type="primary"
+              >查看 / 编辑</el-button>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
@@ -85,8 +111,15 @@
     </el-row>
 
     <el-row>
-      <el-pagination @size-change="t=>planTable.pageSize=t" background :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        @size-change="t=>planTable.pageSize=t"
+        background
+        :current-page.sync="planTable.page"
+        :page-sizes="planTable.pageSizes"
+        :page-size="planTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
   </el-row>
 </template>
@@ -102,12 +135,6 @@ export default {
   data() {
     return {
       search: {
-        text: "",
-        kind: "",
-        state: "",
-        daterange: []
-      },
-      currentSearch: {
         text: "",
         kind: "",
         state: "",
@@ -160,11 +187,8 @@ export default {
         t.stf = getStaffByID(t.staff).name;
       });
 
-      if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
-      ) {
-        let searchText = this.currentSearch.text;
+      if (this.search.text && this.search.text.trim().length > 0) {
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
@@ -173,23 +197,23 @@ export default {
         );
       }
 
-      if (this.currentSearch.kind && this.currentSearch.kind != "") {
-        tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
+      if (this.search.kind && this.search.kind != "") {
+        tableData = tableData.filter(t => t.kind === this.search.kind);
       }
 
-      if (this.currentSearch.state && this.currentSearch.state != "") {
-        tableData = tableData.filter(t => t.state === this.currentSearch.state);
+      if (this.search.state && this.search.state != "") {
+        tableData = tableData.filter(t => t.state === this.search.state);
       }
 
       if (
-        this.currentSearch.daterange &&
-        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+        this.search.daterange &&
+        (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
           let dt = new Date(t.date);
           return (
-            dt.getTime() >= this.currentSearch.daterange[0].getTime() &&
-            dt.getTime() <= this.currentSearch.daterange[1].getTime()
+            dt.getTime() >= this.search.daterange[0].getTime() &&
+            dt.getTime() <= this.search.daterange[1].getTime()
           );
         });
       }
@@ -219,20 +243,6 @@ export default {
         default:
           return "info";
       }
-    },
-
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
-
-    searchReset() {
-      this.search = {
-        text: "",
-        kind: "",
-        state: "",
-        daterange: []
-      };
-      this.searchSubmit();
     },
 
     postDetail(post) {

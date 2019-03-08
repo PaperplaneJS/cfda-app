@@ -31,7 +31,12 @@
 
         <el-col :span="8">
           <el-form-item label="下发日期：">
-            <el-date-picker style="width:100%;" disabled v-model="currentRectify.plan.post" type="date"></el-date-picker>
+            <el-date-picker
+              style="width:100%;"
+              disabled
+              v-model="currentRectify.plan.post"
+              type="date"
+            ></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -62,7 +67,12 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="检查日期：">
-            <el-date-picker style="width:100%;" disabled v-model="currentRectify.task.date" type="date"></el-date-picker>
+            <el-date-picker
+              style="width:100%;"
+              disabled
+              v-model="currentRectify.task.date"
+              type="date"
+            ></el-date-picker>
           </el-form-item>
         </el-col>
 
@@ -96,10 +106,16 @@
       </el-row>
     </el-form>
 
-    <el-row style="font-size:18px;margin-bottom:15px;" class="section">所属检查任务</el-row>
+    <el-row style="font-size:18px;margin-bottom:15px;" class="section">结果详情</el-row>
     <el-row>
       <el-col :span="24">
-        <el-table :data="checkResult" :span-method="resultSpan" size="medium" style="width: 100%;margin-bottom:20px;" border>
+        <el-table
+          :data="checkResult"
+          :span-method="resultSpan"
+          size="medium"
+          style="width: 100%;margin-bottom:20px;"
+          border
+        >
           <el-table-column label="检查内容" width="200px">
             <template slot-scope="scope">
               <el-tag style="margin-bottom:5px;margin-right:8px;" size="mini">{{scope.row.i+1}}</el-tag>
@@ -108,8 +124,16 @@
           </el-table-column>
           <el-table-column prop="detail" label="检查项目">
             <template slot-scope="scope">
-              <el-tag style="margin-bottom:5px;margin-right:8px;" size="mini">{{scope.row.i+1}}.{{scope.row.j+1}}</el-tag>
-              <el-tag style="margin-bottom:5px;margin-right:8px;" v-if="scope.row.important" size="mini" type="danger">重点项</el-tag>
+              <el-tag
+                style="margin-bottom:5px;margin-right:8px;"
+                size="mini"
+              >{{scope.row.i+1}}.{{scope.row.j+1}}</el-tag>
+              <el-tag
+                style="margin-bottom:5px;margin-right:8px;"
+                v-if="scope.row.important"
+                size="mini"
+                type="danger"
+              >重点项</el-tag>
               {{scope.row.detail}}
             </template>
           </el-table-column>
@@ -117,14 +141,23 @@
             <template slot-scope="scope">
               <el-tag v-if="scope.row.result" :type="getResultType(scope.row.result)" size="mini">
                 {{scope.row.result.check}}
-                <strong v-if="scope.row.result.point"> [分值:{{scope.row.result.point}}]</strong>
+                <strong
+                  v-if="scope.row.result.point"
+                >[分值:{{scope.row.result.point}}]</strong>
               </el-tag>
               <el-tag v-else size="small" type="info">留空项</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="备注" width="90px">
             <template slot-scope="scope">
-              <el-popover v-if="scope.row.result&&scope.row.result.remark" placement="top-start" title="备注" width="400" trigger="hover" :content="scope.row.result.remark">
+              <el-popover
+                v-if="scope.row.result&&scope.row.result.remark"
+                placement="top-start"
+                title="备注"
+                width="400"
+                trigger="hover"
+                :content="scope.row.result.remark"
+              >
                 <el-button style="margin:0 5px;" size="mini" slot="reference">备注</el-button>
               </el-popover>
             </template>
@@ -132,7 +165,6 @@
         </el-table>
       </el-col>
     </el-row>
-
   </el-row>
 </template>
 

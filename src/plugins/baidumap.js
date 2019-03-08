@@ -3,6 +3,7 @@ export default function BDMap(ak) {
     if (window.BMap) {
       resolve(window.BMap);
     } else {
+
       window.onload = function () {
         resolve(window.BMap);
       }

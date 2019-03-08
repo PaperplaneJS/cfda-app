@@ -3,7 +3,7 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/biz">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/biz">食品企业</el-breadcrumb-item>
+      <el-breadcrumb-item to="/base/biz">食品单位</el-breadcrumb-item>
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
@@ -11,21 +11,33 @@
 
     <el-tabs style="margin-top:30px;" v-model="tab">
       <el-tab-pane label="基本信息" name="base">
-
-        <el-form :model="currentBizInfo" :disabled="!edit" label-position="left" style="margin-top:20px;" label-width="100px">
+        <el-form
+          :model="currentBizInfo"
+          :disabled="!edit"
+          label-position="left"
+          style="margin-top:20px;"
+          label-width="100px"
+        >
           <el-row :gutter="20">
             <el-col :span="16">
-              <el-form-item label="企业名称：" required>
-                <el-input v-model="currentBizInfo.com_name" placeholder="请输入企业名称"></el-input>
+              <el-form-item label="单位名称：" required>
+                <el-input v-model="currentBizInfo.com_name" placeholder="请输入单位名称"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item label="网格区域：" required>
-                <el-cascader :show-all-levels="false" :props="{label:'name',value:'id'}" v-model="currentBizInfo.area" :options="department.getArea()" placeholder="选择网格区域" style="width:100%;" change-on-select>
-                </el-cascader>
+              <el-form-item label="行政区域：" required>
+                <el-cascader
+                  :show-all-levels="false"
+                  :props="{label:'name',value:'id'}"
+                  v-model="currentBizInfo.area"
+                  :options="department.getArea()"
+                  placeholder="选择行政区域"
+                  style="width:100%;"
+                  change-on-select
+                ></el-cascader>
               </el-form-item>
             </el-col>
 
@@ -51,7 +63,11 @@
 
             <el-col :span="8">
               <el-form-item label="经营类别：" required>
-                <el-select v-model="currentBizInfo.com_category" style="width:100%" placeholder="请选择">
+                <el-select
+                  v-model="currentBizInfo.com_category"
+                  style="width:100%"
+                  placeholder="请选择"
+                >
                   <el-option label="餐馆" value="餐馆"></el-option>
                   <el-option label="快餐店" value="快餐店"></el-option>
                   <el-option label="小吃店" value="小吃店"></el-option>
@@ -76,7 +92,6 @@
           </el-row>
 
           <el-row :gutter="20">
-
             <el-col :span="8">
               <el-form-item label="单位电话：">
                 <el-input v-model="currentBizInfo.com_tel" placeholder="请输入企业单位(座机)电话"></el-input>
@@ -100,8 +115,7 @@
 
           <el-row :gutter="15">
             <el-col :span="16">
-              <el-alert show-icon title="经纬度是指百度地图的坐标值，用于在地图上定位商户的位置" type="info">
-              </el-alert>
+              <el-alert show-icon title="经纬度是指百度地图的坐标值，用于在地图上定位商户的位置" type="info"></el-alert>
             </el-col>
           </el-row>
 
@@ -123,16 +137,24 @@
 
           <el-row :gutter="15">
             <el-col :span="16">
-              <el-alert show-icon title="如果该企业单位有许可证信息，那么勾选上面的「有许可证」复选框，然后在「许可信息」一页输入其许可证内容" type="info">
-              </el-alert>
+              <el-alert
+                show-icon
+                title="如果该企业单位有许可证信息，那么勾选上面的「有许可证」复选框，然后在「许可信息」一页输入其许可证内容"
+                type="info"
+              ></el-alert>
             </el-col>
           </el-row>
         </el-form>
       </el-tab-pane>
 
       <el-tab-pane v-if="hasLicence" label="许可信息" name="licence">
-
-        <el-form :disabled="!edit" :model="currentBizInfo" label-position="left" style="margin-top:20px;" label-width="130px">
+        <el-form
+          :disabled="!edit"
+          :model="currentBizInfo"
+          label-position="left"
+          style="margin-top:20px;"
+          label-width="130px"
+        >
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="生产者名称：" required>
@@ -183,7 +205,12 @@
           <el-row>
             <el-col :span="16">
               <el-form-item label="生产地址：">
-                <el-input v-model="currentBizInfo.lic_business_address" :rows="4" type="textarea" placeholder="请输入企业生产地址"></el-input>
+                <el-input
+                  v-model="currentBizInfo.lic_business_address"
+                  :rows="4"
+                  type="textarea"
+                  placeholder="请输入企业生产地址"
+                ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -204,7 +231,14 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="许可证有效期：" required>
-                <el-date-picker style="width:100%" type="daterange" range-separator="至" start-placeholder="生效日期" end-placeholder="截止" v-model="currentBizInfo.daterange"></el-date-picker>
+                <el-date-picker
+                  style="width:100%"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="生效日期"
+                  end-placeholder="截止"
+                  v-model="currentBizInfo.daterange"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
@@ -212,18 +246,26 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="颁发日期：" required>
-                <el-date-picker style="width:100%" type="date" placeholder="选择颁发日期" v-model="currentBizInfo.lic_date_send"></el-date-picker>
+                <el-date-picker
+                  style="width:100%"
+                  type="date"
+                  placeholder="选择颁发日期"
+                  v-model="currentBizInfo.lic_date_send"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
-
         </el-form>
       </el-tab-pane>
 
       <el-tab-pane v-if="!isNew" label="检查记录" name="record">
         <el-row>
           <el-col :span="24">
-            <el-table :data="getCheckRecord()" size="medium" style="width: 100%;margin-bottom:25px;">
+            <el-table
+              :data="getCheckRecord()"
+              size="medium"
+              style="width: 100%;margin-bottom:25px;"
+            >
               <el-table-column label="检查时间" sortable></el-table-column>
               <el-table-column label="执法人员"></el-table-column>
               <el-table-column label="执法单位"></el-table-column>
@@ -231,9 +273,7 @@
               <el-table-column label="检查结果" sortable></el-table-column>
               <el-table-column label="处理方式" sortable></el-table-column>
               <el-table-column label="操作" width="80px">
-                <template slot-scope="scope">
-                  <el-button size="mini">查看</el-button>
-                </template>
+                <el-button size="mini">查看</el-button>
               </el-table-column>
             </el-table>
           </el-col>
@@ -249,9 +289,7 @@
               <el-table-column label="评定人员"></el-table-column>
               <el-table-column label="评定单位"></el-table-column>
               <el-table-column label="操作" min-width="80px">
-                <template slot-scope="scope">
-                  <el-button size="mini">查看</el-button>
-                </template>
+                <el-button size="mini">查看</el-button>
               </el-table-column>
             </el-table>
           </el-col>
@@ -261,7 +299,11 @@
       <el-tab-pane v-if="!isNew" label="行政处罚记录" name="refity">
         <el-row>
           <el-col :span="24">
-            <el-table :data="getRectifyRecord()" size="medium" style="width: 100%;margin-bottom:25px;">
+            <el-table
+              :data="getRectifyRecord()"
+              size="medium"
+              style="width: 100%;margin-bottom:25px;"
+            >
               <el-table-column label="执法人员"></el-table-column>
               <el-table-column label="执法单位"></el-table-column>
               <el-table-column label="处罚时间"></el-table-column>
@@ -269,9 +311,7 @@
               <el-table-column label="是否整改"></el-table-column>
               <el-table-column label="状态"></el-table-column>
               <el-table-column label="操作">
-                <template slot-scope="scope">
-                  <el-button size="mini">查看</el-button>
-                </template>
+                <el-button size="mini">查看</el-button>
               </el-table-column>
             </el-table>
           </el-col>
@@ -282,10 +322,15 @@
     <el-row>
       <el-col :span="24">
         <el-button @click="edit=true" v-if="!edit" icon="el-icon-edit" type="primary">编辑</el-button>
-        <el-button @click="editOK" v-if="edit" icon="el-icon-check" type="primary">{{isNew?"提交审核":"完成编辑"}}</el-button>
+        <el-button
+          @click="editOK"
+          v-if="edit"
+          icon="el-icon-check"
+          type="primary"
+        >{{isNew?"提交审核":"完成编辑"}}</el-button>
         <el-button @click="editCancel" v-if="edit&&!isNew" icon="el-icon-close">取消并还原</el-button>
         <router-link to="/base/biz">
-          <el-button style="margin-left:20px;">返回企业管理</el-button>
+          <el-button style="margin-left:20px;">返回食品单位管理</el-button>
         </router-link>
       </el-col>
     </el-row>
@@ -357,7 +402,7 @@ export default {
       };
 
       if (bizid === "new") {
-        this.title = "新增企业";
+        this.title = "新增单位";
         this.hasLicence = false;
         this.isNew = true;
         this.edit = true;

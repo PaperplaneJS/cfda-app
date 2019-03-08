@@ -28,7 +28,10 @@
           </el-table-column>
           <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
-              <el-tag size="small" :type="getPlanType(scope.row.state)">{{scope.row.state | planStateText}}</el-tag>
+              <el-tag
+                size="small"
+                :type="getPlanType(scope.row.state)"
+              >{{scope.row.state | planStateText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">
@@ -41,8 +44,15 @@
     </el-row>
 
     <el-row>
-      <el-pagination background @size-change="t=>planTable.pageSize=t" :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="t=>planTable.pageSize=t"
+        :current-page.sync="planTable.page"
+        :page-sizes="planTable.pageSizes"
+        :page-size="planTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
 
     <el-dialog title="查看和接收计划" v-if="isPopup" :visible.sync="isPopup">
@@ -89,15 +99,24 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="下发日期:">
-              <el-date-picker style="width:100%;" disabled type="date" v-model="popupItem.post.date"></el-date-picker>
+              <el-date-picker
+                style="width:100%;"
+                disabled
+                type="date"
+                v-model="popupItem.post.date"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="使用模板：">
               <el-select disabled style="width:100%;" v-model="popupItem.template">
-                <el-option v-for="item of taskTemplate" :key="item.id" :label="item.name" :value="item.id">
-                </el-option>
+                <el-option
+                  v-for="item of taskTemplate"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -106,8 +125,13 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="执行期限:">
-              <el-date-picker style="width:100%;" v-model="popupItem.limit" disabled type="daterange" range-separator="至">
-              </el-date-picker>
+              <el-date-picker
+                style="width:100%;"
+                v-model="popupItem.limit"
+                disabled
+                type="daterange"
+                range-separator="至"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -119,7 +143,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="isPopup=false">取消</el-button>

@@ -3,14 +3,20 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/grid/member">网格化管理</el-breadcrumb-item>
-      <el-breadcrumb-item to="/grid/member">网格人员管理</el-breadcrumb-item>
+      <el-breadcrumb-item to="/grid/member">行政人员管理</el-breadcrumb-item>
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
     <el-row class="title">{{title}}</el-row>
 
-    <el-form :rules="rules" ref="currentMember" :model="currentMember" label-position="left" style="margin-top:20px;" label-width="90px">
-
+    <el-form
+      :rules="rules"
+      ref="currentMember"
+      :model="currentMember"
+      label-position="left"
+      style="margin-top:20px;"
+      label-width="90px"
+    >
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="人员姓名:" prop="name">
@@ -51,21 +57,33 @@
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="所属层级:" prop="area">
-            <el-cascader :disabled="!edit" :show-all-levels="false" v-model="currentMember.area" :props="{label:'name',value:'id'}" :options="department.getArea()" placeholder="选择层级" change-on-select></el-cascader>
+          <el-form-item label="所属行政级别:" prop="area">
+            <el-cascader
+              :disabled="!edit"
+              :show-all-levels="false"
+              v-model="currentMember.area"
+              :props="{label:'name',value:'id'}"
+              :options="department.getArea()"
+              placeholder="选择层级"
+              change-on-select
+            ></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
-
     </el-form>
 
     <el-row>
       <el-col :span="24">
         <el-button @click="edit=true" v-if="!edit" icon="el-icon-edit" type="primary">编辑该人员</el-button>
-        <el-button @click="editOK" v-if="edit" icon="el-icon-check" type="primary">{{isNew?"完成新建":"完成编辑"}}</el-button>
+        <el-button
+          @click="editOK"
+          v-if="edit"
+          icon="el-icon-check"
+          type="primary"
+        >{{isNew?"完成新建":"完成编辑"}}</el-button>
         <el-button @click="editCancel" v-if="edit&&!isNew" icon="el-icon-close">取消并还原</el-button>
         <router-link to="/grid/member">
-          <el-button style="margin-left:20px;">返回网格人员</el-button>
+          <el-button style="margin-left:20px;">返回行政人员管理</el-button>
         </router-link>
       </el-col>
     </el-row>
@@ -120,7 +138,7 @@ export default {
         area: [
           {
             required: true,
-            message: "必须输入人员所属网格区域",
+            message: "必须输入人员所属行政区域",
             trigger: ["blur", "change"]
           }
         ]
@@ -146,7 +164,7 @@ export default {
         };
         this.isNew = true;
         this.edit = true;
-        this.title = "新的网格人员";
+        this.title = "新的行政人员";
       } else {
         let member = copy(getStaffByID(gmid));
 

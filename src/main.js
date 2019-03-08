@@ -4,6 +4,7 @@ import router from './router';
 import '@/plugins/element.js';
 
 import "@/assets/style/public.scss";
+
 Vue.config.productionTip = process.env.NODE_ENV !== "development";
 
 router.beforeEach((to, from, next) => {

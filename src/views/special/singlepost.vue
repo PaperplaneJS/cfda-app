@@ -138,7 +138,7 @@
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane label="选择企业单位" name="biz">
+      <el-tab-pane label="选择食品单位" name="biz">
         <el-form label-position="left" style="margin-top:10px;" label-width="90px">
 
           <el-row style="margin-bottom:35px;">
@@ -149,7 +149,7 @@
 
           <el-row style="margin-bottom:20px;" :gutter="15">
             <el-col :span="14">
-              <el-alert title="请选择该次检查任务所要检查的企业单位，可以使用复选框多选" type="info" :closable="false" show-icon>
+              <el-alert title="请选择该次检查任务所要检查的单位，可以使用复选框多选" type="info" :closable="false" show-icon>
               </el-alert>
             </el-col>
           </el-row>
@@ -205,7 +205,7 @@
                     {{scope.row.com_kind | bizKindText}}
                   </template>
                 </el-table-column>
-                <el-table-column label="网格区域" sortable>
+                <el-table-column label="行政区域" sortable>
                   <template slot-scope="scope">
                     {{department.getAreaByID(scope.row.area).name}}
                   </template>
@@ -261,7 +261,7 @@
                     {{scope.row.biz.com_kind | bizKindText}}
                   </template>
                 </el-table-column>
-                <el-table-column label="网格区域" sortable>
+                <el-table-column label="行政区域" sortable>
                   <template slot-scope="scope">
                     {{department.getAreaByID(scope.row.biz.area).name}}
                   </template>

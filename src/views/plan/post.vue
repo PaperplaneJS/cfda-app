@@ -10,7 +10,13 @@
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input v-model="search.text" size="small" clearable placeholder="搜索计划内容/标题/来源等" prefix-icon="el-icon-search"></el-input>
+        <el-input
+          v-model="search.text"
+          size="small"
+          clearable
+          placeholder="搜索计划内容/标题/来源等"
+          prefix-icon="el-icon-search"
+        ></el-input>
       </el-col>
 
       <el-col :span="4">
@@ -22,8 +28,15 @@
       </el-col>
 
       <el-col :span="8">
-        <el-date-picker v-model="search.daterange" clearable size="small" type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
-        </el-date-picker>
+        <el-date-picker
+          v-model="search.daterange"
+          clearable
+          size="small"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="起始日期"
+          end-placeholder="截止日期"
+        ></el-date-picker>
       </el-col>
 
       <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
@@ -52,7 +65,10 @@
           </el-table-column>
           <el-table-column align="center" label="状态" sortable>
             <template slot-scope="scope">
-              <el-tag size="small" :type="getPlanType(scope.row.state)">{{scope.row.state | planStateText}}</el-tag>
+              <el-tag
+                size="small"
+                :type="getPlanType(scope.row.state)"
+              >{{scope.row.state | planStateText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="60px">
@@ -65,8 +81,15 @@
     </el-row>
 
     <el-row>
-      <el-pagination background @size-change="t=>planTable.pageSize=t" :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="t=>planTable.pageSize=t"
+        :current-page.sync="planTable.page"
+        :page-sizes="planTable.pageSizes"
+        :page-size="planTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
   </el-row>
 </template>
@@ -82,11 +105,6 @@ export default {
   data() {
     return {
       search: {
-        text: "",
-        kind: "",
-        daterange: []
-      },
-      currentSearch: {
         text: "",
         kind: "",
         daterange: []
@@ -133,10 +151,10 @@ export default {
       });
 
       if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
+        this.search.text &&
+        this.search.text.trim().length > 0
       ) {
-        let searchText = this.currentSearch.text;
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
@@ -145,21 +163,21 @@ export default {
         );
       }
 
-      if (this.currentSearch.kind && this.currentSearch.kind != "") {
+      if (this.search.kind && this.search.kind != "") {
         tableData = tableData.filter(
-          t => t.kind === this.currentSearch.kind && t.state === 1
+          t => t.kind === this.search.kind && t.state === 1
         );
       }
 
       if (
-        this.currentSearch.daterange &&
-        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+        this.search.daterange &&
+        (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
           let dt = new Date(t.date);
           return (
-            dt.getTime() >= this.currentSearch.daterange[0].getTime() &&
-            dt.getTime() <= this.currentSearch.daterange[1].getTime()
+            dt.getTime() >= this.search.daterange[0].getTime() &&
+            dt.getTime() <= this.search.daterange[1].getTime()
           );
         });
       }

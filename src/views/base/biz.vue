@@ -3,10 +3,10 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/biz">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item>食品企业</el-breadcrumb-item>
+      <el-breadcrumb-item>食品单位</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">食品企业管理</el-row>
+    <el-row class="title">食品单位管理</el-row>
 
     <el-row type="flex" class="action" :gutter="15">
       <el-col :span="3">
@@ -36,7 +36,7 @@
           :props="{label:'name',value:'id'}"
           v-model="search.grid"
           :options="department.getArea()"
-          placeholder="网格区域"
+          placeholder="行政区域"
           change-on-select
         ></el-cascader>
       </el-col>
@@ -82,7 +82,7 @@
           <el-table-column label="类型" sortable>
             <template slot-scope="scope">{{scope.row.com_kind | kindText}}</template>
           </el-table-column>
-          <el-table-column label="网格区域" sortable>
+          <el-table-column label="行政区域" sortable>
             <template slot-scope="scope">{{department.getAreaByID(scope.row.area).name}}</template>
           </el-table-column>
           <el-table-column prop="com_contact" label="联系人" sortable></el-table-column>

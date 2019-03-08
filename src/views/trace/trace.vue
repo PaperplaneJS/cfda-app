@@ -9,45 +9,71 @@
 
     <div id="banner">
       <span>
-        <div class="text">当前计划数目:
+        <div class="text">
+          当前计划数目:
           <span class="bold">{{count.plan.current}}</span>
         </div>
         <div class="button">
           <el-button @click.native="$router.push('/plan/list')" type="text" size="small">前往计划列表</el-button>
         </div>
-        <el-progress :width="count.opt.width" :stroke-width="count.opt.stroke" type="circle" :percentage="Number(((1-count.plan.current/count.plan.total)*100).toFixed(2))"></el-progress>
+        <el-progress
+          :width="count.opt.width"
+          :stroke-width="count.opt.stroke"
+          type="circle"
+          :percentage="Number(((1-count.plan.current/count.plan.total)*100).toFixed(2))"
+        ></el-progress>
       </span>
-
+      
       <span>
-        <div class="text">当前所有任务:
+        <div class="text">
+          当前所有任务:
           <span class="bold">{{count.task.computed}} / {{count.task.current}}</span>
         </div>
         <div class="button">
           <el-button @click.native="$router.push('/plan/list')" type="text" size="small">前往查看计划</el-button>
         </div>
-        <el-progress color="#8e71c7" :width="count.opt.width" :stroke-width="count.opt.stroke" type="circle" :percentage="getPrecent(count.task.computed/count.task.current)"></el-progress>
+        <el-progress
+          color="#8e71c7"
+          :width="count.opt.width"
+          :stroke-width="count.opt.stroke"
+          type="circle"
+          :percentage="getPrecent(count.task.computed/count.task.current)"
+        ></el-progress>
       </span>
-
+      
       <span class="text">
-        <div>检查经营个体数目:
+        <div>
+          检查经营个体数目:
           <span class="bold">{{count.biz.computed}} / {{count.biz.current}}</span>
         </div>
         <div class="button">
           <el-button @click.native="$router.push('/base/biz')" type="text" size="small">企业单位列表</el-button>
         </div>
-        <el-progress color="#FF6633" :width="count.opt.width" :stroke-width="count.opt.stroke" type="circle" :percentage="getPrecent(count.biz.computed/count.biz.current)"></el-progress>
+        <el-progress
+          color="#FF6633"
+          :width="count.opt.width"
+          :stroke-width="count.opt.stroke"
+          type="circle"
+          :percentage="getPrecent(count.biz.computed/count.biz.current)"
+        ></el-progress>
       </span>
-
+      
       <span class="text">
-        <div>量化评级进度:
+        <div>
+          量化评级进度:
           <span class="bold">{{count.risk.computed}} / {{count.risk.current}}</span>
         </div>
         <div class="button">
           <el-button @click.native="$router.push('/risk')" type="text" size="small">前往量化评级</el-button>
         </div>
-        <el-progress color="#33CC00" :width="count.opt.width" :stroke-width="count.opt.stroke" type="circle" :percentage="getPrecent(count.risk.computed/count.risk.current)"></el-progress>
+        <el-progress
+          color="#33CC00"
+          :width="count.opt.width"
+          :stroke-width="count.opt.stroke"
+          type="circle"
+          :percentage="getPrecent(count.risk.computed/count.risk.current)"
+        ></el-progress>
       </span>
-
     </div>
 
     <el-row>
@@ -57,13 +83,13 @@
             <el-row>
               <el-col :span="24">
                 <el-table :data="planPageData" size="medium">
-
                   <el-table-column type="expand">
                     <template slot-scope="scope">
                       <div v-for="task of scope.row.task" :key="task.id" class="task">
                         <span>
                           <el-tag size="mini">{{task.state | taskState}}</el-tag>
-                          {{task.title}}</span>
+                          {{task.title}}
+                        </span>
                         <span class="taskdetail">
                           <span>进度：
                             <el-tag size="mini">{{task.progress[0]}}/{{task.progress[1]}}</el-tag>
@@ -71,8 +97,12 @@
                           <span>分派时间：
                             <el-tag size="mini">{{task.date}}</el-tag>
                           </span>
-                          <el-button style="padding:0;" size="mini" type="text" @click.native="$router.push('/daily/monitor/'+task.id)">
-                            前往查看</el-button>
+                          <el-button
+                            style="padding:0;"
+                            size="mini"
+                            type="text"
+                            @click.native="$router.push('/daily/monitor/'+task.id)"
+                          >前往查看</el-button>
                         </span>
                       </div>
                     </template>
@@ -98,31 +128,41 @@
                     </template>
                   </el-table-column>
                   <el-table-column align="center" label="操作">
-                    <template slot-scope="scope">
-                      <el-button size="mini" @click.native="$router.push('/daily/monitor')" type="primary">检查监督</el-button>
-                    </template>
+                    <el-button
+                      size="mini"
+                      @click.native="$router.push('/daily/monitor')"
+                      type="primary"
+                    >检查监督</el-button>
                   </el-table-column>
                 </el-table>
               </el-col>
             </el-row>
 
             <el-row>
-              <el-pagination background @size-change="t=>planPageTable.pageSize=t" :current-page.sync="planPageTable.page" :page-sizes="planPageTable.pageSizes" :page-size="planPageTable.pageSize" layout="total, prev, pager, next, sizes" :total="planPageData.length">
-              </el-pagination>
+              <el-pagination
+                background
+                @size-change="t=>planPageTable.pageSize=t"
+                :current-page.sync="planPageTable.page"
+                :page-sizes="planPageTable.pageSizes"
+                :page-size="planPageTable.pageSize"
+                layout="total, prev, pager, next, sizes"
+                :total="planPageData.length"
+              ></el-pagination>
             </el-row>
           </el-tab-pane>
 
           <el-tab-pane label="量化评级进度" name="risk">
-
             <el-row>
               <el-col :span="24">
-                <el-table :data="riskPageData" size="medium" style="width: 100%;margin-bottom:20px;">
+                <el-table
+                  :data="riskPageData"
+                  size="medium"
+                  style="width: 100%;margin-bottom:20px;"
+                >
                   <el-table-column prop="biz.com_name" label="单位名称" sortable></el-table-column>
-                  <el-table-column prop="areaName" label="网格区域" sortable></el-table-column>
+                  <el-table-column prop="areaName" label="行政区域" sortable></el-table-column>
                   <el-table-column label="个体类型" sortable>
-                    <template slot-scope="scope">
-                      {{scope.row.biz.com_kind | bizKindText}}
-                    </template>
+                    <template slot-scope="scope">{{scope.row.biz.com_kind | bizKindText}}</template>
                   </el-table-column>
                   <el-table-column prop="code" label="许可证编号"></el-table-column>
                   <el-table-column label="评级结果" min-width="120px;" sortable>
@@ -134,7 +174,11 @@
                   <el-table-column prop="date" label="评定日期" align="center" sortable></el-table-column>
                   <el-table-column align="center" label="操作" min-width="60px">
                     <template slot-scope="scope">
-                      <el-button @click.native="$router.push('risk/'+scope.row.id)" size="mini" type="primary">检查监督</el-button>
+                      <el-button
+                        @click.native="$router.push('risk/'+scope.row.id)"
+                        size="mini"
+                        type="primary"
+                      >检查监督</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -142,10 +186,16 @@
             </el-row>
 
             <el-row>
-              <el-pagination background @size-change="t=>riskPageTable.pageSize=t" :current-page.sync="riskPageTable.page" :page-sizes="riskPageTable.pageSizes" :page-size="riskPageTable.pageSize" layout="total, prev, pager, next, sizes" :total="riskPageData.length">
-              </el-pagination>
+              <el-pagination
+                background
+                @size-change="t=>riskPageTable.pageSize=t"
+                :current-page.sync="riskPageTable.page"
+                :page-sizes="riskPageTable.pageSizes"
+                :page-size="riskPageTable.pageSize"
+                layout="total, prev, pager, next, sizes"
+                :total="riskPageData.length"
+              ></el-pagination>
             </el-row>
-
           </el-tab-pane>
         </el-tabs>
       </el-col>

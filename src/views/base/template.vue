@@ -13,7 +13,12 @@
           <el-row class="action" :gutter="15">
             <el-col :span="3">
               <router-link to="/base/template/new">
-                <el-button style="width:100%;" size="small" type="primary" icon="el-icon-plus">新建常规检查模板</el-button>
+                <el-button
+                  style="width:100%;"
+                  size="small"
+                  type="primary"
+                  icon="el-icon-plus"
+                >新建常规检查模板</el-button>
               </router-link>
             </el-col>
 
@@ -26,7 +31,13 @@
 
           <el-row type="flex" :gutter="15">
             <el-col :span="6">
-              <el-input v-model="search.text" size="small" clearable placeholder="搜索模板名/创建人等" prefix-icon="el-icon-search"></el-input>
+              <el-input
+                v-model="search.text"
+                size="small"
+                clearable
+                placeholder="搜索模板名/创建人等"
+                prefix-icon="el-icon-search"
+              ></el-input>
             </el-col>
 
             <el-col :span="4">
@@ -41,11 +52,6 @@
                 <el-option label="激活" :value="1"></el-option>
                 <el-option label="停用" :value="2"></el-option>
               </el-select>
-            </el-col>
-
-            <el-col style="margin-left:auto;display:flex;justify-content:flex-end;" :span="6">
-              <el-button @click="searchSubmit" size="small" icon="el-icon-search" type="primary" round>搜索</el-button>
-              <el-button @click="searchReset" size="small" round>重置</el-button>
             </el-col>
           </el-row>
 
@@ -63,12 +69,19 @@
                 <el-table-column prop="date" label="创建日期" align="center" sortable></el-table-column>
                 <el-table-column label="状态" align="center">
                   <template slot-scope="scope">
-                    <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state|stateText}}</el-tag>
+                    <el-tag
+                      size="small"
+                      :type="getStateType(scope.row.state)"
+                    >{{scope.row.state|stateText}}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column align="center" label="操作" min-width="90px">
                   <template slot-scope="scope">
-                    <el-button @click="$router.push(`${scope.row.kind=='risk'?'risk':''}template/${scope.row.id}`)" size="mini" type="primary">查看 / 编辑</el-button>
+                    <el-button
+                      @click="$router.push(`${scope.row.kind=='risk'?'risk':''}template/${scope.row.id}`)"
+                      size="mini"
+                      type="primary"
+                    >查看 / 编辑</el-button>
                     <el-button size="mini" type="danger">删除</el-button>
                   </template>
                 </el-table-column>
@@ -77,8 +90,14 @@
           </el-row>
 
           <el-row>
-            <el-pagination background :current-page.sync="templateTable.page" :page-sizes="templateTable.pageSizes" :page-size="templateTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-            </el-pagination>
+            <el-pagination
+              background
+              :current-page.sync="templateTable.page"
+              :page-sizes="templateTable.pageSizes"
+              :page-size="templateTable.pageSize"
+              layout="total, prev, pager, next, sizes"
+              :total="tableData.length"
+            ></el-pagination>
           </el-row>
         </div>
       </el-col>
@@ -95,11 +114,6 @@ export default {
   data() {
     return {
       search: {
-        text: "",
-        state: null,
-        kind: null
-      },
-      currentSearch: {
         text: "",
         state: null,
         kind: null
@@ -127,10 +141,10 @@ export default {
       let tableData = getTemplates();
 
       if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
+        this.search.text &&
+        this.search.text.trim().length > 0
       ) {
-        let searchText = this.currentSearch.text;
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.name.includes(searchText) ||
@@ -139,12 +153,12 @@ export default {
         );
       }
 
-      if (this.currentSearch.state && this.currentSearch.state != "") {
-        tableData = tableData.filter(t => t.state === this.currentSearch.state);
+      if (this.search.state && this.search.state != "") {
+        tableData = tableData.filter(t => t.state === this.search.state);
       }
 
-      if (this.currentSearch.kind && this.currentSearch.kind != "") {
-        tableData = tableData.filter(t => t.kind === this.currentSearch.kind);
+      if (this.search.kind && this.search.kind != "") {
+        tableData = tableData.filter(t => t.kind === this.search.kind);
       }
 
       return tableData;
@@ -159,19 +173,6 @@ export default {
   },
 
   methods: {
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
-
-    searchReset() {
-      this.search = {
-        text: "",
-        state: null,
-        kind: null
-      };
-      this.searchSubmit();
-    },
-
     getStateType(state) {
       switch (state) {
         case 1:

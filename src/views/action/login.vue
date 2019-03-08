@@ -1,12 +1,10 @@
 <template>
   <div id="action_login">
     <div id="logo_bar">
-      <img src="@/assets/img/logo.png" alt="">
+      <img src="@/assets/img/logo.png" alt>
     </div>
 
-    <div class="title_bar" style="margin-bottom: 20px">
-      常熟市食品生产经营监管信息化平台
-    </div>
+    <div class="title_bar" style="margin-bottom: 20px">常熟市食品生产经营监管信息化平台</div>
 
     <div class="login_bar">
       <el-row style="margin-bottom:26px;">
@@ -19,7 +17,12 @@
         <el-row>
           <el-col :span="24">
             <el-form-item prop="account" label="账户：">
-              <el-input v-model="form.account" size="small" style="width:100%;" placeholder="请输入用户账户"></el-input>
+              <el-input
+                v-model="form.account"
+                size="small"
+                style="width:100%;"
+                placeholder="请输入用户账户"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -27,19 +30,30 @@
         <el-row>
           <el-col :span="24">
             <el-form-item prop="pwd" label="密码：">
-              <el-input v-model="form.pwd" type="password" size="small" style="width:100%;" placeholder="请输入登录密码"></el-input>
+              <el-input
+                v-model="form.pwd"
+                type="password"
+                size="small"
+                style="width:100%;"
+                placeholder="请输入登录密码"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row style="margin-top:20px;">
           <el-col :span="24">
-            <el-button @click="handelSubmit" style="width:100%;" size="small" type="primary" icon="el-icon-check">用户登录</el-button>
+            <el-button
+              @click="handelSubmit"
+              style="width:100%;"
+              size="small"
+              type="primary"
+              icon="el-icon-check"
+            >用户登录</el-button>
           </el-col>
         </el-row>
       </el-form>
     </div>
-
   </div>
 </template>
 

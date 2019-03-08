@@ -5,11 +5,17 @@
       <el-breadcrumb-item to="/rectify">行政处罚</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">行政处罚</el-row>
+    <el-row class="title action">行政处罚总览</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input v-model="search.text" size="small" clearable placeholder="搜索单位名称/区域/评定单位人员等" prefix-icon="el-icon-search"></el-input>
+        <el-input
+          v-model="search.text"
+          size="small"
+          clearable
+          placeholder="搜索单位名称/区域/评定单位人员等"
+          prefix-icon="el-icon-search"
+        ></el-input>
       </el-col>
 
       <el-col :span="3">
@@ -20,13 +26,15 @@
       </el-col>
 
       <el-col :span="6">
-        <el-date-picker v-model="search.daterange" size="small" clearable type="daterange" range-separator="至" start-placeholder="下发日期起" end-placeholder="截止">
-        </el-date-picker>
-      </el-col>
-
-      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="small" round>重置</el-button>
+        <el-date-picker
+          v-model="search.daterange"
+          size="small"
+          clearable
+          type="daterange"
+          range-separator="至"
+          start-placeholder="下发日期起"
+          end-placeholder="截止"
+        ></el-date-picker>
       </el-col>
     </el-row>
 
@@ -57,18 +65,28 @@
           <el-table-column prop="task.date" label="检查日期" align="center" sortable></el-table-column>
           <el-table-column label="检查结果">
             <template slot-scope="scope">
-              <el-tag :type="getResultType(scope.row.task.result)" size="small">{{scope.row.task.result}}</el-tag>
+              <el-tag
+                :type="getResultType(scope.row.task.result)"
+                size="small"
+              >{{scope.row.task.result}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="处理方式">
             <template slot-scope="scope">
-              <el-tag :type="getResultType(scope.row.task.handle)" size="small">{{scope.row.task.handle}}</el-tag>
+              <el-tag
+                :type="getResultType(scope.row.task.handle)"
+                size="small"
+              >{{scope.row.task.handle}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="date" label="处罚日期" align="center" sortable></el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-button @click.native="$router.push('rectify/'+scope.row.id)" size="mini" type="primary">查看详情</el-button>
+              <el-button
+                @click.native="$router.push('rectify/'+scope.row.id)"
+                size="mini"
+                type="primary"
+              >查看详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -76,8 +94,15 @@
     </el-row>
 
     <el-row>
-      <el-pagination background @size-change="t=>rectifyTable.pageSize=t" :current-page.sync="rectifyTable.page" :page-sizes="rectifyTable.pageSizes" :page-size="rectifyTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="t=>rectifyTable.pageSize=t"
+        :current-page.sync="rectifyTable.page"
+        :page-sizes="rectifyTable.pageSizes"
+        :page-size="rectifyTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
   </el-row>
 </template>
@@ -96,11 +121,6 @@ export default {
   data() {
     return {
       search: {
-        text: "",
-        kind: "",
-        daterange: []
-      },
-      currentSearch: {
         text: "",
         kind: "",
         daterange: []
@@ -135,11 +155,8 @@ export default {
         ];
       });
 
-      if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
-      ) {
-        let searchText = this.currentSearch.text;
+      if (this.search.text && this.search.text.trim().length > 0) {
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.biz.name.includes(searchText) ||
@@ -149,19 +166,19 @@ export default {
         );
       }
 
-      if (this.currentSearch.kind && this.currentSearch.kind != "") {
-        tableData = tableData.filter(t => t.kind == this.currentSearch.kind);
+      if (this.search.kind && this.search.kind != "") {
+        tableData = tableData.filter(t => t.kind == this.search.kind);
       }
 
       if (
-        this.currentSearch.daterange &&
-        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+        this.search.daterange &&
+        (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
           let dt = new Date(t.date);
           return (
-            dt.getTime() >= this.currentSearch.daterange[0].getTime() &&
-            dt.getTime() <= this.currentSearch.daterange[1].getTime()
+            dt.getTime() >= this.search.daterange[0].getTime() &&
+            dt.getTime() <= this.search.daterange[1].getTime()
           );
         });
       }
@@ -213,19 +230,6 @@ export default {
         case "停业整顿":
           return "danger";
       }
-    },
-
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
-
-    searchReset() {
-      this.search = {
-        text: "",
-        level: "",
-        daterange: []
-      };
-      this.searchSubmit();
     }
   }
 };

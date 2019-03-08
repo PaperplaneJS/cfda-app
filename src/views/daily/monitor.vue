@@ -10,17 +10,25 @@
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input v-model="search.text" clearable size="small" placeholder="搜索检查计划标题/类型等" prefix-icon="el-icon-search"></el-input>
+        <el-input
+          v-model="search.text"
+          clearable
+          size="small"
+          placeholder="搜索检查计划标题/类型等"
+          prefix-icon="el-icon-search"
+        ></el-input>
       </el-col>
 
       <el-col :span="10">
-        <el-date-picker v-model="search.daterange" clearable size="small" type="daterange" range-separator="至" start-placeholder="制定日期范围" end-placeholder="截止日期">
-        </el-date-picker>
-      </el-col>
-
-      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="small" round>重置</el-button>
+        <el-date-picker
+          v-model="search.daterange"
+          clearable
+          size="small"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="制定日期范围"
+          end-placeholder="截止日期"
+        ></el-date-picker>
       </el-col>
     </el-row>
 
@@ -40,12 +48,14 @@
           <el-table-column label="状态与进度">
             <template slot-scope="scope">
               <div>检查企业：
-                <el-tag size="mini">{{progress(scope.row.task.tasklist)[0]}} / {{progress(scope.row.task.tasklist)[1]}}</el-tag>
+                <el-tag
+                  size="mini"
+                >{{progress(scope.row.task.tasklist)[0]}} / {{progress(scope.row.task.tasklist)[1]}}</el-tag>
               </div>
               <div style="margin-top:1px;">任务完成：
-                <el-tag size="mini">
-                  {{taskProgress(scope.row.task)[0]}} / {{taskProgress(scope.row.task)[1]}}
-                </el-tag>
+                <el-tag
+                  size="mini"
+                >{{taskProgress(scope.row.task)[0]}} / {{taskProgress(scope.row.task)[1]}}</el-tag>
               </div>
             </template>
           </el-table-column>
@@ -57,9 +67,11 @@
                   <i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="item of scope.row.task.tasklist" :key="item.id" @click.native="$router.push('monitor/'+item.id)">
-                    {{item.title}} [{{item.progress[0]}}/{{item.progress[1]}}]
-                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-for="item of scope.row.task.tasklist"
+                    :key="item.id"
+                    @click.native="$router.push('monitor/'+item.id)"
+                  >{{item.title}} [{{item.progress[0]}}/{{item.progress[1]}}]</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -69,8 +81,15 @@
     </el-row>
 
     <el-row>
-      <el-pagination background @size-change="t=>planTable.pageSize=t" :current-page.sync="planTable.page" :page-sizes="planTable.pageSizes" :page-size="planTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="t=>planTable.pageSize=t"
+        :current-page.sync="planTable.page"
+        :page-sizes="planTable.pageSizes"
+        :page-size="planTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
   </el-row>
 </template>
@@ -89,10 +108,6 @@ export default {
   data() {
     return {
       search: {
-        text: "",
-        daterange: []
-      },
-      currentSearch: {
         text: "",
         daterange: []
       },
@@ -129,11 +144,8 @@ export default {
         t.stf = getStaffByID(t.staff).name;
       });
 
-      if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
-      ) {
-        let searchText = this.currentSearch.text;
+      if (this.search.text && this.search.text.trim().length > 0) {
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
@@ -143,14 +155,14 @@ export default {
       }
 
       if (
-        this.currentSearch.daterange &&
-        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+        this.search.daterange &&
+        (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
           let dt = new Date(t.task.recive);
           return (
-            dt.getTime() >= this.currentSearch.daterange[0].getTime() &&
-            dt.getTime() <= this.currentSearch.daterange[1].getTime()
+            dt.getTime() >= this.search.daterange[0].getTime() &&
+            dt.getTime() <= this.search.daterange[1].getTime()
           );
         });
       }
@@ -167,18 +179,6 @@ export default {
   },
 
   methods: {
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
-
-    searchReset() {
-      this.search = {
-        text: "",
-        daterange: []
-      };
-      this.searchSubmit();
-    },
-
     progress(taskList) {
       let sum = [0, 0];
       taskList.forEach(t => {

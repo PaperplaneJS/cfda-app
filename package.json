@@ -5,12 +5,15 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "server": "node --experimental-modules ./server/app.mjs"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "echarts": "^4.1.0",
     "element-ui": "^2.4.5",
+    "mongojs": "^2.6.0",
+    "restify": "^8.1.0",
     "sass-loader": "^7.1.0",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",

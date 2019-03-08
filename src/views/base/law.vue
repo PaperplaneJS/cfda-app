@@ -17,7 +17,13 @@
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
-        <el-input v-model="search.text" size="small" clearable placeholder="搜索法律法规名/编号/单位等" prefix-icon="el-icon-search"></el-input>
+        <el-input
+          v-model="search.text"
+          size="small"
+          clearable
+          placeholder="搜索法律法规名/编号/单位等"
+          prefix-icon="el-icon-search"
+        ></el-input>
       </el-col>
 
       <el-col :span="3">
@@ -25,11 +31,6 @@
           <el-option label="激活" :value="1"></el-option>
           <el-option label="停用" :value="2"></el-option>
         </el-select>
-      </el-col>
-
-      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="small" round>重置</el-button>
       </el-col>
     </el-row>
 
@@ -42,7 +43,10 @@
           <el-table-column prop="date" label="创建日期" align="center" sortable></el-table-column>
           <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
-              <el-tag size="small" :type="getStateType(scope.row.state)">{{scope.row.state | stateText}}</el-tag>
+              <el-tag
+                size="small"
+                :type="getStateType(scope.row.state)"
+              >{{scope.row.state | stateText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="110px">
@@ -56,8 +60,14 @@
     </el-row>
 
     <el-row>
-      <el-pagination background :current-page.sync="lawTable.page" :page-sizes="lawTable.pageSizes" :page-size="lawTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        background
+        :current-page.sync="lawTable.page"
+        :page-sizes="lawTable.pageSizes"
+        :page-size="lawTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
   </el-row>
 </template>
@@ -70,10 +80,6 @@ export default {
   data() {
     return {
       search: {
-        text: "",
-        state: null
-      },
-      currentSearch: {
         text: "",
         state: null
       },
@@ -95,11 +101,8 @@ export default {
     tableData() {
       let tableData = getLaws();
 
-      if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
-      ) {
-        let searchText = this.currentSearch.text;
+      if (this.search.text && this.search.text.trim().length > 0) {
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.name.includes(searchText) ||
@@ -108,8 +111,8 @@ export default {
         );
       }
 
-      if (this.currentSearch.state && this.currentSearch.state != "") {
-        tableData = tableData.filter(t => t.state === this.currentSearch.state);
+      if (this.search.state && this.search.state != "") {
+        tableData = tableData.filter(t => t.state === this.search.state);
       }
 
       return tableData;
@@ -131,18 +134,6 @@ export default {
         default:
           return "danger";
       }
-    },
-
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
-
-    searchReset() {
-      this.search = {
-        text: "",
-        state: ""
-      };
-      this.searchSubmit();
     }
   }
 };

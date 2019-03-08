@@ -7,7 +7,8 @@
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{title}}
+    <el-row class="title">
+      {{title}}
       <el-button @click="$router.push('/plan/list/'+currentPlan.id)" type="text">编辑计划</el-button>
     </el-row>
 
@@ -41,8 +42,15 @@
       <el-row :gutter="15">
         <el-col :span="8">
           <el-form-item label="执行期限：">
-            <el-date-picker style="width:100%;" v-model="currentPlan.limit" disabled type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
-            </el-date-picker>
+            <el-date-picker
+              style="width:100%;"
+              v-model="currentPlan.limit"
+              disabled
+              type="daterange"
+              range-separator="至"
+              start-placeholder="起始日期"
+              end-placeholder="截止日期"
+            ></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -51,8 +59,12 @@
         <el-col :span="16">
           <el-form-item label="选择模板：" required>
             <el-select disabled style="width:100%;" v-model="currentPlan.template">
-              <el-option v-for="item of taskTemplate" :key="item.id" :label="item.name" :value="item.id">
-              </el-option>
+              <el-option
+                v-for="item of taskTemplate"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -61,7 +73,13 @@
       <el-row>
         <el-col :span="16">
           <el-form-item label="检查描述：">
-            <el-input v-model="currentPlan.desc" :rows="4" type="textarea" disabled placeholder="选填,检查工作的简要描述"></el-input>
+            <el-input
+              v-model="currentPlan.desc"
+              :rows="4"
+              type="textarea"
+              disabled
+              placeholder="选填,检查工作的简要描述"
+            ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -69,7 +87,13 @@
       <el-row>
         <el-col :span="16">
           <el-form-item label="备注：">
-            <el-input v-model="currentPlan.remark" :rows="4" type="textarea" disabled placeholder="选填,工作备注"></el-input>
+            <el-input
+              v-model="currentPlan.remark"
+              :rows="4"
+              type="textarea"
+              disabled
+              placeholder="选填,工作备注"
+            ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -78,20 +102,33 @@
       <el-row>
         <el-col :span="16">
           <el-form-item label="分发给：" required>
-            <el-tree @check="checkChange" :expand-on-click-node="false" ref="tree" :check-strictly="true" :default-expanded-keys="[treeData[0].id]" :props="{label:'name'}" style="margin-bottom:20px;" node-key="id" :data="treeData" show-checkbox>
-              <span class="custom-tree-node" slot-scope="{ node, data }">
+            <el-tree
+              @check="checkChange"
+              :expand-on-click-node="false"
+              ref="tree"
+              :check-strictly="true"
+              :default-expanded-keys="[treeData[0].id]"
+              :props="{label:'name'}"
+              style="margin-bottom:20px;"
+              node-key="id"
+              :data="treeData"
+              show-checkbox
+            >
+              <span class="custom-tree-node" slot-scope="{ node }">
                 <span>{{ node.label }}</span>
                 <span>
-                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="node.checked=true">
-                    单个选中
-                  </el-button>
+                  <el-button
+                    v-if="!node.isLeaf"
+                    type="text"
+                    size="mini"
+                    @click="node.checked=true"
+                  >单个选中</el-button>
                 </span>
               </span>
             </el-tree>
           </el-form-item>
         </el-col>
       </el-row>
-
     </el-form>
 
     <el-row>
@@ -100,7 +137,6 @@
         <router-link to="/plan/post">
           <el-button style="margin-left:20px;">返回计划列表</el-button>
         </router-link>
-
       </el-col>
     </el-row>
   </el-row>

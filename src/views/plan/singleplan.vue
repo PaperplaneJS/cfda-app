@@ -9,7 +9,6 @@
 
     <el-row class="title">{{title}}</el-row>
     <el-form label-position="left" style="margin-top:20px;" label-width="100px">
-
       <el-row>
         <el-col :span="16">
           <el-form-item label="计划标题:" required>
@@ -21,23 +20,34 @@
       <el-row :gutter="15">
         <el-col :span="8">
           <el-form-item label="执行期限:" required>
-            <el-date-picker style="width:100%;" :disabled="!edit" v-model="currentPlan.limit" type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="截止日期">
-            </el-date-picker>
+            <el-date-picker
+              style="width:100%;"
+              :disabled="!edit"
+              v-model="currentPlan.limit"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="起始日期"
+              end-placeholder="截止日期"
+            ></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row style="margin-bottom:20px;" :gutter="15">
         <el-col :span="16">
-          <el-alert show-icon title="下级单位可以将计划分派为具体检查任务，检查任务的期限必须包含在计划的执行期限内" type="info">
-          </el-alert>
+          <el-alert show-icon title="下级单位可以将计划分派为具体检查任务，检查任务的期限必须包含在计划的执行期限内" type="info"></el-alert>
         </el-col>
       </el-row>
 
       <el-row :gutter="15">
         <el-col :span="8">
           <el-form-item label="检查类别:" required>
-            <el-select style="width:100%;" :disabled="!edit" v-model="currentPlan.kind" placeholder="请选择">
+            <el-select
+              style="width:100%;"
+              :disabled="!edit"
+              v-model="currentPlan.kind"
+              placeholder="请选择"
+            >
               <el-option label="日常检查" value="daily"></el-option>
               <el-option label="专项检查" value="special"></el-option>
               <el-option label="全量检查(风险评级)" value="risk"></el-option>
@@ -50,15 +60,20 @@
         <el-row :gutter="15">
           <el-col :span="16">
             <el-form-item label="专项通知:">
-              <el-input :disabled="!edit" :rows="4" v-model="currentPlan.special" type="textarea" placeholder="专项检查通知"></el-input>
+              <el-input
+                :disabled="!edit"
+                :rows="4"
+                v-model="currentPlan.special"
+                type="textarea"
+                placeholder="专项检查通知"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row style="margin-bottom:20px;" :gutter="15">
           <el-col :span="16">
-            <el-alert show-icon title="专项检查可以单独设置专项检查的通告，以体现专项检查的特殊性" type="info">
-            </el-alert>
+            <el-alert show-icon title="专项检查可以单独设置专项检查的通告，以体现专项检查的特殊性" type="info"></el-alert>
           </el-col>
         </el-row>
       </template>
@@ -67,8 +82,12 @@
         <el-col :span="8">
           <el-form-item label="使用模板：" required>
             <el-select :disabled="!edit" style="width:100%;" v-model="currentPlan.template">
-              <el-option v-for="item of taskTemplate" :key="item.id" :label="item.name" :value="item.id">
-              </el-option>
+              <el-option
+                v-for="item of taskTemplate"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -77,7 +96,13 @@
       <el-row :gutter="15">
         <el-col :span="16">
           <el-form-item label="备注:">
-            <el-input :disabled="!edit" :rows="4" v-model="currentPlan.remark" type="textarea" placeholder="选填,工作备注"></el-input>
+            <el-input
+              :disabled="!edit"
+              :rows="4"
+              v-model="currentPlan.remark"
+              type="textarea"
+              placeholder="选填,工作备注"
+            ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -98,17 +123,27 @@
       <el-row :gutter="15">
         <el-col :span="8">
           <el-form-item label="制定日期:" required>
-            <el-date-picker style="width:100%;" :disabled="!edit" v-model="currentPlan.date" type="date" placeholder="选择计划制定日期"></el-date-picker>
+            <el-date-picker
+              style="width:100%;"
+              :disabled="!edit"
+              v-model="currentPlan.date"
+              type="date"
+              placeholder="选择计划制定日期"
+            ></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
-
     </el-form>
 
     <el-row>
       <el-col :span="24">
         <el-button @click="edit=true" v-if="!edit" icon="el-icon-edit" type="primary">编辑</el-button>
-        <el-button @click="editOK" v-if="edit" icon="el-icon-check" type="primary">{{isNew?"完成新建":"完成编辑"}}</el-button>
+        <el-button
+          @click="editOK"
+          v-if="edit"
+          icon="el-icon-check"
+          type="primary"
+        >{{isNew?"完成新建":"完成编辑"}}</el-button>
         <el-button @click="editCancel" v-if="edit&&!isNew" icon="el-icon-close">取消并还原</el-button>
         <router-link to="/plan/list">
           <el-button style="margin-left:20px;">返回计划列表</el-button>

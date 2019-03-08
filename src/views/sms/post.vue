@@ -8,8 +8,7 @@
 
     <el-row class="title">消息发布</el-row>
 
-    <el-row :gutter="15">
-    </el-row>
+    <el-row :gutter="15"></el-row>
 
     <el-form label-position="left" style="margin-top:20px;" label-width="100px">
       <el-row :gutter="15">
@@ -30,14 +29,14 @@
 
       <el-row :gutter="15">
         <el-col :span="6">
-          <el-form-item label="发布机构：">
-            <el-input disabled v-model="$store.state.currentUser.usr_name"></el-input>
+          <el-form-item label="发布单位：">
+            <el-input disabled v-model="department.getAreaByID($store.state.currentUser.area).name"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :push="2" :span="6">
           <el-form-item label="发布人：">
-            <el-input disabled :value="department.getAreaByID($store.state.currentUser.area).name"></el-input>
+            <el-input disabled :value="$store.state.currentUser.name"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -45,20 +44,33 @@
       <el-row :gutter="15">
         <el-col :span="8">
           <el-form-item label="接收主体:" required>
-            <el-tree @check="checkChange" :expand-on-click-node="false" ref="tree" :check-strictly="true" :default-expanded-keys="[treeData[0].id]" :props="{label:'name'}" style="margin-bottom:20px;" node-key="id" :data="treeData" show-checkbox>
-              <span class="custom-tree-node" slot-scope="{ node, data }">
+            <el-tree
+              @check="checkChange"
+              :expand-on-click-node="false"
+              ref="tree"
+              :check-strictly="true"
+              :default-expanded-keys="[treeData[0].id]"
+              :props="{label:'name'}"
+              style="margin-bottom:20px;"
+              node-key="id"
+              :data="treeData"
+              show-checkbox
+            >
+              <span class="custom-tree-node" slot-scope="{ node }">
                 <span>{{ node.label }}</span>
                 <span>
-                  <el-button v-if="!node.isLeaf" type="text" size="mini" @click="node.checked=true">
-                    单个选中
-                  </el-button>
+                  <el-button
+                    v-if="!node.isLeaf"
+                    type="text"
+                    size="mini"
+                    @click="node.checked=true"
+                  >单个选中</el-button>
                 </span>
               </span>
             </el-tree>
           </el-form-item>
         </el-col>
       </el-row>
-
     </el-form>
 
     <el-row>
@@ -69,7 +81,6 @@
         </router-link>
       </el-col>
     </el-row>
-
   </el-row>
 </template>
 

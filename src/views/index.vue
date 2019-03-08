@@ -5,10 +5,7 @@
       <div id="action">
         <el-row>
           <el-col :span="24">
-            <el-radio-group
-              size="small"
-              v-model="posKind"
-            >
+            <el-radio-group size="small" v-model="posKind">
               <el-radio-button label="全部">全部</el-radio-button>
               <el-radio-button label="1">食品经营</el-radio-button>
               <el-radio-button label="2">小作坊</el-radio-button>
@@ -27,10 +24,7 @@
               placeholder="搜索食品经营个体"
               clearable
             >
-              <i
-                slot="prefix"
-                class="el-input__icon el-icon-search"
-              ></i>
+              <i slot="prefix" class="el-input__icon el-icon-search"></i>
             </el-input>
           </el-col>
         </el-row>
@@ -38,65 +32,40 @@
         <el-row>
           <el-col :span="24">
             <div style="margin-top:10px;display:flex;justify-content:space-around;">
-              <el-radio-group
-                size="mini"
-                v-model="chartKind"
-              >
+              <el-radio-group size="mini" v-model="chartKind">
                 <el-radio-button label="bizCountKind">个体比例</el-radio-button>
                 <el-radio-button label="increaseArea">增长情况</el-radio-button>
                 <el-radio-button label="monthKind">检查合格率</el-radio-button>
               </el-radio-group>
             </div>
-            <div
-              style="height:180px;margin:8px;"
-              id="chart"
-            ></div>
+            <div style="height:180px;margin:8px;" id="chart"></div>
           </el-col>
         </el-row>
 
-        <el-row
-          :gutter="10"
-          style="flex-grow: 1;"
-        >
-
-        </el-row>
+        <el-row :gutter="10" style="flex-grow: 1;"></el-row>
       </div>
     </div>
 
-    <el-dialog
-      v-if="popup"
-      :title="popupItem.name"
-      :visible.sync="popup"
-      width="50%"
-    >
+    <el-dialog v-if="popup" :title="popupItem.name" :visible.sync="popup" width="50%">
       <el-form label-width="110px">
         <el-row :gutter="15">
           <el-col :span="24">
             <el-form-item label="经营个体名：">
-              <el-input
-                v-model="popupItem.com_name"
-                disabled
-              ></el-input>
+              <el-input v-model="popupItem.com_name" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row :gutter="15">
           <el-col :span="12">
-            <el-form-item label="所属网格区域：">
-              <el-input
-                :value="getAreaByID(popupItem.area).name"
-                disabled
-              ></el-input>
+            <el-form-item label="所属行政区域：">
+              <el-input :value="getAreaByID(popupItem.area).name" disabled></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="企业类型：">
-              <el-input
-                :value="kindText(popupItem.com_kind)"
-                disabled
-              ></el-input>
+              <el-input :value="kindText(popupItem.com_kind)" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -104,19 +73,13 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="联系人员：">
-              <el-input
-                v-model="popupItem.com_contact"
-                disabled
-              ></el-input>
+              <el-input v-model="popupItem.com_contact" disabled></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="联系电话：">
-              <el-input
-                v-model="popupItem.com_contactphone"
-                disabled
-              ></el-input>
+              <el-input v-model="popupItem.com_contactphone" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -124,46 +87,28 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="许可证号：">
-              <el-input
-                v-if="popupItem.lic_code"
-                v-model="popupItem.lic_code"
-                disabled
-              ></el-input>
-              <el-input
-                v-else
-                value="暂无许可证"
-                disabled
-              ></el-input>
+              <el-input v-if="popupItem.lic_code" v-model="popupItem.lic_code" disabled></el-input>
+              <el-input v-else value="暂无许可证" disabled></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="经营类别：">
-              <el-input
-                v-model="popupItem.com_category"
-                disabled
-              ></el-input>
+              <el-input v-model="popupItem.com_category" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
+      <span slot="footer" class="dialog-footer">
         <el-button
           size="medium"
           type="primary"
           @click="$router.push('/base/biz/'+popupItem.com_id)"
         >前往查看</el-button>
-        <el-button
-          size="medium"
-          @click="()=>{popup=false;popupItem=null;}"
-        >关闭</el-button>
+        <el-button size="medium" @click="()=>{popup=false;popupItem=null;}">关闭</el-button>
       </span>
     </el-dialog>
   </el-row>
-
 </template>
 
 <script>
@@ -172,7 +117,7 @@ import { count } from "@/api/count.js";
 import { getAllBizs } from "@/api/old_biz.js";
 import { getAreaByID } from "@/api/old_area.js";
 import echarts from "echarts";
-import BDMap from "@/baidumap";
+import BDMap from "../plugins/baidumap";
 
 export default {
   name: "index",

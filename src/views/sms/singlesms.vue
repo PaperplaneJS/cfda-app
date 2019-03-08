@@ -20,7 +20,7 @@
 
       <el-row>
         <el-col :span="6">
-          <el-form-item label="下发机构：">
+          <el-form-item label="下发单位：">
             <el-input disabled v-model="currentSMS.department"></el-input>
           </el-form-item>
         </el-col>
@@ -35,8 +35,7 @@
       <el-row>
         <el-col :span="6">
           <el-form-item label="发布时间：">
-            <el-date-picker disabled v-model="currentSMS.date" type="datetime">
-            </el-date-picker>
+            <el-date-picker disabled v-model="currentSMS.date" type="datetime"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -48,7 +47,6 @@
           </el-form-item>
         </el-col>
       </el-row>
-
     </el-form>
 
     <el-row>

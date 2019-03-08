@@ -10,7 +10,7 @@ let menu = [{
     icon: "el-icon-tickets",
     promission: [1, 2],
     group: [{
-      label: "食品企业",
+      label: "食品单位",
       url: "biz",
       promission: [1, 2]
     }, {
@@ -21,10 +21,6 @@ let menu = [{
       label: "法律法规管理",
       url: "law",
       promission: [1, 2]
-    }, {
-      label: "数据导入导出",
-      url: "import",
-      promission: [1]
     }]
   },
   {
@@ -33,12 +29,12 @@ let menu = [{
     icon: "el-icon-menu",
     promission: [2],
     group: [{
-        label: "网格区域管理",
+        label: "行政区域管理",
         url: "area",
         promission: [2]
       },
       {
-        label: "网格人员管理",
+        label: "行政人员管理",
         url: "member",
         promission: [2]
       }
@@ -80,11 +76,6 @@ let menu = [{
         label: "计划接收",
         url: "recive",
         promission: [1]
-      },
-      {
-        label: "计划归档",
-        url: "archives",
-        promission: [1, 2]
       }
     ]
   },
@@ -94,21 +85,15 @@ let menu = [{
     icon: "el-icon-date",
     promission: [1, 2],
     group: [{
-        label: "任务分派",
+        label: "检查任务分派",
         url: "post",
         promission: [1]
       },
       {
-        label: "任务监管",
+        label: "检查进度",
         url: "monitor",
         promission: [1, 2]
       }
-      // ,
-      // {
-      //   label: "检查报告",
-      //   url: "report",
-      //   promission: [1, 2]
-      // }
     ]
   },
   {
@@ -117,21 +102,15 @@ let menu = [{
     icon: "el-icon-star-on",
     promission: [1, 2],
     group: [{
-        label: "任务分派",
+        label: "检查任务分派",
         url: "post",
         promission: [1]
       },
       {
-        label: "任务监管",
+        label: "检查进度",
         url: "monitor",
         promission: [1, 2]
       }
-      // ,
-      // {
-      //   label: "检查报告",
-      //   url: "report",
-      //   promission: [1, 2]
-      // }
     ]
   },
   {
@@ -141,19 +120,13 @@ let menu = [{
     promission: [1, 2]
   },
   {
-    label: "数据监控",
-    url: "datamonitor",
-    icon: "el-icon-refresh",
-    promission: [2]
-  },
-  {
     label: "行政处罚",
     url: "rectify",
     icon: "el-icon-bell",
     promission: [1, 2]
   },
   {
-    label: "跟踪监督",
+    label: "全局总览",
     url: "trace",
     icon: "el-icon-view",
     promission: [2]
@@ -163,12 +136,6 @@ let menu = [{
     url: "count",
     icon: "el-icon-edit-outline",
     promission: [2]
-  },
-  {
-    label: "系统管理",
-    url: "option",
-    icon: "el-icon-setting",
-    promission: [1, 2]
   }
 ];
 

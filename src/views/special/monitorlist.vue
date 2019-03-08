@@ -12,11 +12,17 @@
 
     <el-row type="flex" :gutter="15">
       <el-col :span="3">
-        <el-checkbox size="small" v-model="currentSearch.onlychecked" label="只显示已检查的" border></el-checkbox>
+        <el-checkbox size="small" v-model="search.onlychecked" label="只显示已检查的" border></el-checkbox>
       </el-col>
 
       <el-col :span="6">
-        <el-input v-model="search.text" size="small" clearable placeholder="搜索单位名称/结果等" prefix-icon="el-icon-search"></el-input>
+        <el-input
+          v-model="search.text"
+          size="small"
+          clearable
+          placeholder="搜索单位名称/结果等"
+          prefix-icon="el-icon-search"
+        ></el-input>
       </el-col>
 
       <el-select size="small" v-model="search.kind" clearable placeholder="按检查结果筛选">
@@ -26,19 +32,26 @@
       </el-select>
 
       <el-col :span="10">
-        <el-date-picker v-model="search.daterange" size="small" clearable type="daterange" range-separator="至" start-placeholder="检查日期" end-placeholder="截止日期">
-        </el-date-picker>
-      </el-col>
-
-      <el-col :span="4" style="margin-left:auto;display:flex;justify-content:flex-end;">
-        <el-button @click="searchSubmit" size="small" round type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="searchReset" size="small" round>重置</el-button>
+        <el-date-picker
+          v-model="search.daterange"
+          size="small"
+          clearable
+          type="daterange"
+          range-separator="至"
+          start-placeholder="检查日期"
+          end-placeholder="截止日期"
+        ></el-date-picker>
       </el-col>
     </el-row>
 
     <el-row>
       <el-col :span="24">
-        <el-table :data="pageData" :row-class-name="tableRowClassName" size="medium" style="width: 100%;margin-bottom:20px;">
+        <el-table
+          :data="pageData"
+          :row-class-name="tableRowClassName"
+          size="medium"
+          style="width: 100%;margin-bottom:20px;"
+        >
           <el-table-column label="单位名称" min-width="180px" sortable>
             <template slot-scope="scope">
               {{scope.row.bizname}}
@@ -58,18 +71,31 @@
           <el-table-column prop="date" label="检查日期" align="center" sortable></el-table-column>
           <el-table-column align="center" label="检查结果">
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.result" size="small" :type="getResultType(scope.row.result)">{{scope.row.result}}</el-tag>
+              <el-tag
+                v-if="scope.row.result"
+                size="small"
+                :type="getResultType(scope.row.result)"
+              >{{scope.row.result}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="处理方式">
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.handle" size="small" :type="getResultType(scope.row.handle)">{{scope.row.handle}}</el-tag>
+              <el-tag
+                v-if="scope.row.handle"
+                size="small"
+                :type="getResultType(scope.row.handle)"
+              >{{scope.row.handle}}</el-tag>
             </template>
           </el-table-column>
 
           <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
-              <el-button v-if="!scope.row.notchecked" @click.native="$router.push($route.path+'/'+scope.row.id)" size="mini" type="primary">查看记录</el-button>
+              <el-button
+                v-if="!scope.row.notchecked"
+                @click.native="$router.push($route.path+'/'+scope.row.id)"
+                size="mini"
+                type="primary"
+              >查看记录</el-button>
               <el-button v-if="!scope.row.notchecked" size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
@@ -78,8 +104,15 @@
     </el-row>
 
     <el-row>
-      <el-pagination background @size-change="t=>taskDetailTable.pageSize=t" :current-page.sync="taskDetailTable.page" :page-sizes="taskDetailTable.pageSizes" :page-size="taskDetailTable.pageSize" layout="total, prev, pager, next, sizes" :total="tableData.length">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="t=>taskDetailTable.pageSize=t"
+        :current-page.sync="taskDetailTable.page"
+        :page-sizes="taskDetailTable.pageSizes"
+        :page-size="taskDetailTable.pageSize"
+        layout="total, prev, pager, next, sizes"
+        :total="tableData.length"
+      ></el-pagination>
     </el-row>
   </el-row>
 </template>
@@ -103,11 +136,6 @@ export default {
       currentTask: null,
 
       search: {
-        text: "",
-        daterange: [],
-        kind: ""
-      },
-      currentSearch: {
         text: "",
         daterange: [],
         kind: "",
@@ -137,7 +165,7 @@ export default {
         ];
       });
 
-      if (!this.currentSearch.onlychecked) {
+      if (!this.search.onlychecked) {
         this.currentTask.checklist.forEach(t => {
           tableData.push({
             id: uuid(6, 16),
@@ -148,10 +176,10 @@ export default {
       }
 
       if (
-        this.currentSearch.text &&
-        this.currentSearch.text.trim().length > 0
+        this.search.text &&
+        this.search.text.trim().length > 0
       ) {
-        let searchText = this.currentSearch.text;
+        let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
             t.bizname.includes(searchText) ||
@@ -162,19 +190,19 @@ export default {
         );
       }
 
-      if (this.currentSearch.kind && this.currentSearch.kind != "") {
-        tableData = tableData.filter(t => t.result === this.currentSearch.kind);
+      if (this.search.kind && this.search.kind != "") {
+        tableData = tableData.filter(t => t.result === this.search.kind);
       }
 
       if (
-        this.currentSearch.daterange &&
-        (this.currentSearch.daterange[0] || this.currentSearch.daterange[1])
+        this.search.daterange &&
+        (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
           let dt = new Date(t.date);
           return (
-            dt.getTime() >= this.currentSearch.daterange[0].getTime() &&
-            dt.getTime() <= this.currentSearch.daterange[1].getTime()
+            dt.getTime() >= this.search.daterange[0].getTime() &&
+            dt.getTime() <= this.search.daterange[1].getTime()
           );
         });
       }
@@ -204,19 +232,6 @@ export default {
         }
       });
       this.title = this.currentTask.title;
-    },
-
-    searchSubmit() {
-      Object.assign(this.currentSearch, this.search);
-    },
-
-    searchReset() {
-      this.search = {
-        text: "",
-        daterange: [],
-        kind: ""
-      };
-      this.searchSubmit();
     },
 
     tableRowClassName({ row }) {

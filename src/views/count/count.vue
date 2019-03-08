@@ -1,7 +1,6 @@
  <template>
   <div id="count_count">
     <el-row style="margin-bottom:40px" :gutter="8">
-
       <el-col :span="10">
         <el-radio-group style="width:100%;" v-model="range1" size="medium">
           <el-radio-button label="month">最近1月</el-radio-button>
@@ -13,29 +12,38 @@
       </el-col>
 
       <el-col :span="8">
-        <el-date-picker style="width:100%;" v-model="range2" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-        </el-date-picker>
+        <el-date-picker
+          style="width:100%;"
+          v-model="range2"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
       </el-col>
     </el-row>
 
     <el-row :gutter="8" class="count_item_box">
-
       <el-col :span="8">
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-star-on"></i>频繁出现的问题项目</span>
+              <i class="el-icon-star-on"></i>频繁出现的问题项目
+            </span>
           </div>
           <div class="list">
             <div>
               <el-tag style="margin-right:4px" size="mini">25次</el-tag>
-              <strong>1.</strong>未发现超范围、超限量使用食品添加剂的情况</div>
+              <strong>1.</strong>未发现超范围、超限量使用食品添加剂的情况
+            </div>
             <div>
               <el-tag style="margin-right:4px" size="mini">20次</el-tag>
-              <strong>2.</strong>建立和保存原始检验数据和检验报告记录，检验记录真实、完整</div>
+              <strong>2.</strong>建立和保存原始检验数据和检验报告记录，检验记录真实、完整
+            </div>
             <div>
               <el-tag style="margin-right:4px" size="mini">17次</el-tag>
-              <strong>3.</strong>有与生产产品相适应的食品安全标准文本，按照食品安全标准规定进行检验</div>
+              <strong>3.</strong>有与生产产品相适应的食品安全标准文本，按照食品安全标准规定进行检验
+            </div>
           </div>
         </el-card>
       </el-col>
@@ -44,7 +52,8 @@
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-warning"></i>频繁查出问题的经营个体</span>
+              <i class="el-icon-warning"></i>频繁查出问题的经营个体
+            </span>
           </div>
           <div class="list">
             <div>
@@ -80,28 +89,24 @@
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-search"></i>系统使用情况</span>
+              <i class="el-icon-search"></i>系统使用情况
+            </span>
           </div>
           <div class="list">
             <div>
-              <el-tag style="margin-right:4px" size="mini">计划</el-tag>
-              2018-09-11 14:30 王小明制定了检查计划
+              <el-tag style="margin-right:4px" size="mini">计划</el-tag>2018-09-11 14:30 王小明制定了检查计划
             </div>
             <div>
-              <el-tag style="margin-right:4px" size="mini">登录</el-tag>
-              2018-09-11 14:24 王小明登录了系统
+              <el-tag style="margin-right:4px" size="mini">登录</el-tag>2018-09-11 14:24 王小明登录了系统
             </div>
             <div>
-              <el-tag style="margin-right:4px" size="mini">查询</el-tag>
-              2018-09-10 10:23 顾小华查询了任务进度
+              <el-tag style="margin-right:4px" size="mini">查询</el-tag>2018-09-10 10:23 顾小华查询了任务进度
             </div>
             <div>
-              <el-tag style="margin-right:4px" size="mini">通知</el-tag>
-              2018-09-10 10:05 顾小华下发了通知
+              <el-tag style="margin-right:4px" size="mini">通知</el-tag>2018-09-10 10:05 顾小华下发了通知
             </div>
             <div>
-              <el-tag style="margin-right:4px" size="mini">登录</el-tag>
-              2018-09-10 9:30 顾小华登录了系统
+              <el-tag style="margin-right:4px" size="mini">登录</el-tag>2018-09-10 9:30 顾小华登录了系统
             </div>
           </div>
         </el-card>
@@ -111,7 +116,8 @@
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-menu"></i>地区检查覆盖率</span>
+              <i class="el-icon-menu"></i>地区检查覆盖率
+            </span>
             <el-radio-group style="float:right;" v-model="cover" size="mini">
               <el-radio-button label="coverDaily">日常检查</el-radio-button>
               <el-radio-button label="coverRisk">量化评级</el-radio-button>
@@ -125,7 +131,8 @@
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-goods"></i>食品行业分布情况</span>
+              <i class="el-icon-goods"></i>食品行业分布情况
+            </span>
             <el-radio-group style="float:right;" v-model="bizCount" size="mini">
               <el-radio-button label="bizCountKind">大类别</el-radio-button>
               <el-radio-button label="bizCountDetail">详细类别</el-radio-button>
@@ -140,7 +147,8 @@
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-d-caret"></i>近3个月内的商家增长</span>
+              <i class="el-icon-d-caret"></i>近3个月内的商家增长
+            </span>
             <el-radio-group style="float:right;" v-model="increase" size="mini">
               <el-radio-button label="increaseArea">按分局</el-radio-button>
               <el-radio-button label="increaseKind">按行业</el-radio-button>
@@ -154,7 +162,8 @@
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-tickets"></i>检查结果汇总统计</span>
+              <i class="el-icon-tickets"></i>检查结果汇总统计
+            </span>
             <el-radio-group style="float:right;" v-model="result" size="mini">
               <el-radio-button label="resultQualified">合格率趋势图</el-radio-button>
               <el-radio-button label="resultCheck">检查次数趋势图</el-radio-button>
@@ -169,7 +178,8 @@
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-circle-check-outline"></i>检查结果合格率</span>
+              <i class="el-icon-circle-check-outline"></i>检查结果合格率
+            </span>
             <el-radio-group style="float:right;" v-model="month" size="mini">
               <el-radio-button label="monthArea">按分局</el-radio-button>
               <el-radio-button label="monthKind">按行业</el-radio-button>
@@ -183,7 +193,8 @@
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-document"></i>法规文书使用情况统计</span>
+              <i class="el-icon-document"></i>法规文书使用情况统计
+            </span>
           </div>
           <div class="count" id="lawUsed"></div>
         </el-card>
@@ -193,7 +204,8 @@
         <el-card :body-style="{padding:'10px'}" class="count_item">
           <div slot="header">
             <span class="table_title">
-              <i class="el-icon-edit-outline"></i>许可证发放覆盖率统计</span>
+              <i class="el-icon-edit-outline"></i>许可证发放覆盖率统计
+            </span>
             <el-radio-group style="float:right;" v-model="licCover" size="mini">
               <el-radio-button label="licCoverArea">按分局</el-radio-button>
               <el-radio-button label="licCoverKind">按行业</el-radio-button>
@@ -202,9 +214,7 @@
           <div class="count" id="licCover"></div>
         </el-card>
       </el-col>
-
     </el-row>
-
   </div>
 </template>
 

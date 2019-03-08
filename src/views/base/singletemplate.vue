@@ -62,13 +62,18 @@
       <el-row :gutter="20">
         <el-col :span="16">
           <el-form-item prop="productaddr" label="备注:">
-            <el-input :disabled="!edit" v-model="currentTemplate.tips" :rows="6" type="textarea" placeholder="请输入备注信息"></el-input>
+            <el-input
+              :disabled="!edit"
+              v-model="currentTemplate.tips"
+              :rows="6"
+              type="textarea"
+              placeholder="请输入备注信息"
+            ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row style="font-size:18px;margin-bottom:15px;" class="section">模板内容</el-row>
-
     </el-form>
 
     <el-row>
@@ -85,38 +90,99 @@
               <td :rowspan="item.children.length+(edit?1:0)">
                 <el-tag size="mini">{{index+1}}</el-tag>
                 {{item.title}}
-                <el-popover v-if="item.tips" placement="top-start" title="备注" width="350" trigger="hover" :content="item.tips">
-                  <el-button style="margin:5px;" type="warning" size="mini" slot="reference" plain round>备注</el-button>
+                <el-popover
+                  v-if="item.tips"
+                  placement="top-start"
+                  title="备注"
+                  width="350"
+                  trigger="hover"
+                  :content="item.tips"
+                >
+                  <el-button
+                    style="margin:5px;"
+                    type="warning"
+                    size="mini"
+                    slot="reference"
+                    plain
+                    round
+                  >备注</el-button>
                 </el-popover>
                 <div style="margin-top:30px;" v-if="edit">
-                  <el-button @click="deleteItem(index)" size="mini" type="danger" icon="el-icon-delete" circle></el-button>
-                  <el-button @click="editItem(index)" size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+                  <el-button
+                    @click="deleteItem(index)"
+                    size="mini"
+                    type="danger"
+                    icon="el-icon-delete"
+                    circle
+                  ></el-button>
+                  <el-button
+                    @click="editItem(index)"
+                    size="mini"
+                    type="primary"
+                    icon="el-icon-edit"
+                    circle
+                  ></el-button>
                 </div>
               </td>
 
               <template v-if="item.children&&item.children[0]">
                 <td>
                   <el-tag size="mini" type="info">{{index+1}}.1</el-tag>
-                  <el-tag style="margin-left:5px;" v-if="item.children[0].important" size="mini" type="danger">
-                    重点项
-                  </el-tag>
+                  <el-tag
+                    style="margin-left:5px;"
+                    v-if="item.children[0].important"
+                    size="mini"
+                    type="danger"
+                  >重点项</el-tag>
                   {{item.children[0].content}}
                 </td>
                 <td style="min-width:130px;">
-                  <el-tag style="margin-bottom:5px;margin-right:8px;" v-for="result of item.children[0].item" :type="result.check===null?'':(result.check?'success':'danger')" :key="result.label" size="small">
+                  <el-tag
+                    style="margin-bottom:5px;margin-right:8px;"
+                    v-for="result of item.children[0].item"
+                    :type="result.check===null?'':(result.check?'success':'danger')"
+                    :key="result.label"
+                    size="small"
+                  >
                     {{result.label}}
-                    <strong v-if="result.point!==undefined"> [{{result.point | itemText}}]</strong>
+                    <strong
+                      v-if="result.point!==undefined"
+                    >[{{result.point | itemText}}]</strong>
                   </el-tag>
-                  <el-tag v-if="!item.children[0].required" style="margin-bottom:5px;margin-right:8px;" size="small" type="info">留空</el-tag>
+                  <el-tag
+                    v-if="!item.children[0].required"
+                    style="margin-bottom:5px;margin-right:8px;"
+                    size="small"
+                    type="info"
+                  >留空</el-tag>
                 </td>
                 <td v-if="edit" style="min-width:70px;">
-                  <el-button @click="deleteDetail(index,0)" size="mini" type="danger" icon="el-icon-delete" circle></el-button>
-                  <el-button @click="editDetail(index,0)" size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+                  <el-button
+                    @click="deleteDetail(index,0)"
+                    size="mini"
+                    type="danger"
+                    icon="el-icon-delete"
+                    circle
+                  ></el-button>
+                  <el-button
+                    @click="editDetail(index,0)"
+                    size="mini"
+                    type="primary"
+                    icon="el-icon-edit"
+                    circle
+                  ></el-button>
                 </td>
               </template>
               <template v-else>
                 <td colspan="4">
-                  <el-button @click="editDetail(index)" v-if="edit" icon="el-icon-plus" size="mini" type="primary" round>添加一项</el-button>
+                  <el-button
+                    @click="editDetail(index)"
+                    v-if="edit"
+                    icon="el-icon-plus"
+                    size="mini"
+                    type="primary"
+                    round
+                  >添加一项</el-button>
                   <span v-else>没有内容</span>
                 </td>
               </template>
@@ -124,30 +190,62 @@
 
             <tr :key="detailIndex.label" v-for="(detailItem,detailIndex) of item.children.slice(1)">
               <td>
-                <el-tag size="mini" type="info">
-                  {{index+1}}.{{detailIndex+2}}
-                </el-tag>
-                <el-tag style="margin-left:5px;" v-if="detailItem.important" size="mini" type="danger">
-                  重点项
-                </el-tag>
+                <el-tag size="mini" type="info">{{index+1}}.{{detailIndex+2}}</el-tag>
+                <el-tag
+                  style="margin-left:5px;"
+                  v-if="detailItem.important"
+                  size="mini"
+                  type="danger"
+                >重点项</el-tag>
                 {{detailItem.content}}
               </td>
               <td style="min-width:130px;">
-                <el-tag style="margin-bottom:5px;margin-right:8px;" v-for="result of detailItem.item" :type="result.check===null?'':(result.check?'success':'danger')" :key="result.label" size="small">
+                <el-tag
+                  style="margin-bottom:5px;margin-right:8px;"
+                  v-for="result of detailItem.item"
+                  :type="result.check===null?'':(result.check?'success':'danger')"
+                  :key="result.label"
+                  size="small"
+                >
                   {{result.label}}
-                  <strong v-if="result.point!==undefined"> [{{result.point | itemText}}]</strong>
+                  <strong
+                    v-if="result.point!==undefined"
+                  >[{{result.point | itemText}}]</strong>
                 </el-tag>
-                <el-tag v-if="!detailItem.required" style="margin-bottom:5px;margin-right:8px;" size="small" type="info">留空</el-tag>
+                <el-tag
+                  v-if="!detailItem.required"
+                  style="margin-bottom:5px;margin-right:8px;"
+                  size="small"
+                  type="info"
+                >留空</el-tag>
               </td>
               <td v-if="edit" style="min-width:70px;">
-                <el-button @click="deleteDetail(index,detailIndex+1)" size="mini" type="danger" icon="el-icon-delete" circle></el-button>
-                <el-button @click="editDetail(index,detailIndex+1)" size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+                <el-button
+                  @click="deleteDetail(index,detailIndex+1)"
+                  size="mini"
+                  type="danger"
+                  icon="el-icon-delete"
+                  circle
+                ></el-button>
+                <el-button
+                  @click="editDetail(index,detailIndex+1)"
+                  size="mini"
+                  type="primary"
+                  icon="el-icon-edit"
+                  circle
+                ></el-button>
               </td>
             </tr>
 
             <tr v-if="item.children.length>=1&&edit" :key="item.title+'-add'">
               <td colspan="4">
-                <el-button @click="editDetail(index)" icon="el-icon-plus" size="mini" type="primary" round>添加一项</el-button>
+                <el-button
+                  @click="editDetail(index)"
+                  icon="el-icon-plus"
+                  size="mini"
+                  type="primary"
+                  round
+                >添加一项</el-button>
               </td>
             </tr>
           </template>
@@ -160,7 +258,14 @@
       </el-col>
     </el-row>
 
-    <el-dialog v-if="itemPopup" title="编辑大检查项" :visible.sync="itemPopup" width="50%" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog
+      v-if="itemPopup"
+      title="编辑大检查项"
+      :visible.sync="itemPopup"
+      width="50%"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
       <el-form label-width="80px">
         <el-row>
           <el-col :span="24">
@@ -183,12 +288,24 @@
       </span>
     </el-dialog>
 
-    <el-dialog v-if="detailPopup" title="编辑详细检查项" :visible.sync="detailPopup" width="50%" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog
+      v-if="detailPopup"
+      title="编辑详细检查项"
+      :visible.sync="detailPopup"
+      width="50%"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
       <el-form label-width="100px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="内容：" required>
-              <el-input :rows="4" type="textarea" placeholder="输入检查项内容" v-model="detailPopupData.content"></el-input>
+              <el-input
+                :rows="4"
+                type="textarea"
+                placeholder="输入检查项内容"
+                v-model="detailPopupData.content"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -210,7 +327,12 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="分值：">
-              <el-checkbox :disabled="detailPopupData.type==='pingfen'" v-model="detailPopupData.point" label="有分值" border></el-checkbox>
+              <el-checkbox
+                :disabled="detailPopupData.type==='pingfen'"
+                v-model="detailPopupData.point"
+                label="有分值"
+                border
+              ></el-checkbox>
             </el-form-item>
           </el-col>
         </el-row>
@@ -218,7 +340,11 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="可选项：" required>
-              <el-radio-group @change="detailTypeChange" v-model="detailPopupData.type" size="small">
+              <el-radio-group
+                @change="detailTypeChange"
+                v-model="detailPopupData.type"
+                size="small"
+              >
                 <el-radio-button label="shifou">是/否</el-radio-button>
                 <el-radio-button label="fuhe">符合/基本符合/不符合</el-radio-button>
                 <el-radio-button label="pingfen">灵活评分</el-radio-button>
@@ -230,9 +356,11 @@
         <el-row v-if="['shifou','fuhe'].includes(detailPopupData.type)">
           <el-col :push="3" :span="18">
             <div v-for="item of detailPopupData.item" :key="item.label" class="detailitem">
-              <el-tag :type="item.check?'success':'danger'" style="margin-right:5px;">「{{item.label}}」选项</el-tag>
-              <span v-if="detailPopupData.point">
-                分值：
+              <el-tag
+                :type="item.check?'success':'danger'"
+                style="margin-right:5px;"
+              >「{{item.label}}」选项</el-tag>
+              <span v-if="detailPopupData.point">分值：
                 <el-input v-model.number="item.point" size="small" style="width:60px;"></el-input>
               </span>
             </div>
@@ -244,12 +372,10 @@
             <el-tag style="margin-right:5px;">灵活评分</el-tag>
             <div style="margin-top:20px;">
               设置评分的上下限范围： 当前 [ {{detailPopupData.limit[0]}} - {{detailPopupData.limit[1]}} ]
-              <el-slider v-model="detailPopupData.limit" range show-stops :min="0" :max="20">
-              </el-slider>
+              <el-slider v-model="detailPopupData.limit" range show-stops :min="0" :max="20"></el-slider>
             </div>
           </el-col>
         </el-row>
-
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="()=>{detailPopup = false;detailPopupData=null;}">取消</el-button>
@@ -259,16 +385,25 @@
 
     <el-row>
       <el-col :span="24">
-        <el-button v-if="edit" @click="editOK" icon="el-icon-check" type="primary">{{isNew?"完成创建":"完成编辑"}}</el-button>
+        <el-button
+          v-if="edit"
+          @click="editOK"
+          icon="el-icon-check"
+          type="primary"
+        >{{isNew?"完成创建":"完成编辑"}}</el-button>
         <el-button v-if="!edit" @click="edit=true" icon="el-icon-edit-outline" type="primary">编辑模板</el-button>
-        <el-button v-if="edit && !isNew" @click="editCancel" style="margin-left:20px;" icon="el-icon-refresh">取消并还原</el-button>
+        <el-button
+          v-if="edit && !isNew"
+          @click="editCancel"
+          style="margin-left:20px;"
+          icon="el-icon-refresh"
+        >取消并还原</el-button>
         <router-link to="/base/template">
           <el-button style="margin-left:20px;">返回模板管理</el-button>
         </router-link>
       </el-col>
     </el-row>
   </el-row>
-
 </template>
 
 <script>
