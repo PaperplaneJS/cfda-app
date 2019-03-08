@@ -20,11 +20,10 @@ pipeline {
         stage("构建") {
             steps {
                 echo "构建中..."
-                sh 'node -v'
-                sh 'npm run build'
-              
+                npm install
+                npm run build
                 echo "构建完成."
-                artifacts: '/dist/*.*'
+                // archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true // 收集构建产物
             }
         }
     }
