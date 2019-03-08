@@ -25,7 +25,8 @@ pipeline {
                 sh 'npm build'
               
                 echo "构建完成."
-                archiveArtifacts artifacts: 'dist/*.*', fingerprint: true // 收集构建产物
+                sh 'cd dist'
+                archiveArtifacts artifacts: '*.*', fingerprint: true // 收集构建产物
             }
         }
     }
