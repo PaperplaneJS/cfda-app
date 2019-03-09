@@ -20,13 +20,17 @@ pipeline {
         stage("构建") {
             steps {
                 echo "构建中..."
+                sh 'rm -rf dist'
+                sh 'rm -f dist.zip'
+              
                 sh 'node -v'
                 sh 'npm install'
                 sh 'npm run build'
               
                 echo "构建完成."
-              
-                archiveArtifacts artifacts: 'dist/*.*', fingerprint: true // 收集构建产物
+                
+                sh 'zip -r dist.zip dist'
+                archiveArtifacts artifacts: 'dist.zip', fingerprint: true // 收集构建产物
             }
         }
     }
