@@ -30,7 +30,7 @@ pipeline {
                 echo "构建完成."
                 
                 sh 'tar zcvf dist.tar.gz dist'
-                archiveArtifacts artifacts: 'dist.zip', fingerprint: true // 收集构建产物
+                archiveArtifacts artifacts: 'dist.tar.gz', fingerprint: true // 收集构建产物
             }
         }
     }
