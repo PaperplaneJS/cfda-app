@@ -1,17 +1,17 @@
 module.exports = function (server, db, url) {
-  const bizs = db.collection('biz');
+  const templates = db.collection('template');
 
   server.get(url, (req, res, next) => {
-    bizs.find({}, (err, data) => {
+    templates.find({}, (err, data) => {
       res.send(data);
     });
 
     return next();
   });
 
-  server.get(`${url}/:bizid`, (req, res, next) => {
-    bizs.findOne({
-      com_id: req.params['bizid']
+  server.get(`${url}/:templateid`, (req, res, next) => {
+    templates.findOne({
+      template_id: req.params['templateid']
     }, (err, data) => {
       res.send(data);
     });

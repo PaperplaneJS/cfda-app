@@ -1,21 +1,21 @@
 module.exports = function (server, db, url) {
-  const bizs = db.collection('biz');
+  const laws = db.collection('law');
 
   server.get(url, (req, res, next) => {
-    bizs.find({}, (err, data) => {
+    laws.find({}, (err, data) => {
       res.send(data);
     });
 
     return next();
   });
 
-  server.get(`${url}/:bizid`, (req, res, next) => {
-    bizs.findOne({
-      com_id: req.params['bizid']
+  server.get(`${url}/:lawid`, (req, res, next) => {
+    laws.findOne({
+      law_id: req.params['lawid']
     }, (err, data) => {
       res.send(data);
     });
-
+    
     return next();
   });
 }
