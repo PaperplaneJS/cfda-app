@@ -11,7 +11,7 @@
     <el-row type="flex" class="action" :gutter="15">
       <el-col :span="3">
         <router-link to="biz/new">
-          <el-button size="small" type="primary" icon="el-icon-plus">新建食品企业</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus">新增食品单位</el-button>
         </router-link>
       </el-col>
     </el-row>
@@ -33,9 +33,9 @@
           size="small"
           clearable
           :show-all-levels="false"
-          :props="{label:'name',value:'id'}"
+          :props="{label:'name',value:'_id'}"
           v-model="search.grid"
-          :options="department.getArea()"
+          :options="casecadeDep"
           placeholder="行政区域"
           change-on-select
         ></el-cascader>
@@ -77,35 +77,33 @@
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="pageData" size="medium" style="width: 100%;">
-          <el-table-column prop="com_name" label="企业名称" min-width="110px" sortable></el-table-column>
+        <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%;">
+          <el-table-column prop="name" label="企业名称" min-width="110px" sortable></el-table-column>
           <el-table-column label="类型" sortable>
-            <template slot-scope="scope">{{scope.row.com_kind | kindText}}</template>
+            <template slot-scope="scope">{{scope.row.kind | kindText}}</template>
           </el-table-column>
-          <el-table-column label="行政区域" sortable>
-            <template slot-scope="scope">{{department.getAreaByID(scope.row.area).name}}</template>
-          </el-table-column>
-          <el-table-column prop="com_contact" label="联系人" sortable></el-table-column>
-          <el-table-column prop="com_tel" label="联系电话"></el-table-column>
+          <el-table-column label="行政区域" prop="dep.name" sortable></el-table-column>
+          <el-table-column prop="contact" label="联系人" sortable></el-table-column>
+          <el-table-column prop="phone" label="联系电话"></el-table-column>
           <el-table-column label="许可证编号">
             <template slot-scope="scope">
-              <span v-if="scope.row.lic_code">{{scope.row.lic_code}}</span>
+              <span v-if="scope.row.lic">{{scope.row.lic.code}}</span>
               <el-tag size="small" type="warning" v-else>暂无许可证</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="lic_lawer" label="法人" sortable></el-table-column>
+          <el-table-column prop="lawer" label="法人" sortable></el-table-column>
           <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
               <el-tag
                 size="small"
-                :type="getStateType(scope.row.com_state)"
-              >{{scope.row.com_state|stateText}}</el-tag>
+                :type="getStateType(scope.row.state)"
+              >{{scope.row.state|stateText}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
               <el-button
-                @click.native="$router.push('biz/'+scope.row.com_id)"
+                @click.native="$router.push('biz/'+scope.row._id)"
                 size="mini"
                 type="primary"
               >查看 / 编辑</el-button>
@@ -131,15 +129,17 @@
 </template>
 
 <script>
-import { getAllBizs } from "@/api/old_biz.js";
-import department from "@/api/old_area.js";
+import { Biz } from "@/api/biz.js";
+import { Dep, Cascade } from "@/api/dep.js";
 
 export default {
   name: "base_biz",
   data() {
     return {
       bizData: [],
-      department,
+      depData: [],
+      casecadeDep: [],
+      loading: true,
       search: {
         text: "",
         category: "",
@@ -162,19 +162,21 @@ export default {
 
   filters: {
     stateText(text) {
-      return text == 1 ? "正常" : "关闭";
+      return text === 1 ? "正常" : "关闭";
     },
 
     kindText(kind) {
       switch (kind) {
-        case "1":
+        case 1:
           return "食品经营";
-        case "2":
+        case 2:
           return "食品小作坊";
-        case "3":
+        case 3:
           return "网上商家";
-        case "4":
+        case 4:
           return "餐饮服务";
+        default:
+          return "未知";
       }
     }
   },
@@ -187,44 +189,37 @@ export default {
         let searchText = this.search.text;
         tableData = tableData.filter(
           t =>
-            t.com_name.includes(searchText) ||
-            t.com_contact.includes(searchText) ||
-            t.com_kind.includes(searchText) ||
-            t.com_tel.includes(searchText) ||
-            (t.lic_code && t.lic_code.includes(searchText))
+            t.name.includes(searchText) ||
+            t.contact.includes(searchText) ||
+            t.kind.includes(searchText) ||
+            t.tel.includes(searchText) ||
+            (t.lic && t.lic.code.includes(searchText))
         );
       }
 
       if (this.search.state && this.search.state != "") {
-        tableData = tableData.filter(t => t.com_state == this.search.state);
+        tableData = tableData.filter(t => t.state == this.search.state);
       }
 
       if (this.search.kind && this.search.kind != "") {
-        tableData = tableData.filter(t => t.com_kind === this.search.kind);
+        tableData = tableData.filter(t => t.kind === this.search.kind);
       }
 
       if (this.search.category && this.search.category != "") {
-        tableData = tableData.filter(
-          t => t.com_category === this.search.category
-        );
+        tableData = tableData.filter(t => t.category === this.search.category);
       }
 
       if (this.search.licence !== "") {
         if (this.search.licence === true) {
-          tableData = tableData.filter(t => t.lic_code);
+          tableData = tableData.filter(t => t.lic.code);
         } else {
-          tableData = tableData.filter(t => !t.lic_code);
+          tableData = tableData.filter(t => !t.lic.code);
         }
       }
 
       if (this.search.grid && this.search.grid.length > 0) {
-        let gridSearch = this.search.grid.join(",");
-        tableData = tableData.filter(t =>
-          department
-            .getAreaIDArray(t.area)
-            .join(",")
-            .includes(gridSearch)
-        );
+        let gridSearch = this.search.grid;
+        tableData = tableData.filter(biz => gridSearch.includes(biz.area));
       }
 
       return tableData;
@@ -240,14 +235,28 @@ export default {
 
   methods: {
     init() {
-      this.bizData = getAllBizs();
+      let depList = [],
+        bizList = [];
+
+      Promise.all([
+        Biz().then(data => (bizList = data.data)),
+        Dep().then(data => (depList = data.data))
+      ]).then(() => {
+        bizList.forEach(biz => {
+          biz["dep"] = depList.find(t => t._id === biz.area);
+        });
+        this.bizData = bizList;
+        this.depData = depList;
+        this.casecadeDep = Cascade(depList);
+        this.loading = false;
+      });
     },
 
     getStateType(state) {
       switch (state) {
-        case "1":
+        case 1:
           return "success";
-        case "0":
+        case 0:
           return "danger";
         default:
           return "info";

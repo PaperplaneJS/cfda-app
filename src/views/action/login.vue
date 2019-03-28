@@ -16,13 +16,8 @@
       <el-form @submit.native="handelSubmit" label-width="55px">
         <el-row>
           <el-col :span="24">
-            <el-form-item prop="account" label="账户：">
-              <el-input
-                v-model="form.account"
-                size="small"
-                style="width:100%;"
-                placeholder="请输入用户账户"
-              ></el-input>
+            <el-form-item prop="staff" label="账户：">
+              <el-input v-model="form.staff" size="small" style="width:100%;" placeholder="请输入用户账户"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -58,41 +53,33 @@
 </template>
 
 <script>
-import Login from "@/api/login.js";
-import { getAreaByID } from "@/api/old_area.js";
-import { getStaffByID } from "@/api/old_staff.js";
+import { Login } from "@/api/action.js";
 
 export default {
   name: "action_login",
 
   data() {
     return {
-      form: {
-        account: "",
-        pwd: ""
-      }
+      form: { staff: "", pwd: "" }
     };
   },
 
   methods: {
     handelSubmit() {
       if (
-        this.form.account.trim().length <= 0 ||
+        this.form.staff.trim().length <= 0 ||
         this.form.pwd.trim().length <= 0
       ) {
         return;
       }
 
-      Login({
-        usr_account: this.form.account,
-        usr_password: this.form.pwd
-      }).then(data => {
-        if (data.success) {
+      Login(this.form).then(data => {
+        if (data.status === 200) {
           this.$store.state.currentUser = data.data;
           sessionStorage.setItem("currentUser", JSON.stringify(data.data));
           this.$router.push("/index");
         } else {
-          this.$message.error(`登录失败 ${data.message}`);
+          this.$message.error(`登录失败!`);
         }
       });
     }

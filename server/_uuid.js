@@ -1,4 +1,4 @@
-function uuid(len, radix) {
+module.exports = function(len, radix) {
   let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
     uuid = [],
     i = 0;
@@ -12,10 +12,3 @@ function uuid(len, radix) {
 
   return uuid.join('');
 }
-
-function copy(item) {
-  return JSON.parse(JSON.stringify(item));
-}
-
-export default { uuid, copy }
-export { uuid, copy }

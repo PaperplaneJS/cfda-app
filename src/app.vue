@@ -105,6 +105,7 @@
 import { copy, uuid } from "@/utils/utils.js";
 import menu from "@/menu.js";
 import { notice } from "@/api/old_notice.js";
+import Cookies from "js-cookie";
 
 export default {
   name: "app",
@@ -162,7 +163,7 @@ export default {
 
     logout() {
       this.$store.state.currentUser = null;
-      sessionStorage.removeItem("currentUser");
+      Cookies.remove("cfdaId");
       this.$router.push("/login");
     }
   }

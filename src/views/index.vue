@@ -117,13 +117,11 @@ import { count } from "@/api/count.js";
 import { getAllBizs } from "@/api/old_biz.js";
 import { getAreaByID } from "@/api/old_area.js";
 import echarts from "echarts";
-import BDMap from "../plugins/baidumap";
 
 export default {
   name: "index",
   data() {
     return {
-      BMap: null,
       map: null,
       mappoint: null,
       chart: null,
@@ -174,28 +172,25 @@ export default {
 
   methods: {
     init() {
-      let bmap = this.BMap;
-      BDMap("XqvE8XjeKnYVLb2p6sPm0UPxACOOFOvR").then(BMap => {
-        this.map = new BMap.Map("map");
-        this.map.centerAndZoom("常熟", 12);
-        this.map.addControl(
-          new BMap.MapTypeControl({
-            mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
-            anchor: BMAP_ANCHOR_TOP_LEFT
-          })
-        );
-        let top_left_navigation = new BMap.NavigationControl({
-          anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
-          type: BMAP_NAVIGATION_CONTROL_SMALL
-        });
-        this.map.addControl(top_left_navigation);
-        this.map.enableScrollWheelZoom();
-        this.area();
-        this.posKind = "全部";
-
-        this.chart = echarts.init(document.getElementById("chart"));
-        this.chartKind = "bizCountKind";
+      this.map = new BMap.Map("map");
+      this.map.centerAndZoom("常熟", 12);
+      this.map.addControl(
+        new BMap.MapTypeControl({
+          mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
+          anchor: BMAP_ANCHOR_TOP_LEFT
+        })
+      );
+      let top_left_navigation = new BMap.NavigationControl({
+        anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
+        type: BMAP_NAVIGATION_CONTROL_SMALL
       });
+      this.map.addControl(top_left_navigation);
+      this.map.enableScrollWheelZoom();
+      this.area();
+      this.posKind = "全部";
+
+      this.chart = echarts.init(document.getElementById("chart"));
+      this.chartKind = "bizCountKind";
     },
 
     pointDraw() {
