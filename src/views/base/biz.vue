@@ -34,8 +34,8 @@
           clearable
           :show-all-levels="false"
           :props="{label:'name',value:'_id'}"
-          v-model="search.grid"
-          :options="casecadeDep"
+          v-model="search.area"
+          :options="casecadeDepData"
           placeholder="行政区域"
           change-on-select
         ></el-cascader>
@@ -43,20 +43,13 @@
 
       <el-col :span="3">
         <el-select size="small" v-model="search.kind" clearable placeholder="选择类别">
-          <el-option label="食品经营" value="1"></el-option>
-          <el-option label="食品小作坊" value="2"></el-option>
-          <el-option label="网上商家" value="3"></el-option>
-          <el-option label="餐饮服务" value="4"></el-option>
+          <el-option v-for="(name,index) of bizKind" :key="index+1" :label="name" :value="index+1"></el-option>
         </el-select>
       </el-col>
 
       <el-col :span="3">
         <el-select size="small" v-model="search.category" clearable placeholder="经营种类">
-          <el-option label="餐馆" value="餐馆"></el-option>
-          <el-option label="快餐店" value="快餐店"></el-option>
-          <el-option label="小吃店" value="小吃店"></el-option>
-          <el-option label="饮品店" value="饮品店"></el-option>
-          <el-option label="食堂" value="食堂"></el-option>
+          <el-option v-for="name of bizCategory" :key="name" :label="name" :value="name"></el-option>
         </el-select>
       </el-col>
 
@@ -78,11 +71,11 @@
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%;">
-          <el-table-column prop="name" label="企业名称" min-width="110px" sortable></el-table-column>
+          <el-table-column prop="name" label="企业名称" min-width="150px" sortable></el-table-column>
           <el-table-column label="类型" sortable>
             <template slot-scope="scope">{{scope.row.kind | kindText}}</template>
           </el-table-column>
-          <el-table-column label="行政区域" prop="dep.name" sortable></el-table-column>
+          <el-table-column label="行政区域" prop="_dep.name" sortable></el-table-column>
           <el-table-column prop="contact" label="联系人" sortable></el-table-column>
           <el-table-column prop="phone" label="联系电话"></el-table-column>
           <el-table-column label="许可证编号">
@@ -91,7 +84,6 @@
               <el-tag size="small" type="warning" v-else>暂无许可证</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="lawer" label="法人" sortable></el-table-column>
           <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
               <el-tag
@@ -103,11 +95,11 @@
           <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
               <el-button
-                @click.native="$router.push('biz/'+scope.row._id)"
+                @click="$router.push('biz/'+scope.row._id)"
                 size="mini"
                 type="primary"
               >查看 / 编辑</el-button>
-              <el-button size="mini" type="danger">删除</el-button>
+              <el-button @click="deleteButtonClick(scope.row)" size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -125,12 +117,21 @@
         :total="tableData.length"
       ></el-pagination>
     </el-row>
+    <el-dialog title="确认删除" v-if="deleteDialog" :visible="true" width="30%">
+      <span>确定要删除食品单位 {{deleteDialog.name}} 吗？</span>
+      <br>
+      <span>这将一并删除与之相关的所有检查记录等。此操作无法复原。</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialog=null" type="normal">取消</el-button>
+        <el-button @click="deleteBiz()" type="danger">确定</el-button>
+      </span>
+    </el-dialog>
   </el-row>
 </template>
 
 <script>
-import { Biz } from "@/api/biz.js";
-import { Dep, Cascade } from "@/api/dep.js";
+import { biz, del, bizKind, bizCategory, bizState } from "@/api/biz";
+import { dep } from "@/api/dep";
 
 export default {
   name: "base_biz",
@@ -138,47 +139,37 @@ export default {
     return {
       bizData: [],
       depData: [],
-      casecadeDep: [],
+      casecadeDepData: [],
       loading: true,
+
       search: {
         text: "",
         category: "",
         kind: "",
         licence: "",
         state: "",
-        grid: []
+        area: []
       },
       bizTable: {
         page: 1,
         pageSize: 10,
         pageSizes: [10, 25, 50, 100]
-      }
+      },
+
+      bizKind: bizKind(),
+      bizCategory: bizCategory(),
+
+      deleteDialog: null
     };
   },
 
-  beforeMount() {
-    this.init();
+  async beforeMount() {
+    await this.init();
   },
 
   filters: {
-    stateText(text) {
-      return text === 1 ? "正常" : "关闭";
-    },
-
-    kindText(kind) {
-      switch (kind) {
-        case 1:
-          return "食品经营";
-        case 2:
-          return "食品小作坊";
-        case 3:
-          return "网上商家";
-        case 4:
-          return "餐饮服务";
-        default:
-          return "未知";
-      }
-    }
+    stateText: state => bizState(state),
+    kindText: kind => bizKind(kind)
   },
 
   computed: {
@@ -191,7 +182,6 @@ export default {
           t =>
             t.name.includes(searchText) ||
             t.contact.includes(searchText) ||
-            t.kind.includes(searchText) ||
             t.tel.includes(searchText) ||
             (t.lic && t.lic.code.includes(searchText))
         );
@@ -211,15 +201,15 @@ export default {
 
       if (this.search.licence !== "") {
         if (this.search.licence === true) {
-          tableData = tableData.filter(t => t.lic.code);
+          tableData = tableData.filter(t => t.lic);
         } else {
-          tableData = tableData.filter(t => !t.lic.code);
+          tableData = tableData.filter(t => !t.lic);
         }
       }
 
-      if (this.search.grid && this.search.grid.length > 0) {
-        let gridSearch = this.search.grid;
-        tableData = tableData.filter(biz => gridSearch.includes(biz.area));
+      if (this.search.area && this.search.area.length > 0) {
+        let areaSearch = this.search.area.slice(-1)[0];
+        tableData = tableData.filter(biz => biz.dep._rel.includes(areaSearch));
       }
 
       return tableData;
@@ -234,33 +224,33 @@ export default {
   },
 
   methods: {
-    init() {
-      let depList = [],
-        bizList = [];
+    async init() {
+      this.loading = true;
+      this.depData = (await dep()).data;
+      this.casecadeDepData = (await dep(null, false, true)).data;
+      let bizList = (await biz()).data;
 
-      Promise.all([
-        Biz().then(data => (bizList = data.data)),
-        Dep().then(data => (depList = data.data))
-      ]).then(() => {
-        bizList.forEach(biz => {
-          biz["dep"] = depList.find(t => t._id === biz.area);
-        });
-        this.bizData = bizList;
-        this.depData = depList;
-        this.casecadeDep = Cascade(depList);
-        this.loading = false;
+      bizList.forEach(biz => {
+        biz["_dep"] = this.depData.find(t => t._id === biz.area);
       });
+      this.bizData = bizList;
+      this.loading = false;
     },
 
     getStateType(state) {
-      switch (state) {
-        case 1:
-          return "success";
-        case 0:
-          return "danger";
-        default:
-          return "info";
+      return ["danger", "success"][state];
+    },
+
+    deleteButtonClick(biz) {
+      this.deleteDialog = biz;
+    },
+
+    async deleteBiz() {
+      if (!this.deleteDialog) {
+        return;
       }
+      await del(this.deleteDialog._id);
+      this.init();
     }
   }
 };

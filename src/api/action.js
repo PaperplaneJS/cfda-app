@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-async function Login(loginData) {
+async function login(loginData) {
   return await axios.post('/login', loginData);
 }
 
-async function Auth() {
+async function auth() {
   return await axios.post('/auth');
 }
 
 export {
-  Login,
-  Auth
+  login,
+  auth
 };

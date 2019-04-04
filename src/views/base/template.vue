@@ -24,7 +24,7 @@
 
             <el-col :span="3">
               <router-link to="/base/template">
-                <el-button size="small" type="primary" icon="el-icon-plus">新建量化分级模板</el-button>
+                <el-button size="small" type="primary" icon="el-icon-plus">新建风险量化模板</el-button>
               </router-link>
             </el-col>
           </el-row>
@@ -57,7 +57,7 @@
 
           <el-row style="margin-top: -10px;">
             <el-col :span="24">
-              <el-table :data="pageData" size="medium" style="width: 100%">
+              <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%">
                 <el-table-column prop="name" label="模板名称" sortable min-width="120px;"></el-table-column>
                 <el-table-column prop="kind" label="类别" sortable>
                   <template slot-scope="scope">
@@ -113,6 +113,12 @@ export default {
 
   data() {
     return {
+      templateData: [],
+      depData: [],
+      staffData: [],
+
+      loading: true,
+
       search: {
         text: "",
         state: null,
@@ -140,10 +146,7 @@ export default {
     tableData() {
       let tableData = getTemplates();
 
-      if (
-        this.search.text &&
-        this.search.text.trim().length > 0
-      ) {
+      if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;
         tableData = tableData.filter(
           t =>

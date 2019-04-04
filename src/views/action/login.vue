@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { Login } from "@/api/action.js";
+import { login } from "@/api/action.js";
 
 export default {
   name: "action_login",
@@ -73,7 +73,7 @@ export default {
         return;
       }
 
-      Login(this.form).then(data => {
+      login(this.form).then(data => {
         if (data.status === 200) {
           this.$store.state.currentUser = data.data;
           sessionStorage.setItem("currentUser", JSON.stringify(data.data));

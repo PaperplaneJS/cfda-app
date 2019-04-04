@@ -6,53 +6,51 @@
       <el-breadcrumb-item to="/base/law">法律法规管理</el-breadcrumb-item>
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
-
     <el-row class="title">{{title}}</el-row>
-    <template v-if="isnew">
-      <el-upload class="upload-demo" drag action="/">
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">
-          将文件拖到此处，或
-          <em>点击上传</em>
-        </div>
-        <div class="el-upload__tip" slot="tip">可以上传pdf/doc/docx/txt文件</div>
-      </el-upload>
-
-      <el-row style="margin-top:25px;">
-        <el-button icon="el-icon-upload" type="primary">确认上传</el-button>
-        <el-button icon="el-icon-view">预览</el-button>
-      </el-row>
-    </template>
+    <el-row class="content"></el-row>
   </el-row>
 </template>
 
 <script>
-import { copy } from "@/utils/utils.js";
-import { getLawByID } from "@/api/old_law.js";
+import { copy } from "@/utils/utils";
+import { law, emptyLaw, lawState } from "@/api/law";
 
 export default {
   name: "base_singlelaw",
 
   data() {
     return {
-      currentLaw: null,
       title: "",
-      isnew: null
+      isnew: false,
+      edit: false,
+
+      current: emptyLaw(),
+      origin: emptyLaw()
     };
   },
   beforeMount() {
-    let lid = this.$route.params.lawid;
-    if (lid.trim() === "new") {
-      this.currentLaw = {
-        name: ""
-      };
-      this.title = "新建法律法规";
-      this.isnew = true;
-    } else {
-      this.currentLaw = copy(getLawByID(lid));
-      this.title = this.currentLaw.name;
-      this.isnew = false;
+    this.init();
+  },
+
+  methods: {
+    async init() {
+      const lawid = this.$route.params.lawid;
+      this.isNew = lawid === "new";
+      this.edit = lawid === "new";
+
+      const currentLaw = (await law(lawid)).data;
+      this.origin = this.isNew ? emptyBiz() : currentBiz;
+      this.current = copy(this.origin);
+
+      this.title = this.isNew ? "新增法律法规" : this.origin.name;
     }
   }
 };
 </script>
+
+<style lang="sass" scoped>
+.content{
+  
+}
+</style>
+

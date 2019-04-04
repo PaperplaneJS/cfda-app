@@ -12,7 +12,7 @@
     <el-tabs style="margin-top:30px;" v-model="tab">
       <el-tab-pane label="基本信息" name="base">
         <el-form
-          :model="currentBizInfo"
+          :model="current"
           :disabled="!edit"
           label-position="left"
           style="margin-top:20px;"
@@ -21,7 +21,7 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="单位名称：" required>
-                <el-input v-model="currentBizInfo.com_name" placeholder="请输入单位名称"></el-input>
+                <el-input v-model="current.name" placeholder="请输入单位名称"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -31,9 +31,9 @@
               <el-form-item label="行政区域：" required>
                 <el-cascader
                   :show-all-levels="false"
-                  :props="{label:'name',value:'id'}"
-                  v-model="currentBizInfo.area"
-                  :options="department.getArea()"
+                  :props="{label:'name',value:'_id'}"
+                  v-model="dep"
+                  :options="casecadeDepData"
                   placeholder="选择行政区域"
                   style="width:100%;"
                   change-on-select
@@ -42,10 +42,10 @@
             </el-col>
 
             <el-col :span="8">
-              <el-form-item prop="com_state" label="个体状态：" required>
-                <el-radio-group v-model="currentBizInfo.com_state">
-                  <el-radio :label="'1'">开启</el-radio>
-                  <el-radio :label="'0'">关闭</el-radio>
+              <el-form-item prop="state" label="个体状态：" required>
+                <el-radio-group v-model="current.state">
+                  <el-radio :label="1">开启</el-radio>
+                  <el-radio :label="0">关闭</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -54,24 +54,21 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="企业类型：" required>
-                <el-select v-model="currentBizInfo.com_kind" style="width:100%" placeholder="请选择">
-                  <el-option label="食品经营" value="1"></el-option>
-                  <el-option label="餐饮服务" value="4"></el-option>
+                <el-select v-model="current.kind" style="width:100%" placeholder="请选择">
+                  <el-option
+                    v-for="(name,index) of bizKind"
+                    :key="index+1"
+                    :label="name"
+                    :value="index+1"
+                  ></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
               <el-form-item label="经营类别：" required>
-                <el-select
-                  v-model="currentBizInfo.com_category"
-                  style="width:100%"
-                  placeholder="请选择"
-                >
-                  <el-option label="餐馆" value="餐馆"></el-option>
-                  <el-option label="快餐店" value="快餐店"></el-option>
-                  <el-option label="小吃店" value="小吃店"></el-option>
-                  <el-option label="饮品店" value="饮品店"></el-option>
+                <el-select v-model="current.category" style="width:100%" placeholder="请选择">
+                  <el-option v-for="name of bizCategory" :key="name" :label="name" :value="name"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -80,13 +77,13 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="联系人员：" required>
-                <el-input v-model="currentBizInfo.com_contact" placeholder="请输入企业联系人姓名"></el-input>
+                <el-input v-model="current.contact" placeholder="请输入企业联系人姓名"></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
               <el-form-item label="联系电话：" required>
-                <el-input v-model="currentBizInfo.com_contactphone" placeholder="请输入企业联系人电话"></el-input>
+                <el-input v-model="current.phone" placeholder="请输入企业联系人电话"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -94,7 +91,7 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="单位电话：">
-                <el-input v-model="currentBizInfo.com_tel" placeholder="请输入企业单位(座机)电话"></el-input>
+                <el-input v-model="current.tel" placeholder="请输入企业单位(座机)电话"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -102,13 +99,13 @@
           <el-row :gutter="20">
             <el-col :span="6">
               <el-form-item label="经度：">
-                <el-input v-model.number="currentBizInfo.pos[0]" placeholder="数值"></el-input>
+                <el-input v-model.number="current.gps[0]" placeholder="数值"></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="6" :push="2">
               <el-form-item label="纬度：">
-                <el-input v-model.number="currentBizInfo.pos[1]" placeholder="数值"></el-input>
+                <el-input v-model.number="current.gps[1]" placeholder="数值"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -122,7 +119,7 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="企业地址：">
-                <el-input :rows="4" type="textarea" v-model="currentBizInfo.com_address"></el-input>
+                <el-input :rows="4" type="textarea" v-model="current.address"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -130,7 +127,7 @@
           <el-row :gutter="15">
             <el-col :span="16">
               <el-form-item label="许可证：">
-                <el-checkbox v-model="hasLicence" label="有许可证" border></el-checkbox>
+                <el-checkbox @change="licToggle" v-model="hasLicence" label="有许可证" border></el-checkbox>
               </el-form-item>
             </el-col>
           </el-row>
@@ -150,7 +147,7 @@
       <el-tab-pane v-if="hasLicence" label="许可信息" name="licence">
         <el-form
           :disabled="!edit"
-          :model="currentBizInfo"
+          :model="current"
           label-position="left"
           style="margin-top:20px;"
           label-width="130px"
@@ -158,12 +155,12 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="生产者名称：" required>
-                <el-input v-model="currentBizInfo.lic_name" placeholder="请输入生产者名称"></el-input>
+                <el-input v-model="current.lic.biz" placeholder="请输入生产者名称"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="许可证号：" required>
-                <el-input v-model="currentBizInfo.lic_code" placeholder="请输许可证号"></el-input>
+                <el-input v-model="current.lic.code" placeholder="请输许可证号"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -171,25 +168,51 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="法定代理人：" required>
-                <el-input v-model="currentBizInfo.lic_lawer" placeholder="法定代理人或负责人"></el-input>
+                <el-input v-model="current.lic.lawer" placeholder="法定代理人或负责人"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="日常监管机构：" required>
-                <el-input v-model="currentBizInfo.lic_supervise_org" placeholder="日常监管机构名称"></el-input>
+              <el-form-item label="社会信用代码：">
+                <el-input v-model="current.lic.socialnum" placeholder="请输入社会信用代码"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item label="社会信用代码：">
-                <el-input v-model="currentBizInfo.lic_socialnum" placeholder="请输入社会信用代码"></el-input>
+              <el-form-item label="监管机构：" required>
+                <el-cascader
+                  :show-all-levels="false"
+                  :props="{label:'name',value:'_id'}"
+                  v-model="current.lic.dep"
+                  :options="casecadeDepData"
+                  placeholder="选择日常监管机构"
+                  style="width:100%;"
+                  change-on-select
+                ></el-cascader>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="日常监管人员：" required>
-                <el-input v-model="currentBizInfo.lic_supervise_staff" placeholder="日常监管人员名"></el-input>
+              <el-form-item label="监管人员：" required>
+                <el-select
+                  v-model="current.lic.staff"
+                  :label="currentLicStaff.label"
+                  style="width:100%"
+                  placeholder="请选择日常监管人员"
+                >
+                  <el-option-group
+                    v-for="group in currentLicStaff"
+                    :key="group.label"
+                    :label="group.label"
+                  >
+                    <el-option
+                      v-for="item of group.options"
+                      :key="item._id"
+                      :label="item.name"
+                      :value="item._id"
+                    ></el-option>
+                  </el-option-group>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -197,7 +220,7 @@
           <el-row>
             <el-col :span="16">
               <el-form-item label="注册地址：">
-                <el-input v-model="currentBizInfo.lic_register_address" placeholder="请输入许可证的注册信息"></el-input>
+                <el-input v-model="current.lic.logaddr" placeholder="请输入许可证的注册信息"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -206,7 +229,7 @@
             <el-col :span="16">
               <el-form-item label="生产地址：">
                 <el-input
-                  v-model="currentBizInfo.lic_business_address"
+                  v-model="current.lic.bizaddr"
                   :rows="4"
                   type="textarea"
                   placeholder="请输入企业生产地址"
@@ -217,19 +240,32 @@
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item label="类别：" required>
-                <el-input v-model="currentBizInfo.lic_kind" placeholder="输入食品类别"></el-input>
+              <el-form-item label="发证机关：" required>
+                <el-cascader
+                  :show-all-levels="false"
+                  :props="{label:'name',value:'_id'}"
+                  v-model="current.lic.send"
+                  :options="casecadeDepData"
+                  placeholder="请选择此许可证颁发机关"
+                  style="width:100%;"
+                  change-on-select
+                ></el-cascader>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="发证机关：" required>
-                <el-input v-model="currentBizInfo.lic_send_org" placeholder="输入发证机关"></el-input>
+              <el-form-item label="颁发日期：" required>
+                <el-date-picker
+                  style="width:100%"
+                  type="date"
+                  placeholder="清选择颁发日期"
+                  v-model="current.lic.date"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
-            <el-col :span="16">
+            <el-col :span="10">
               <el-form-item label="许可证有效期：" required>
                 <el-date-picker
                   style="width:100%"
@@ -237,20 +273,7 @@
                   range-separator="至"
                   start-placeholder="生效日期"
                   end-placeholder="截止"
-                  v-model="currentBizInfo.daterange"
-                ></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item label="颁发日期：" required>
-                <el-date-picker
-                  style="width:100%"
-                  type="date"
-                  placeholder="选择颁发日期"
-                  v-model="currentBizInfo.lic_date_send"
+                  v-model="current.lic.daterange"
                 ></el-date-picker>
               </el-form-item>
             </el-col>
@@ -327,7 +350,7 @@
           v-if="edit"
           icon="el-icon-check"
           type="primary"
-        >{{isNew?"提交审核":"完成编辑"}}</el-button>
+        >{{isNew?"提交信息":"完成编辑"}}</el-button>
         <el-button @click="editCancel" v-if="edit&&!isNew" icon="el-icon-close">取消并还原</el-button>
         <router-link to="/base/biz">
           <el-button style="margin-left:20px;">返回食品单位管理</el-button>
@@ -338,117 +361,101 @@
 </template>
 
 <script>
-import { copy } from "@/utils/utils.js";
-import { getBizByID } from "@/api/old_biz.js";
-import department from "@/api/old_area.js";
+import { copy } from "@/utils/utils";
+import {
+  biz,
+  emptyBiz,
+  emptyLic,
+  bizKind,
+  bizCategory,
+  bizState
+} from "@/api/biz";
+import { dep } from "@/api/dep";
+import { staff, staffByDep } from "@/api/staff";
 
 export default {
   name: "base_singlebiz",
 
   data() {
     return {
-      department,
       tab: "base",
-      edit: null,
-      isNew: null,
-      kind: null,
-      title: null,
-      hasLicence: null,
+      edit: false,
+      isNew: false,
 
-      currentBizInfo: null,
-      originBizInfo: null
+      title: "",
+      hasLicence: false,
+
+      current: emptyBiz(),
+      origin: emptyBiz(),
+
+      depData: [],
+      casecadeDepData: [],
+      staffData: [],
+
+      bizKind: bizKind(),
+      bizCategory: bizCategory()
     };
   },
 
-  beforeMount() {
-    this.init();
+  async beforeMount() {
+    await this.init();
   },
 
-  beforeRouteUpdate(to, from, next) {
-    this.init();
+  async beforeRouteUpdate(to, from, next) {
     next();
+    await this.init();
   },
 
   methods: {
-    init() {
-      let bizid = this.$route.params.bizid.trim();
+    async init() {
+      const bizid = this.$route.params.bizid;
+      this.isNew = bizid === "new";
+      this.edit = bizid === "new";
 
-      this.currentBizInfo = {
-        com_name: "",
-        com_state: 1,
-        com_category: "",
-        com_kind: "",
-        com_address: "",
-        area: [],
-        com_contact: "",
-        com_contactphone: "",
-        com_tel: "",
+      this.depData = (await dep()).data;
+      this.casecadeDepData = (await dep(null, false, true)).data;
+      this.staffData = (await staff()).data;
 
-        lic_code: "",
-        lic_name: "",
-        lic_socialnum: "",
-        lic_supervise_org: "",
-        lic_supervise_staff: "",
-        lic_send_org: "",
-        lic_business_address: "",
-        lic_register_address: "",
-        lic_kind: "",
-        lic_date_send: "",
-        lic_date_start: "",
-        lic_date_end: "",
+      const currentBiz = (await biz(bizid)).data;
+      await bizDepInfoParse();
 
-        pos: [null, null],
-        daterange: ["", ""]
-      };
+      this.origin = this.isNew ? emptyBiz() : currentBiz;
+      this.current = copy(this.origin);
 
-      if (bizid === "new") {
-        this.title = "新增单位";
-        this.hasLicence = false;
-        this.isNew = true;
-        this.edit = true;
+      this.title = this.isNew ? "新增食品单位" : this.origin.name;
+      this.hasLicence = this.current.lic !== null;
+    },
+
+    async editOK() {
+      this.origin = (await biz(this.result)).data;
+
+      if (this.isNew) {
+        this.$router.push(`/base/biz/${this.origin._id}`);
       } else {
-        let bizInfo = getBizByID(bizid);
-        bizInfo.pos = [null, null];
-        bizInfo.daterange = ["", ""];
-
-        if (bizInfo.area) {
-          bizInfo.area = department.getAreaIDArray(bizInfo.area);
-        }
-
-        if (bizInfo.com_gps) {
-          let [x, y] = bizInfo.com_gps.split(",");
-          bizInfo.pos = [Number(x.trim()), Number(y.trim())];
-        }
-
-        if (bizInfo.lic_date_start || bizInfo.lic_date_end) {
-          bizInfo.daterange = [bizInfo.lic_date_start, bizInfo.lic_date_end];
-        }
-
-        this.currentBizInfo = bizInfo;
-
-        this.originBizInfo = copy(this.currentBizInfo);
-        this.originBizInfo.area = copy(this.currentBizInfo.area);
-
-        this.title = this.originBizInfo.com_name;
-        this.hasLicence =
-          this.originBizInfo.lic_code && this.originBizInfo.lic_code.length > 0;
-
-        this.isNew = false;
-        this.edit = false;
+        this.init();
       }
     },
 
-    editOK() {},
-
     editCancel() {
-      this.currentBizInfo = copy(this.originBizInfo);
+      this.current = copy(this.origin);
+      this.title = this.origin.name;
+      this.hasLicence = this.origin.lic !== null;
 
-      this.title = this.originBizInfo.com_name;
-      this.hasLicence =
-        this.originBizInfo.lic_code && this.originBizInfo.lic_code.length > 0;
-
-      this.edit = false;
       this.tab = "base";
+      this.edit = false;
+    },
+
+    async bizDepInfoParse() {
+      this.current.dep = (await dep(this.current.dep)).data._rel;
+      if (this.current.lic) {
+        this.current.lic.dep = (await dep(this.current.lic.dep)).data._rel;
+        this.current.lic.staff = (await dep(this.current.lic.staff)).data._rel;
+        this.current.lic.send = (await dep(this.current.lic.send)).data._rel;
+      }
+    },
+
+    licToggle(lic) {
+      this.current.lic = lic ? emptyLic() : null;
     },
 
     getRectifyRecord() {
@@ -459,6 +466,41 @@ export default {
     },
     getRiskRecord() {
       return [];
+    }
+  },
+
+  computed: {
+    result() {
+      let currentBiz = Object.assign(this.current, {
+        dep: this.current.dep.slice(-1)[0]
+      });
+
+      if (this.current.lic) {
+        currentBiz.lic = Object.assign(this.current.lic, {
+          staff: this.current.lic.staff.slice(-1)[0],
+          dep: this.current.lic.dep.slice(-1)[0],
+          send: this.current.lic.send.slice(-1)[0]
+        });
+      }
+
+      return currentBiz;
+    },
+
+    currentLicStaff() {
+      const currentDep = this.current.lic.dep
+        ? this.current.lic.dep.slice(-1)[0]
+        : "";
+
+      return [
+        {
+          label: "当前监管机构职员：",
+          options: this.staffData.filter(staff => staff.dep === currentDep)
+        },
+        {
+          label: "不属于当前监管机构的：",
+          options: this.staffData.filter(staff => staff.dep !== currentDep)
+        }
+      ];
     }
   }
 };

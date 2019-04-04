@@ -10,7 +10,7 @@
     <el-row class="action" :gutter="15">
       <el-col :span="4">
         <router-link to="law/new">
-          <el-button type="primary" size="small" icon="el-icon-plus">新建 / 上传法律法规</el-button>
+          <el-button type="primary" size="small" icon="el-icon-plus">新增法律法规</el-button>
         </router-link>
       </el-col>
     </el-row>
@@ -36,10 +36,10 @@
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="pageData" size="medium" style="width: 100%">
+        <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%">
           <el-table-column prop="num" label="法令法规编号" sortable></el-table-column>
           <el-table-column prop="name" label="法令法规名称" min-width="250px" sortable></el-table-column>
-          <el-table-column prop="department" label="创建单位" sortable></el-table-column>
+          <el-table-column prop="_dep.name" label="创建单位" sortable></el-table-column>
           <el-table-column prop="date" label="创建日期" align="center" sortable></el-table-column>
           <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
@@ -51,8 +51,8 @@
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
-              <el-button @click="$router.push('law/'+scope.row.id)" size="mini" type="primary">进入查看</el-button>
-              <el-button size="mini" type="danger">删除</el-button>
+              <el-button @click="$router.push('law/'+scope.row._id)" size="mini" type="primary">进入查看</el-button>
+              <el-button @click="deleteButtonClick(scope.row._id)" size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -69,16 +69,30 @@
         :total="tableData.length"
       ></el-pagination>
     </el-row>
+
+    <el-dialog title="确认删除" v-if="deleteDialog" :visible="true" width="30%">
+      <span>确定要删除法律法规 {{deleteDialog.name}} 吗？</span>
+      <br>
+      <span>此操作无法复原。</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialog=null" type="normal">取消</el-button>
+        <el-button @click="deleteLaw()" type="danger">确定</el-button>
+      </span>
+    </el-dialog>
   </el-row>
 </template>
 
 <script>
-import { getLaws } from "@/api/old_law.js";
+import { law, del, lawState } from "@/api/law";
 
 export default {
   name: "base_law",
   data() {
     return {
+      lawData: [],
+      depData: [],
+      loading: true,
+
       search: {
         text: "",
         state: null
@@ -87,19 +101,26 @@ export default {
         page: 1,
         pageSize: 10,
         pageSizes: [10, 25, 50, 100]
-      }
+      },
+
+      lawState: lawState(),
+      deleteDialog: null
     };
+  },
+
+  async beforeMount() {
+    await this.init();
   },
 
   filters: {
     stateText(state) {
-      return state === 1 ? "激活" : "停用";
+      return lawState(state);
     }
   },
 
   computed: {
     tableData() {
-      let tableData = getLaws();
+      let tableData = this.lawData;
 
       if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;
@@ -107,7 +128,7 @@ export default {
           t =>
             t.name.includes(searchText) ||
             t.num.includes(searchText) ||
-            t.department.includes(searchText)
+            t._dep.name.includes(searchText)
         );
       }
 
@@ -127,13 +148,33 @@ export default {
   },
 
   methods: {
-    getStateType(state) {
-      switch (state) {
-        case 1:
-          return "success";
-        default:
-          return "danger";
+    async init() {
+      this.loading = true;
+      let lawList = (await law()).data;
+      this.depData = (await dep()).data;
+
+      bizList.forEach(biz => {
+        biz["_dep"] = this.depData.find(t => t._id === biz.area);
+      });
+
+      this.bizData = bizList;
+      this.loading = false;
+    },
+
+    deleteButtonClick(law) {
+      this.deleteDialog = law;
+    },
+
+    async deleteLaw() {
+      if (!this.deleteDialog) {
+        return;
       }
+      await del(this.deleteDialog._id);
+      this.init();
+    },
+
+    getStateType(state) {
+      return ["danger", "success"][state];
     }
   }
 };

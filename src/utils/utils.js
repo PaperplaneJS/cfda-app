@@ -8,7 +8,7 @@ function uuid(len, radix) {
 
   for (i = 0; i < len; i++) {
     uuid[i] = chars[0 | Math.random() * radix]
-  };
+  }
 
   return uuid.join('');
 }

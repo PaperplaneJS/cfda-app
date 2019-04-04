@@ -1,28 +1,51 @@
 import axios from 'axios';
 
-async function Dep(depId) {
-  const url = depId ? `/dep/${depId}` : '/dep';
-  return await axios.get(url);
+const depState = (state) => {
+  const allStates = ['停用', '正常'];
+  if (state !== undefined) {
+    return allStates[state];
+  }
+  allStates.reverse;
+  return allStates;
+}
+const emptyDep = () => ({
+  code: '',
+  name: '',
+  state: 1,
+  _rel: []
+})
+
+
+async function dep(depOpt, isUnder, isCascade) {
+  const underParam = isUnder ? 'under=1' : '';
+  const cascadeParam = isCascade ? '&cascade=1' : '';
+
+  if (!depOpt) {
+    let url = `/dep?${underParam}&${cascadeParam}`;
+    return await axios.get(url);
+
+  } else if (typeof(depOpt) === 'string') {
+    let url = `/dep/${depOpt}?${underParam}&${cascadeParam}`;
+    return await axios.get(url);
+
+  } else if (typeof(depOpt) === 'object') {
+    const isNew = !depOpt._id || depOpt._id.length === 0;
+    const method = isNew ? 'post' : 'put';
+    let url = isNew ? '/dep' : `/dep/${depOpt._id}`;
+
+    return await axios[method](url, depOpt);
+  }
+
+  return void 0;
 }
 
-function Cascade(depList) {
-  const cascade = depList.filter(dep => dep._rel.length <= 1);
-
-  function handleCascade(parent, deep = 0) {
-    const children = depList.filter(dep =>
-      dep._rel.length === parent._rel.length + 1 && dep._rel[deep] === parent._id
-    );
-    if (children.length > 0) {
-      parent.children = children;
-      parent.children.forEach(t => handleCascade(t, deep + 1));
-    }
-  };
-
-  cascade.forEach(t => handleCascade(t));
-  return cascade;
+async function del(depId) {
+  return await axios.delete(`/dep/${depId}`);
 }
 
 export {
-  Dep,
-  Cascade
+  dep,
+  del,
+  depState,
+  emptyDep
 };
