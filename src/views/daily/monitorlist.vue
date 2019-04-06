@@ -119,11 +119,11 @@
 
 <script>
 import { copy, uuid } from "@/utils/utils.js";
-import { getAllBizs } from "@/api/old_biz.js";
-import { getAreaIDArray } from "@/api/old_area.js";
-import { getTaskItems } from "@/api/old_task.js";
-import { getStaffByID } from "@/api/old_staff.js";
-import { getPlanByID } from "@/api/old_plan.js";
+import { getAllBizs } from "@/oldAPI/old_biz.js";
+import { getAreaIDArray } from "@/oldAPI/old_area.js";
+import { getTaskItems } from "@/oldAPI/old_task.js";
+import { getStaffByID } from "@/oldAPI/old_staff.js";
+import { getPlanByID } from "@/oldAPI/old_plan.js";
 
 export default {
   name: "daily_monitorlist",

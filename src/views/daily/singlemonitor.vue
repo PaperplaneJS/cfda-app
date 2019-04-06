@@ -415,12 +415,12 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
-import { getTemplates } from "@/api/old_template.js";
-import { getAreaByID } from "@/api/old_area.js";
-import { getTaskItems } from "@/api/old_task.js";
-import { getPlanByID } from "@/api/old_plan.js";
-import { getBizByID } from "@/api/old_biz.js";
-import { getStaffByID } from "@/api/old_staff.js";
+import { getTemplates } from "@/oldAPI/old_template.js";
+import { getAreaByID } from "@/oldAPI/old_area.js";
+import { getTaskItems } from "@/oldAPI/old_task.js";
+import { getPlanByID } from "@/oldAPI/old_plan.js";
+import { getBizByID } from "@/oldAPI/old_biz.js";
+import { getStaffByID } from "@/oldAPI/old_staff.js";
 
 export default {
   name: "daily_singlemonitor",

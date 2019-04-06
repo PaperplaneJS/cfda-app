@@ -144,9 +144,9 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
-import { getArea } from "@/api/old_area.js";
-import { getPlanByID } from "@/api/old_plan.js";
-import { getTemplates } from "@/api/old_template.js";
+import { getArea } from "@/oldAPI/old_area.js";
+import { getPlanByID } from "@/oldAPI/old_plan.js";
+import { getTemplates } from "@/oldAPI/old_template.js";
 
 export default {
   name: "plan_singleplan",

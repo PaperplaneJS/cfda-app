@@ -91,8 +91,8 @@
 </template>
 
 <script>
-import staff from "@/api/old_staff.js";
-import department from "@/api/old_area.js";
+import staff from "@/oldAPI/old_staff.js";
+import department from "@/oldAPI/old_area.js";
 
 export default {
   name: "grid_member",

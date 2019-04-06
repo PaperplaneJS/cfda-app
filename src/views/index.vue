@@ -114,8 +114,8 @@
 <script>
 import { copy } from "@/utils/utils.js";
 import { count } from "@/api/count.js";
-import { getAllBizs } from "@/api/old_biz.js";
-import { getAreaByID } from "@/api/old_area.js";
+import { getAllBizs } from "@/oldAPI/old_biz.js";
+import { getAreaByID } from "@/oldAPI/old_area.js";
 import echarts from "echarts";
 
 export default {

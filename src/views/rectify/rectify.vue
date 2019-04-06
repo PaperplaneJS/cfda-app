@@ -109,11 +109,11 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
-import { getRectifys } from "@/api/old_rectify.js";
-import { getPlanByID } from "@/api/old_plan.js";
-import { getBizByID } from "@/api/old_biz.js";
-import { getStaffByID } from "@/api/old_staff.js";
-import { getTaskItems } from "@/api/old_task.js";
+import { getRectifys } from "@/oldAPI/old_rectify.js";
+import { getPlanByID } from "@/oldAPI/old_plan.js";
+import { getBizByID } from "@/oldAPI/old_biz.js";
+import { getStaffByID } from "@/oldAPI/old_staff.js";
+import { getTaskItems } from "@/oldAPI/old_task.js";
 
 export default {
   name: "rectify_rectify",

@@ -3,7 +3,7 @@ import Vue from 'vue/dist/vue';
 
 import {
   notice
-} from "@/api/old_notice.js";
+} from "@/oldAPI/old_notice.js";
 
 Vue.use(Vuex);
 const store = new Vuex.Store({

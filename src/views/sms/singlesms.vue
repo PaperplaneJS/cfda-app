@@ -61,7 +61,7 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
-import { getSMSByID } from "@/api/old_sms.js";
+import { getSMSByID } from "@/oldAPI/old_sms.js";
 
 export default {
   name: "sms_singlesms",

@@ -442,8 +442,8 @@
 
 <script>
 import { uuid, copy } from "@/utils/utils.js";
-import { getTemplateByID } from "@/api/old_template.js";
-import department from "@/api/old_area.js";
+import { getTemplateByID } from "@/oldAPI/old_template.js";
+import department from "@/oldAPI/old_area.js";
 
 export default {
   name: "base_singlerisktemplate",

@@ -153,10 +153,10 @@
 </template>
 
 <script>
-import department from "@/api/old_area.js";
-import { getPlans } from "@/api/old_plan.js";
-import { getTemplates } from "@/api/old_template.js";
-import { getStaffByID } from "@/api/old_staff.js";
+import department from "@/oldAPI/old_area.js";
+import { getPlans } from "@/oldAPI/old_plan.js";
+import { getTemplates } from "@/oldAPI/old_template.js";
+import { getStaffByID } from "@/oldAPI/old_staff.js";
 
 export default {
   name: "plan_recive",

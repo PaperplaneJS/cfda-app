@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import department from "@/api/old_area.js";
+import department from "@/oldAPI/old_area.js";
 
 export default {
   name: "sms_post",

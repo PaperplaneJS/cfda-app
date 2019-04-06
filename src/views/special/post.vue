@@ -89,10 +89,10 @@
 </template>
 
 <script>
-import { getPlans } from "@/api/old_plan.js";
-import { getTaskItems } from "@/api/old_task.js";
-import department from "@/api/old_area.js";
-import { getStaffByID } from "@/api/old_staff.js";
+import { getPlans } from "@/oldAPI/old_plan.js";
+import { getTaskItems } from "@/oldAPI/old_task.js";
+import department from "@/oldAPI/old_area.js";
+import { getStaffByID } from "@/oldAPI/old_staff.js";
 
 export default {
   name: "special_post",

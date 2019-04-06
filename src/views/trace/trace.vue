@@ -205,12 +205,12 @@
 
 <script>
 import { copy } from "@/utils/utils.js";
-import { getStaffByID } from "@/api/old_staff.js";
-import { getAreaByID } from "@/api/old_area.js";
-import { getBizByID } from "@/api/old_biz.js";
-import { getTaskItems } from "@/api/old_task.js";
-import { getPlans } from "@/api/old_plan.js";
-import { getAllRisks } from "@/api/old_risk.js";
+import { getStaffByID } from "@/oldAPI/old_staff.js";
+import { getAreaByID } from "@/oldAPI/old_area.js";
+import { getBizByID } from "@/oldAPI/old_biz.js";
+import { getTaskItems } from "@/oldAPI/old_task.js";
+import { getPlans } from "@/oldAPI/old_plan.js";
+import { getAllRisks } from "@/oldAPI/old_risk.js";
 
 export default {
   name: "trace_trace",

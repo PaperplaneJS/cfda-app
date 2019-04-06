@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import SMS from "@/api/old_sms.js";
+import SMS from "@/oldAPI/old_sms.js";
 
 export default {
   name: "sms_list",

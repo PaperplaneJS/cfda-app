@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { getTemplates } from "@/api/old_template.js";
+import { getTemplates } from "@/oldAPI/old_template.js";
 
 export default {
   name: "base_template",

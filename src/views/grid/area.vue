@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import area from "@/api/old_area.js";
+import area from "@/oldAPI/old_area.js";
 
 export default {
   name: "grid_area",

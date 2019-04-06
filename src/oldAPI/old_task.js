@@ -899,7 +899,7 @@ import {
 
 import {
   getAreaIDArray
-} from "@/api/old_area.js";
+} from "@/oldAPI/old_area.js";
 
 function getTaskDetailByID(id) {
   let result = null;

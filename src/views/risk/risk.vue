@@ -116,10 +116,10 @@
 </template>
 
 <script>
-import { getAllRisks, getRisksByYear } from "@/api/old_risk.js";
-import { getAreaByID } from "@/api/old_area.js";
-import { getAllBizs } from "@/api/old_biz.js";
-import { getStaffByID } from "@/api/old_staff.js";
+import { getAllRisks, getRisksByYear } from "@/oldAPI/old_risk.js";
+import { getAreaByID } from "@/oldAPI/old_area.js";
+import { getAllBizs } from "@/oldAPI/old_biz.js";
+import { getStaffByID } from "@/oldAPI/old_staff.js";
 
 export default {
   name: "risk_risk",
