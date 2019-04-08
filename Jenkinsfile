@@ -24,7 +24,7 @@ pipeline {
                 sh 'rm -f dist.zip'
               
                 sh 'node -v'
-                sh 'npm install'
+                sh 'npm install --no-optional'
                 sh 'npm run build'
               
                 echo "构建完成."
