@@ -6,7 +6,10 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import '@/plugins/element.js';
 import '@/assets/style/public.scss';
+import Element from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
+Vue.use(Element);
 
 Vue.config.productionTip = process.env.NODE_ENV !== 'development';
 

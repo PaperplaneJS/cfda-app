@@ -7,7 +7,8 @@
       <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
     </el-breadcrumb>
     <el-row class="title">{{title}}</el-row>
-    <el-row class="content"></el-row>
+    <el-row class="content">{{current.content}}</el-row>
+    <el-row></el-row>
   </el-row>
 </template>
 
