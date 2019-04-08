@@ -231,7 +231,7 @@ export default {
       let bizList = (await biz()).data;
 
       bizList.forEach(biz => {
-        biz["_dep"] = this.depData.find(t => t._id === biz.area);
+        biz["_dep"] = this.depData.find(t => t._id === biz.dep);
       });
       this.bizData = bizList;
       this.loading = false;
@@ -250,6 +250,7 @@ export default {
         return;
       }
       await del(this.deleteDialog._id);
+      this.deleteDialog = null;
       this.init();
     }
   }

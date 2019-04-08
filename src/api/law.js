@@ -13,6 +13,7 @@ const emptyLaw = () => ({
   state: 1,
   name: '',
   dep: '',
+  staff: '',
   date: '',
   content: ''
 })

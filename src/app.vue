@@ -162,7 +162,7 @@ export default {
     },
 
     logout() {
-      this.$store.state.currentUser = null;
+      this.$store.commit("logout");
       Cookies.remove("cfdaId");
       this.$router.push("/login");
     }

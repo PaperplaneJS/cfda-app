@@ -1,5 +1,8 @@
 import Vue from 'vue/dist/vue';
 import Router from 'vue-router';
+import Cookies from 'js-cookie';
+import store from './state.js';
+import { auth } from '@/api/action';
 
 import App from '@/app';
 import Index from '@/views/index';
@@ -223,6 +226,26 @@ let routes = [{
 
 let router = new Router({
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.path !== '/login' && !store.state.currentUser) {
+    if (Cookies.get('cfdaId')) {
+      auth().then(data => {
+        store.commit('auth', data.data);
+        next();
+      }).catch(() => {
+        store.commit('auth', null);
+        next('/login');
+      });
+    } else {
+      next('/login');
+    }
+  } else if (to.path === '/login' && store.state.currentUser) {
+    next(false);
+  } else {
+    next();
+  }
 });
 
 export default router;

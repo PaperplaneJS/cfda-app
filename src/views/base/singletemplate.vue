@@ -15,7 +15,7 @@
       <el-row :gutter="20">
         <el-col :span="16">
           <el-form-item label="模板名称：" required>
-            <el-input :disabled="!edit" v-model="currentTemplate.name" placeholder="请输入模板名称"></el-input>
+            <el-input :disabled="!edit" v-model="current.name" placeholder="请输入模板名称"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -23,13 +23,13 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="创建人：">
-            <el-input disabled v-model="currentTemplate.staff"></el-input>
+            <el-input disabled v-model="current.staff"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="8">
           <el-form-item label="所属科室：">
-            <el-input disabled v-model="currentTemplate.department"></el-input>
+            <el-input disabled v-model="current.department"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -37,13 +37,13 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item prop="date" label="制定日期：">
-            <el-date-picker disabled style="width:100%" type="date" v-model="currentTemplate.date"></el-date-picker>
+            <el-date-picker disabled style="width:100%" type="date" v-model="current.date"></el-date-picker>
           </el-form-item>
         </el-col>
 
         <el-col :span="8">
           <el-form-item prop="date" label="模板类别：">
-            <el-tag size="medium">{{currentTemplate.kind=="daily"?"日常检查":"全量检查"}}</el-tag>
+            <el-tag size="medium">{{current.kind=="daily"?"日常检查":"全量检查"}}</el-tag>
           </el-form-item>
         </el-col>
       </el-row>
@@ -51,7 +51,7 @@
       <el-row :gutter="20">
         <el-col :span="16">
           <el-form-item label="激活状态：">
-            <el-radio-group :disabled="!edit" v-model="currentTemplate.state">
+            <el-radio-group :disabled="!edit" v-model="current.state">
               <el-radio :label="1">启用</el-radio>
               <el-radio :label="2">停用</el-radio>
             </el-radio-group>
@@ -64,7 +64,7 @@
           <el-form-item prop="productaddr" label="备注:">
             <el-input
               :disabled="!edit"
-              v-model="currentTemplate.tips"
+              v-model="current.tips"
               :rows="6"
               type="textarea"
               placeholder="请输入备注信息"
@@ -85,7 +85,7 @@
             <td class="tablehead">提供选项</td>
             <td v-if="edit" class="tablehead">操作</td>
           </tr>
-          <template v-for="(item,index) of currentTemplate.content">
+          <template v-for="(item,index) of current.content">
             <tr :key="item.title">
               <td :rowspan="item.children.length+(edit?1:0)">
                 <el-tag size="mini">{{index+1}}</el-tag>
@@ -360,7 +360,8 @@
                 :type="item.check?'success':'danger'"
                 style="margin-right:5px;"
               >「{{item.label}}」选项</el-tag>
-              <span v-if="detailPopupData.point">分值：
+              <span v-if="detailPopupData.point">
+                分值：
                 <el-input v-model.number="item.point" size="small" style="width:60px;"></el-input>
               </span>
             </div>
@@ -407,9 +408,10 @@
 </template>
 
 <script>
-import { uuid, copy } from "@/utils/utils.js";
-import { getTemplateByID } from "@/oldAPI/old_template.js";
-import department from "@/oldAPI/old_area.js";
+import { uuid, copy, date } from "@/utils/utils.js";
+import { template, templateState, emptyTemplate } from "@/api/template";
+import { staff } from "@/api/staff";
+import { dep } from "@/api/dep";
 
 export default {
   name: "base_singletemplate",
@@ -419,8 +421,12 @@ export default {
       title: "",
       edit: null,
       isNew: null,
-      currentTemplate: null,
-      originTemplate: null,
+
+      current: null,
+      origin: null,
+
+      staffData: [],
+      depData: [],
 
       itemPopup: false,
       itemPopupData: null,
@@ -429,8 +435,13 @@ export default {
     };
   },
 
-  beforeMount() {
-    this.init();
+  async beforeMount() {
+    await this.init();
+  },
+
+  async beforeRouteUpdate(to, from, next) {
+    next();
+    await this.init();
   },
 
   filters: {
@@ -444,35 +455,32 @@ export default {
   },
 
   methods: {
-    today() {
-      let date = new Date();
+    async init() {
+      const tid = this.$route.params.templateid;
+      this.isNew = tid === "new";
+      this.edit = tid === "new";
 
-      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-    },
-
-    init() {
-      let tid = this.$route.params.templateid;
-      if (tid.trim() === "new") {
-        this.currentTemplate = {
-          name: "",
-          state: 1,
-          content: [],
-          staff: this.$store.state.currentUser.name,
-          department: department.getAreaByID(this.$store.state.currentUser.area)
-            .name,
-          date: this.today(),
-          tips: ""
-        };
-        this.title = "新建检查模板";
-        this.isNew = true;
-        this.edit = true;
-      } else {
-        this.currentTemplate = copy(getTemplateByID(tid));
-        this.originTemplate = copy(this.currentTemplate);
-        this.title = this.currentTemplate.name;
-        this.isNew = false;
-        this.edit = false;
-      }
+      // if (tid.trim() === "new") {
+      //   this.current = {
+      //     name: "",
+      //     state: 1,
+      //     content: [],
+      //     staff: this.$store.state.currentUser.name,
+      //     department: department.getAreaByID(this.$store.state.currentUser.area)
+      //       .name,
+      //     date: this.today(),
+      //     tips: ""
+      //   };
+      //   this.title = "新建检查模板";
+      //   this.isNew = true;
+      //   this.edit = true;
+      // } else {
+      //   this.current = copy(getTemplateByID(tid));
+      //   this.origin = copy(this.current);
+      //   this.title = this.current.name;
+      //   this.isNew = false;
+      //   this.edit = false;
+      // }
     },
 
     uuid(t) {
@@ -482,7 +490,7 @@ export default {
     editOK() {},
 
     editCancel() {
-      this.currentTemplate = copy(this.originTemplate);
+      this.current = copy(this.origin);
       this.edit = false;
     },
 
@@ -498,7 +506,7 @@ export default {
           type: "warning"
         }
       ).then(() => {
-        this.currentTemplate.content[i].children.splice(j, 1);
+        this.current.content[i].children.splice(j, 1);
       });
     },
 
@@ -507,7 +515,7 @@ export default {
       let j = detailIndex;
 
       if (j !== undefined && j !== null) {
-        let popupData = copy(this.currentTemplate.content[i].children[j]);
+        let popupData = copy(this.current.content[i].children[j]);
         popupData.index = [i, j];
         popupData.limit = [0, 10];
         if (popupData.type === "pingfen") {
@@ -553,13 +561,13 @@ export default {
           type: "warning"
         }
       ).then(() => {
-        this.currentTemplate.content.splice(i, 1);
+        this.current.content.splice(i, 1);
       });
     },
 
     editItem(index) {
       if (index !== undefined && index !== null) {
-        this.itemPopupData = copy(this.currentTemplate.content[index]);
+        this.itemPopupData = copy(this.current.content[index]);
         this.itemPopupData.index = index;
       } else {
         this.itemPopupData = {
@@ -577,9 +585,9 @@ export default {
       let i = index;
       Reflect.deleteProperty(this.itemPopupData, "index");
       if (i !== undefined && i !== null) {
-        this.currentTemplate.content.splice(index, 1, copy(this.itemPopupData));
+        this.current.content.splice(index, 1, copy(this.itemPopupData));
       } else {
-        this.currentTemplate.content.push(copy(this.itemPopupData));
+        this.current.content.push(copy(this.itemPopupData));
       }
 
       this.itemPopup = false;
@@ -592,9 +600,9 @@ export default {
         newDetail = this.editToDetail(copy(this.detailPopupData));
 
       if (j !== undefined && j !== null) {
-        this.currentTemplate.content[i].children.splice(j, 1, newDetail);
+        this.current.content[i].children.splice(j, 1, newDetail);
       } else {
-        this.currentTemplate.content[i].children.push(newDetail);
+        this.current.content[i].children.push(newDetail);
       }
       this.detailPopup = false;
       this.detailPopupData = null;

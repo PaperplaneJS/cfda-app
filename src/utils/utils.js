@@ -17,5 +17,9 @@ function copy(item) {
   return JSON.parse(JSON.stringify(item));
 }
 
-export default { uuid, copy }
-export { uuid, copy }
+function date(datetime = new Date()) {
+  return `${datetime.getFullYear()}-${datetime.getMonth()+1}-${datetime.getDay()}`;
+}
+
+export default { uuid, copy, date }
+export { uuid, copy, date }

@@ -32,7 +32,7 @@
                 <el-cascader
                   :show-all-levels="false"
                   :props="{label:'name',value:'_id'}"
-                  v-model="dep"
+                  v-model="current.dep"
                   :options="casecadeDepData"
                   placeholder="选择行政区域"
                   style="width:100%;"
@@ -257,8 +257,9 @@
                 <el-date-picker
                   style="width:100%"
                   type="date"
-                  placeholder="清选择颁发日期"
+                  placeholder="请选择颁发日期"
                   v-model="current.lic.date"
+                  value-format="yyyy-M-d"
                 ></el-date-picker>
               </el-form-item>
             </el-col>
@@ -274,6 +275,7 @@
                   start-placeholder="生效日期"
                   end-placeholder="截止"
                   v-model="current.lic.daterange"
+                  value-format="yyyy-M-d"
                 ></el-date-picker>
               </el-form-item>
             </el-col>
@@ -416,12 +418,30 @@ export default {
       this.casecadeDepData = (await dep(null, false, true)).data;
       this.staffData = (await staff()).data;
 
-      const currentBiz = (await biz(bizid)).data;
-      await bizDepInfoParse();
+      if (!this.isNew) {
+        let currentBiz = (await biz(bizid)).data;
+        currentBiz.dep =
+          currentBiz.dep && currentBiz.dep !== ""
+            ? this.depData.find(dep => dep._id === currentBiz.dep)._rel
+            : [];
 
-      this.origin = this.isNew ? emptyBiz() : currentBiz;
+        if (currentBiz.lic) {
+          currentBiz.lic.dep =
+            currentBiz.lic.dep && currentBiz.lic.dep !== ""
+              ? this.depData.find(dep => dep._id === currentBiz.lic.dep)._rel
+              : [];
+
+          currentBiz.lic.send =
+            currentBiz.lic.send && currentBiz.lic.send !== ""
+              ? this.depData.find(dep => dep._id === currentBiz.lic.send)._rel
+              : [];
+        }
+
+        this.origin = currentBiz;
+      } else {
+        this.origin = emptyBiz();
+      }
       this.current = copy(this.origin);
-
       this.title = this.isNew ? "新增食品单位" : this.origin.name;
       this.hasLicence = this.current.lic !== null;
     },
@@ -445,15 +465,6 @@ export default {
       this.edit = false;
     },
 
-    async bizDepInfoParse() {
-      this.current.dep = (await dep(this.current.dep)).data._rel;
-      if (this.current.lic) {
-        this.current.lic.dep = (await dep(this.current.lic.dep)).data._rel;
-        this.current.lic.staff = (await dep(this.current.lic.staff)).data._rel;
-        this.current.lic.send = (await dep(this.current.lic.send)).data._rel;
-      }
-    },
-
     licToggle(lic) {
       this.current.lic = lic ? emptyLic() : null;
     },
@@ -471,25 +482,22 @@ export default {
 
   computed: {
     result() {
-      let currentBiz = Object.assign(this.current, {
-        dep: this.current.dep.slice(-1)[0]
-      });
+      let resultBiz = copy(this.current);
+      resultBiz.dep = resultBiz.dep.slice(-1)[0];
 
-      if (this.current.lic) {
-        currentBiz.lic = Object.assign(this.current.lic, {
-          staff: this.current.lic.staff.slice(-1)[0],
-          dep: this.current.lic.dep.slice(-1)[0],
-          send: this.current.lic.send.slice(-1)[0]
-        });
+      if (resultBiz.lic) {
+        resultBiz.lic.dep = resultBiz.lic.dep.slice(-1)[0];
+        resultBiz.lic.send = resultBiz.lic.send.slice(-1)[0];
       }
 
-      return currentBiz;
+      return resultBiz;
     },
 
     currentLicStaff() {
-      const currentDep = this.current.lic.dep
-        ? this.current.lic.dep.slice(-1)[0]
-        : "";
+      const currentDep =
+        this.current.lic.dep && this.current.lic.dep.length
+          ? this.current.lic.dep.slice(-1)[0]
+          : "";
 
       return [
         {

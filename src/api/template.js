@@ -13,7 +13,7 @@ const templateKind = (kind) => {
     "daily": "常规模板",
     "risk": "风险量化模板"
   }
-  if (state !== undefined) {
+  if (kind !== undefined) {
     return allStates[kind];
   }
   return kinds;

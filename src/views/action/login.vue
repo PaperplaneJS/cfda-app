@@ -75,7 +75,7 @@ export default {
 
       login(this.form).then(data => {
         if (data.status === 200) {
-          this.$store.state.currentUser = data.data;
+          this.$store.commit("login", data.data);
           sessionStorage.setItem("currentUser", JSON.stringify(data.data));
           this.$router.push("/index");
         } else {
