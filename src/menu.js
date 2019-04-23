@@ -143,14 +143,11 @@ function getMenu() {
   return menu;
 }
 
-import {
-  copy,
-  uuid
-} from '@/utils/utils.js';
+import { copy, uuid } from '@/utils/utils.js';
 
 function getMenuWithPath(promission = null) {
   let m = copy(menu);
-  let genPath = function (menuItem, index, fatherItem, basePath, basePathArray) {
+  let genPath = function(menuItem, index, fatherItem, basePath, basePathArray) {
 
     if (promission && !menuItem.promission.includes(promission)) {
       delete fatherItem[index];

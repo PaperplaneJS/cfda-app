@@ -43,7 +43,7 @@
 
       <el-container>
         <el-header class="title" height="80px">
-          <span class="titletext">常熟市食品生产经营监管信息化平台</span>
+          <span class="titletext">{{depName}}食品生产经营监管信息化平台</span>
 
           <div id="headmenu">
             <span>
@@ -112,6 +112,7 @@ export default {
 
   data() {
     return {
+      depName: process.env.VUE_APP_DEPARTMENT_NAME,
       currentMenuPath: null,
       visible: false,
       notice: this.$store.state.notice,

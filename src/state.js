@@ -1,9 +1,7 @@
 import Vuex from 'vuex';
 import Vue from 'vue/dist/vue';
 
-import {
-  notice
-} from "@/oldAPI/old_notice.js";
+import { notice } from "@/oldAPI/old_notice.js";
 
 Vue.use(Vuex);
 const store = new Vuex.Store({

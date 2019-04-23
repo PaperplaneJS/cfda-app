@@ -8,9 +8,12 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(Element);
 
+import cfdatemplate from "@/component/cfda-template";
+Vue.component('cfda-template', cfdatemplate);
+
 Vue.config.productionTip = process.env.NODE_ENV !== 'development';
 
-axios.defaults.baseURL = 'http://localhost:9000';
+axios.defaults.baseURL = process.env.VUE_APP_API_HOST;
 axios.defaults.withCredentials = true;
 
 new Vue({

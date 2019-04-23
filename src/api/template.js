@@ -19,14 +19,26 @@ const templateKind = (kind) => {
   return kinds;
 }
 const emptyTemplate = () => ({
+  name: '',
   state: 1,
   kind: '',
-  name: '',
   dep: '',
   staff: '',
   date: '',
   tips: '',
-  content: ''
+  template: []
+})
+const emptyMainItem = () => ({
+  title: '',
+  remark: '',
+  detail: []
+})
+const emptySubItem = () => ({
+  content: '',
+  required: false,
+  importent: false,
+  type: 1,
+  val: null
 })
 
 async function template(templateOpt) {
@@ -56,6 +68,8 @@ export {
   templateState,
   templateKind,
   emptyTemplate,
+  emptyMainItem,
+  emptySubItem,
   template,
   del
 }

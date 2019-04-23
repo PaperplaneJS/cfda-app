@@ -1,208 +1,77 @@
 <template>
-  <el-row id="base_singletemplate">
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/template">基础信息</el-breadcrumb-item>
-      <el-breadcrumb-item to="/base/template">模板管理</el-breadcrumb-item>
-      <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
-    </el-breadcrumb>
+  <el-row>
+    <el-col :span="24">
+      <table id="template">
+        <tr>
+          <td class="tablehead">检查项目</td>
+          <td class="tablehead">检查内容</td>
+          <td class="tablehead">提供选项</td>
 
-    <el-row class="title">{{title}}</el-row>
+          <td v-if="edit" class="tablehead">操作</td>
+        </tr>
 
-    <el-form label-position="left" style="margin-top:20px;" label-width="100px">
-      <el-row style="font-size:18px;margin-bottom:15px;" class="section">模板详情</el-row>
+        <template v-for="(mainItem,mainIndex) of value">
+          <!-- 整行 -->
+          <tr :key="`${mainIndex}-${index}`" v-for="index in mainItem.detail.length||1">
+            <!-- 检查大项列，需要跨越所有小项行 -->
+            <td v-if="index===1" :rowspan="item.detail.length + (edit ? 1 : 0)">
+              <el-tag size="mini">{{mainIndex + 1}}</el-tag>
+              {{item.title}}
+              <el-popover
+                v-if="item.remark"
+                placement="top-start"
+                title="备注"
+                width="350"
+                trigger="hover"
+                :content="item.remark"
+              >
+                <el-button
+                  style="margin:5px;"
+                  type="warning"
+                  size="mini"
+                  slot="reference"
+                  plain
+                  round
+                >备注</el-button>
+              </el-popover>
 
-      <el-row :gutter="20">
-        <el-col :span="16">
-          <el-form-item label="模板名称：" required>
-            <el-input :disabled="!edit" v-model="current.name" placeholder="请输入模板名称"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
+              <div style="margin-top:30px;" v-if="edit">
+                <el-button
+                  @click="deleteItem(mainIndex)"
+                  size="mini"
+                  type="danger"
+                  icon="el-icon-delete"
+                  circle
+                ></el-button>
+                <el-button
+                  @click="editItem(mainIndex)"
+                  size="mini"
+                  type="primary"
+                  icon="el-icon-edit"
+                  circle
+                ></el-button>
+              </div>
+            </td>
 
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-form-item label="创建人：">
-            <el-input disabled v-model="current.staff"></el-input>
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="8">
-          <el-form-item label="所属科室：">
-            <el-input disabled v-model="current.department"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-form-item prop="date" label="制定日期：">
-            <el-date-picker disabled style="width:100%" type="date" v-model="current.date"></el-date-picker>
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="8">
-          <el-form-item prop="date" label="模板类别：">
-            <el-tag size="medium">{{current.kind=="daily"?"日常检查":"全量检查"}}</el-tag>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="20">
-        <el-col :span="16">
-          <el-form-item label="激活状态：">
-            <el-radio-group :disabled="!edit" v-model="current.state">
-              <el-radio :label="1">启用</el-radio>
-              <el-radio :label="2">停用</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="20">
-        <el-col :span="16">
-          <el-form-item prop="productaddr" label="备注:">
-            <el-input
-              :disabled="!edit"
-              v-model="current.tips"
-              :rows="6"
-              type="textarea"
-              placeholder="请输入备注信息"
-            ></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row style="font-size:18px;margin-bottom:15px;" class="section">模板内容</el-row>
-    </el-form>
-
-    <!-- <el-row>
-      <el-col :span="24">
-        <table id="template">
-          <tr>
-            <td class="tablehead">检查项目</td>
-            <td class="tablehead">检查内容</td>
-            <td class="tablehead">提供选项</td>
-            <td v-if="edit" class="tablehead">操作</td>
-          </tr>
-          <template v-for="(item,index) of current.content">
-            <tr :key="item.title">
-              <td :rowspan="item.children.length+(edit?1:0)">
-                <el-tag size="mini">{{index+1}}</el-tag>
-                {{item.title}}
-                <el-popover
-                  v-if="item.tips"
-                  placement="top-start"
-                  title="备注"
-                  width="350"
-                  trigger="hover"
-                  :content="item.tips"
-                >
-                  <el-button
-                    style="margin:5px;"
-                    type="warning"
-                    size="mini"
-                    slot="reference"
-                    plain
-                    round
-                  >备注</el-button>
-                </el-popover>
-                <div style="margin-top:30px;" v-if="edit">
-                  <el-button
-                    @click="deleteItem(index)"
-                    size="mini"
-                    type="danger"
-                    icon="el-icon-delete"
-                    circle
-                  ></el-button>
-                  <el-button
-                    @click="editItem(index)"
-                    size="mini"
-                    type="primary"
-                    icon="el-icon-edit"
-                    circle
-                  ></el-button>
-                </div>
-              </td>
-
-              <template v-if="item.children&&item.children[0]">
-                <td>
-                  <el-tag size="mini" type="info">{{index+1}}.1</el-tag>
-                  <el-tag
-                    style="margin-left:5px;"
-                    v-if="item.children[0].important"
-                    size="mini"
-                    type="danger"
-                  >重点项</el-tag>
-                  {{item.children[0].content}}
-                </td>
-                <td style="min-width:130px;">
-                  <el-tag
-                    style="margin-bottom:5px;margin-right:8px;"
-                    v-for="result of item.children[0].item"
-                    :type="result.check===null?'':(result.check?'success':'danger')"
-                    :key="result.label"
-                    size="small"
-                  >
-                    {{result.label}}
-                    <strong
-                      v-if="result.point!==undefined"
-                    >[{{result.point | itemText}}]</strong>
-                  </el-tag>
-                  <el-tag
-                    v-if="!item.children[0].required"
-                    style="margin-bottom:5px;margin-right:8px;"
-                    size="small"
-                    type="info"
-                  >留空</el-tag>
-                </td>
-                <td v-if="edit" style="min-width:70px;">
-                  <el-button
-                    @click="deleteDetail(index,0)"
-                    size="mini"
-                    type="danger"
-                    icon="el-icon-delete"
-                    circle
-                  ></el-button>
-                  <el-button
-                    @click="editDetail(index,0)"
-                    size="mini"
-                    type="primary"
-                    icon="el-icon-edit"
-                    circle
-                  ></el-button>
-                </td>
-              </template>
-              <template v-else>
-                <td colspan="4">
-                  <el-button
-                    @click="editDetail(index)"
-                    v-if="edit"
-                    icon="el-icon-plus"
-                    size="mini"
-                    type="primary"
-                    round
-                  >添加一项</el-button>
-                  <span v-else>没有内容</span>
-                </td>
-              </template>
-            </tr>
-
-            <tr :key="detailIndex.label" v-for="(detailItem,detailIndex) of item.children.slice(1)">
+            <!-- 后面3列有内容的时候-->
+            <template v-if="item.detail && item.detail[0]">
+              <!-- 详细内容 -->
               <td>
-                <el-tag size="mini" type="info">{{index+1}}.{{detailIndex+2}}</el-tag>
+                <el-tag size="mini" type="info">{{mainIndex+1}}.{{index}}</el-tag>
                 <el-tag
                   style="margin-left:5px;"
-                  v-if="detailItem.important"
+                  v-if="item.detail[index-1].important"
                   size="mini"
                   type="danger"
                 >重点项</el-tag>
-                {{detailItem.content}}
+                {{item.detail[index-1].content}}
               </td>
+
+              <!-- ### 接受选项 ### -->
               <td style="min-width:130px;">
-                <el-tag
+                <!-- <el-tag
                   style="margin-bottom:5px;margin-right:8px;"
-                  v-for="result of detailItem.item"
+                  v-for="result of item.detail[index-1]"
                   :type="result.check===null?'':(result.check?'success':'danger')"
                   :key="result.label"
                   size="small"
@@ -211,53 +80,75 @@
                   <strong
                     v-if="result.point!==undefined"
                   >[{{result.point | itemText}}]</strong>
-                </el-tag>
+                </el-tag>-->
+
                 <el-tag
-                  v-if="!detailItem.required"
+                  v-if="!item.detail[index-1].required"
                   style="margin-bottom:5px;margin-right:8px;"
                   size="small"
                   type="info"
                 >留空</el-tag>
               </td>
+
+              <!-- 操作区 -->
               <td v-if="edit" style="min-width:70px;">
                 <el-button
-                  @click="deleteDetail(index,detailIndex+1)"
+                  @click="deleteDetail(index-1,0)"
                   size="mini"
                   type="danger"
                   icon="el-icon-delete"
                   circle
                 ></el-button>
                 <el-button
-                  @click="editDetail(index,detailIndex+1)"
+                  @click="editDetail(index-1,0)"
                   size="mini"
                   type="primary"
                   icon="el-icon-edit"
                   circle
                 ></el-button>
               </td>
-            </tr>
+            </template>
 
-            <tr v-if="item.children.length>=1&&edit" :key="item.title+'-add'">
+            <!-- 没有内容时候的替代 -->
+            <template v-else>
               <td colspan="4">
                 <el-button
-                  @click="editDetail(index)"
+                  @click="editDetail(index-1)"
+                  v-if="edit"
                   icon="el-icon-plus"
                   size="mini"
                   type="primary"
                   round
                 >添加一项</el-button>
+                <span v-else>没有内容</span>
               </td>
-            </tr>
-          </template>
-          <tr v-if="edit">
+            </template>
+          </tr>
+
+          <!-- 添加子项按钮 -->
+          <tr v-if="item.detail.length >= 1 && edit" :key="`${mainIndex}-add`">
             <td colspan="4">
-              <el-button @click="editItem()" icon="el-icon-plus" size="small" type="primary">添加大项</el-button>
+              <el-button
+                @click="editDetail(mainIndex)"
+                icon="el-icon-plus"
+                size="mini"
+                type="primary"
+                round
+              >添加一项</el-button>
             </td>
           </tr>
-        </table>
-      </el-col>
-    </el-row>
+        </template>
 
+        <!-- 添加大项行按钮 -->
+        <tr v-if="edit">
+          <td colspan="4">
+            <el-button @click="editItem()" icon="el-icon-plus" size="small" type="primary">添加大项</el-button>
+          </td>
+        </tr>
+      </table>
+    </el-col>
+
+    <!-- 主项编辑弹窗 -->
     <el-dialog
       v-if="itemPopup"
       title="编辑大检查项"
@@ -277,7 +168,12 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注：">
-              <el-input :rows="4" type="textarea" placeholder="输入备注信息" v-model="itemPopupData.tips"></el-input>
+              <el-input
+                :rows="4"
+                type="textarea"
+                placeholder="输入备注信息"
+                v-model="itemPopupData.remark"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -288,6 +184,7 @@
       </span>
     </el-dialog>
 
+    <!-- 检查子项编辑弹窗 -->
     <el-dialog
       v-if="detailPopup"
       title="编辑详细检查项"
@@ -382,68 +279,26 @@
         <el-button @click="()=>{detailPopup = false;detailPopupData=null;}">取消</el-button>
         <el-button @click="detailPopupOK(detailPopupData.index)" type="primary">完成</el-button>
       </span>
-    </el-dialog>-->
-    <cfda-template v-model="current.content"></cfda-template>
-
-    <el-row>
-      <el-col :span="24">
-        <el-button
-          v-if="edit"
-          @click="editOK"
-          icon="el-icon-check"
-          type="primary"
-        >{{isNew?"完成创建":"完成编辑"}}</el-button>
-        <el-button v-if="!edit" @click="edit=true" icon="el-icon-edit-outline" type="primary">编辑模板</el-button>
-        <el-button
-          v-if="edit && !isNew"
-          @click="editCancel"
-          style="margin-left:20px;"
-          icon="el-icon-refresh"
-        >取消并还原</el-button>
-        <router-link to="/base/template">
-          <el-button style="margin-left:20px;">返回模板管理</el-button>
-        </router-link>
-      </el-col>
-    </el-row>
+    </el-dialog>
   </el-row>
 </template>
 
 <script>
-import { uuid, copy, date } from "@/utils/utils.js";
-// import { template, templateState, emptyTemplate } from "@/api/template";
-import { getTemplates, getTemplateByID } from "@/oldAPI/old_template.js";
-import { staff } from "@/api/staff";
-import { dep } from "@/api/dep";
-
+import { uuid, copy } from "@/utils/utils.js";
 export default {
-  name: "base_singletemplate",
-
+  name: "cfda-template",
+  props: ["value", "edit"],
   data() {
     return {
-      title: "",
-      edit: null,
-      isNew: null,
-
-      current: null,
-      origin: null,
-
-      staffData: [],
-      depData: [],
-
       itemPopup: false,
       itemPopupData: null,
+
       detailPopup: false,
-      detailPopupData: null
+      detailPopupData: null,
+
+      uuid,
+      copy
     };
-  },
-
-  async beforeMount() {
-    await this.init();
-  },
-
-  async beforeRouteUpdate(to, from, next) {
-    next();
-    await this.init();
   },
 
   filters: {
@@ -456,45 +311,14 @@ export default {
     }
   },
 
+  watch: {
+    value: function(newValue, oldValue) {
+      this.$emit("input", newValue);
+    }
+  },
+
   methods: {
-    async init() {
-      const tid = this.$route.params.templateid;
-      this.isNew = tid === "new";
-      this.edit = tid === "new";
-
-      if (tid.trim() === "new") {
-        this.current = {
-          name: "",
-          state: 1,
-          content: [],
-          staff: this.$store.state.currentUser.name,
-          department: department.getAreaByID(this.$store.state.currentUser.area)
-            .name,
-          date: this.today(),
-          tips: ""
-        };
-        this.title = "新建检查模板";
-        this.isNew = true;
-        this.edit = true;
-      } else {
-        this.current = copy(getTemplateByID(tid));
-        this.origin = copy(this.current);
-        this.title = this.current.name;
-        this.isNew = false;
-        this.edit = false;
-      }
-    },
-
-    uuid(t) {
-      return uuid(t);
-    },
-
-    editOK() {},
-
-    editCancel() {
-      this.current = copy(this.origin);
-      this.edit = false;
-    },
+    async init() {},
 
     deleteDetail(index, detailIndex) {
       let i = index;
@@ -508,7 +332,7 @@ export default {
           type: "warning"
         }
       ).then(() => {
-        this.current.content[i].children.splice(j, 1);
+        this.value[i].detail.splice(j, 1);
       });
     },
 
@@ -517,7 +341,7 @@ export default {
       let j = detailIndex;
 
       if (j !== undefined && j !== null) {
-        let popupData = copy(this.current.content[i].children[j]);
+        let popupData = copy(this.value[i].detail[j]);
         popupData.index = [i, j];
         popupData.limit = [0, 10];
         if (popupData.type === "pingfen") {
@@ -563,19 +387,19 @@ export default {
           type: "warning"
         }
       ).then(() => {
-        this.current.content.splice(i, 1);
+        this.value.splice(i, 1);
       });
     },
 
     editItem(index) {
       if (index !== undefined && index !== null) {
-        this.itemPopupData = copy(this.current.content[index]);
+        this.itemPopupData = copy(this.value[index]);
         this.itemPopupData.index = index;
       } else {
         this.itemPopupData = {
           title: "",
-          tips: "",
-          children: [],
+          remark: "",
+          detail: [],
           limit: [0, 10]
         };
       }
@@ -587,9 +411,9 @@ export default {
       let i = index;
       Reflect.deleteProperty(this.itemPopupData, "index");
       if (i !== undefined && i !== null) {
-        this.current.content.splice(index, 1, copy(this.itemPopupData));
+        this.value.splice(index, 1, copy(this.itemPopupData));
       } else {
-        this.current.content.push(copy(this.itemPopupData));
+        this.value.push(copy(this.itemPopupData));
       }
 
       this.itemPopup = false;
@@ -602,9 +426,9 @@ export default {
         newDetail = this.editToDetail(copy(this.detailPopupData));
 
       if (j !== undefined && j !== null) {
-        this.current.content[i].children.splice(j, 1, newDetail);
+        this.value[i].detail.splice(j, 1, newDetail);
       } else {
-        this.current.content[i].children.push(newDetail);
+        this.value[i].detail.push(newDetail);
       }
       this.detailPopup = false;
       this.detailPopupData = null;
@@ -684,10 +508,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-row {
-  margin-bottom: 0;
-}
-
 #template {
   width: 100%;
   border-collapse: collapse;
@@ -711,3 +531,4 @@ export default {
   border-radius: 3px;
 }
 </style>
+
