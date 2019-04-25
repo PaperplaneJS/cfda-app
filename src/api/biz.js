@@ -74,12 +74,4 @@ async function del(bizId) {
   return await axios.delete(`/biz/${bizId}`);
 }
 
-export {
-  biz,
-  del,
-  bizKind,
-  bizCategory,
-  bizState,
-  emptyBiz,
-  emptyLic
-};
+export { biz, del, bizKind, bizCategory, bizState, emptyBiz, emptyLic };

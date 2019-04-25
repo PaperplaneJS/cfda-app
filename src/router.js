@@ -230,17 +230,13 @@ let router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.path !== '/login' && !store.state.currentUser) {
-    if (Cookies.get('cfdaId')) {
-      auth().then(data => {
-        store.commit('auth', data.data);
-        next();
-      }).catch(() => {
-        store.commit('auth', null);
-        next('/login');
-      });
-    } else {
+    auth().then(data => {
+      store.commit('auth', data.data);
+      next();
+    }).catch(() => {
+      store.commit('auth', null);
       next('/login');
-    }
+    });
   } else if (to.path === '/login' && store.state.currentUser) {
     next(false);
   } else {

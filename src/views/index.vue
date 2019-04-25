@@ -173,7 +173,7 @@ export default {
   methods: {
     init() {
       this.map = new BMap.Map("map");
-      this.map.centerAndZoom("常熟", 12);
+      this.map.centerAndZoom(process.env.VUE_APP_CITY_NAME, 12);
       this.map.addControl(
         new BMap.MapTypeControl({
           mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
