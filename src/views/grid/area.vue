@@ -2,15 +2,15 @@
   <el-row id="grid_area">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/grid/area">网格化管理</el-breadcrumb-item>
-      <el-breadcrumb-item>行政区域</el-breadcrumb-item>
+      <el-breadcrumb-item to="/grid/department">网格化管理</el-breadcrumb-item>
+      <el-breadcrumb-item>行政机构管理</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">行政区域</el-row>
+    <el-row class="title">行政机构管理</el-row>
     <el-row class="action" :gutter="15">
       <el-col :span="3">
-        <router-link to="area/new">
-          <el-button style="width:100%;" type="primary" size="small" icon="el-icon-plus">新建行政区域</el-button>
+        <router-link to="department/new">
+          <el-button style="width:100%;" type="primary" size="small" icon="el-icon-plus">新建行政机构</el-button>
         </router-link>
       </el-col>
     </el-row>
@@ -21,7 +21,7 @@
           clearable
           v-model="search.text"
           size="small"
-          placeholder="搜索网格名称/代码等"
+          placeholder="搜索机构名称/代码等"
           prefix-icon="el-icon-search"
         ></el-input>
       </el-col>
@@ -36,14 +36,14 @@
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="pageData" size="medium" style="width: 100%">
-          <el-table-column prop="code" label="主体代码" sortable></el-table-column>
+        <el-table v-loading="loading" :data="pageData" size="medium" style="width: 100%">
+          <el-table-column prop="code" label="机构代码" sortable></el-table-column>
+          <el-table-column prop="name" label="行政机构主体名称" sortable></el-table-column>
           <el-table-column label="行政单位级别">
             <template slot-scope="scope">
-              <el-tag size="small">{{area.getAreaIDArray(scope.row.id).length}}级网格</el-tag>
+              <el-tag size="small">{{scope.row._rel.length}}级机构</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="行政单位主体名称" sortable></el-table-column>
           <el-table-column label="状态" align="center" sortabl>
             <template slot-scope="scope">
               <el-tag
@@ -55,11 +55,16 @@
           <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
               <el-button
-                @click.native="$router.push('area/'+scope.row.id)"
+                @click="$router.push('department/'+scope.row._id)"
                 size="mini"
                 type="primary"
               >查看 / 编辑</el-button>
-              <el-button size="mini" type="danger">删除</el-button>
+              <el-button
+                :disabled="scope.row._rel.length===1"
+                @click="deleteDialog=scope.row"
+                size="mini"
+                type="danger"
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -68,68 +73,67 @@
 
     <el-row>
       <el-pagination
-        @size-change="t=>areaTable.pageSize=t"
+        @size-change="t=>depTable.pageSize=t"
         background
-        :current-page.sync="areaTable.page"
-        :page-sizes="areaTable.pageSizes"
-        :page-size="areaTable.pageSize"
+        :current-page.sync="depTable.page"
+        :page-sizes="depTable.pageSizes"
+        :page-size="depTable.pageSize"
         layout="total, prev, pager, next, sizes"
         :total="tableData.length"
       ></el-pagination>
     </el-row>
+
+    <el-dialog title="确认删除" v-if="deleteDialog" :visible="true" width="30%">
+      <span>确定要删除行政机构 {{deleteDialog.name}} 吗？</span>
+      <br>
+      <span>所有对该行政机构的引用信息将全部更新为其上级机构（例如：职员、政策法规等）。此操作无法复原。</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialog=null" type="normal">取消</el-button>
+        <el-button @click="deleteDep()" type="danger">确定</el-button>
+      </span>
+    </el-dialog>
   </el-row>
 </template>
 
 <script>
-import area from "@/oldAPI/old_area.js";
+import { dep, del, depState } from "@/api/dep.js";
+import { copy } from "@/utils/utils.js";
 
 export default {
   name: "grid_area",
 
   data() {
     return {
-      area,
+      depData: [],
+      loading: true,
+
       search: {
         text: "",
         state: ""
       },
-      areaTable: {
+      depTable: {
         page: 1,
         pageSize: 10,
         pageSizes: [10, 25, 50, 100]
-      }
+      },
+
+      depState,
+
+      deleteDialog: null
     };
   },
 
+  async beforeMount() {
+    await this.init();
+  },
+
   filters: {
-    stateText(state) {
-      return state == 1 ? "激活" : "停用";
-    }
+    stateText: state => depState(state)
   },
 
   computed: {
-    areaData() {
-      let areas = area.getArea();
-      let areasArray = [];
-
-      let getAreas = function(item) {
-        areasArray.push({
-          id: item.id,
-          code: item.code,
-          name: item.name,
-          state: item.state
-        });
-        if (item.children) {
-          item.children.forEach(t => getAreas(t));
-        }
-      };
-
-      areas.forEach(t => getAreas(t));
-      return areasArray;
-    },
-
     tableData() {
-      let tableData = this.areaData;
+      let tableData = copy(this.depData);
       if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;
         tableData = tableData.filter(
@@ -146,20 +150,30 @@ export default {
 
     pageData() {
       return this.tableData.slice(
-        (this.areaTable.page - 1) * this.areaTable.pageSize,
-        this.areaTable.page * this.areaTable.pageSize
+        (this.depTable.page - 1) * this.depTable.pageSize,
+        this.depTable.page * this.depTable.pageSize
       );
     }
   },
 
   methods: {
+    async init() {
+      this.loading = true;
+      this.depData = (await dep()).data;
+      this.loading = false;
+    },
+
     getStateType(state) {
-      switch (state) {
-        case 1:
-          return "success";
-        default:
-          return "danger";
+      return ["danger", "success"][state];
+    },
+
+    async deleteDep() {
+      if (!this.deleteDialog) {
+        return;
       }
+      await del(this.deleteDialog._id);
+      this.deleteDialog = null;
+      this.init();
     }
   }
 };

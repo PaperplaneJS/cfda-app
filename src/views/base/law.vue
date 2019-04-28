@@ -52,7 +52,7 @@
           <el-table-column align="center" label="操作" min-width="110px">
             <template slot-scope="scope">
               <el-button @click="$router.push('law/'+scope.row._id)" size="mini" type="primary">进入查看</el-button>
-              <el-button @click="deleteButtonClick(scope.row._id)" size="mini" type="danger">删除</el-button>
+              <el-button @click="deleteDialog=scope.row" size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -104,7 +104,8 @@ export default {
         pageSizes: [10, 25, 50, 100]
       },
 
-      lawState: lawState(),
+      lawState,
+      
       deleteDialog: null
     };
   },
@@ -161,11 +162,7 @@ export default {
       this.lawData = lawList;
       this.loading = false;
     },
-
-    deleteButtonClick(law) {
-      this.deleteDialog = law;
-    },
-
+    
     async deleteLaw() {
       if (!this.deleteDialog) {
         return;

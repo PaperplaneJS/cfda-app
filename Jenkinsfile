@@ -1,8 +1,5 @@
 pipeline {
     agent {
-        // 此处设定构建环境，目前可选有
-        // default, java-8, python-3.5, ruby-2.3, go-1.11 等
-        // 详情请阅 https://dev.tencent.com/help/knowledge-base/how-to-use-ci#agents
         label "node-10"
     }
     stages  {
@@ -30,7 +27,7 @@ pipeline {
                 echo "构建完成."
                 
                 sh 'tar zcvf dist.tar.gz dist'
-                archiveArtifacts artifacts: 'dist.tar.gz', fingerprint: true // 收集构建产物
+                archiveArtifacts artifacts: 'dist.tar.gz', fingerprint: true
             }
         }
     }

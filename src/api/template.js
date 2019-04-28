@@ -10,35 +10,35 @@ const templateState = (state) => {
 }
 const templateKind = (kind) => {
   const kinds = {
-    "daily": "常规模板",
-    "risk": "风险量化模板"
+    'daily': '常规模板',
+    'risk': '风险量化模板'
   }
   if (kind !== undefined) {
-    return allStates[kind];
+    return kinds[kind];
   }
   return kinds;
 }
-const emptyTemplate = () => ({
+const emptyTemplate = (kind = 'daily') => ({
   name: '',
   state: 1,
-  kind: '',
+  kind,
   dep: '',
   staff: '',
   date: '',
   tips: '',
-  template: []
+  content: []
 })
 const emptyMainItem = () => ({
   title: '',
   remark: '',
   detail: []
 })
-const emptySubItem = () => ({
+const emptySubItem = (kind = 'daily') => ({
   content: '',
   required: false,
   importent: false,
   type: 1,
-  val: null
+  val: kind === 'daily' ? null : [0, 0, 0, 0]
 })
 
 async function template(templateOpt) {

@@ -2,10 +2,10 @@
   <el-row id="trace_trace">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>跟踪监督</el-breadcrumb-item>
+      <el-breadcrumb-item>全局总览</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">跟踪监督</el-row>
+    <el-row class="title">全局总览</el-row>
 
     <div id="banner">
       <span>

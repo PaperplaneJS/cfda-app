@@ -23,7 +23,7 @@
             </el-col>
 
             <el-col :span="3">
-              <router-link to="/base/template">
+              <router-link to="/base/risktemplate/new">
                 <el-button size="small" type="primary" icon="el-icon-plus">新建风险量化模板</el-button>
               </router-link>
             </el-col>
@@ -60,7 +60,10 @@
                 <el-table-column prop="name" label="模板名称" sortable min-width="120px;"></el-table-column>
                 <el-table-column prop="kind" label="类别" sortable>
                   <template slot-scope="scope" :type="getKindTag(scope.row.kind)">
-                    <el-tag size="small">{{scope.row.kind | kindText}}</el-tag>
+                    <el-tag
+                      size="small"
+                      :type="scope.row.kind==='daily'?'primary':'warning'"
+                    >{{scope.row.kind | kindText}}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column prop="_dep.name" label="制定部门" sortable></el-table-column>
@@ -81,7 +84,7 @@
                       size="mini"
                       type="primary"
                     >查看 / 编辑</el-button>
-                    <el-button @click="deleteButtonClick(scope.row)" size="mini" type="danger">删除</el-button>
+                    <el-button @click="deleteDialog=scope.row" size="mini" type="danger">删除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -105,7 +108,7 @@
     <el-dialog title="确认删除" v-if="deleteDialog" :visible="true" width="30%">
       <span>确定要删除检查模板 {{deleteDialog.name}} 吗？</span>
       <br>
-      <span>之前使用过该模板的检查记录将不受影响。</span>
+      <span>之前使用过该模板的检查记录将不受影响。此操作无法复原。</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteDialog=null" type="normal">取消</el-button>
         <el-button @click="deleteTemplate()" type="danger">确定</el-button>
@@ -142,7 +145,7 @@ export default {
         pageSizes: [10, 25, 50, 100]
       },
 
-      templateKind: templateKind()
+      templateKind
     };
   },
 
@@ -186,11 +189,7 @@ export default {
       return kind === "daily" ? "normal" : "warning";
     },
 
-    deleteButtonClick(template) {
-      this.deleteDialog = template;
-    },
-
-    async deleteBiz() {
+    async deleteTemplate() {
       if (!this.deleteDialog) {
         return;
       }

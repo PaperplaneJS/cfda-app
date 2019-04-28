@@ -66,7 +66,7 @@ export default {
   },
 
   methods: {
-    handelSubmit() {
+    async handelSubmit() {
       if (
         this.form.staff.trim().length <= 0 ||
         this.form.pwd.trim().length <= 0
@@ -74,15 +74,15 @@ export default {
         return;
       }
 
-      login(this.form).then(data => {
-        if (data.status === 200) {
+      login(this.form)
+        .then(data => {
           this.$store.commit("login", data.data);
           sessionStorage.setItem("currentUser", JSON.stringify(data.data));
           this.$router.push("/index");
-        } else {
+        })
+        .catch(() => {
           this.$message.error(`登录失败!`);
-        }
-      });
+        });
     }
   }
 };

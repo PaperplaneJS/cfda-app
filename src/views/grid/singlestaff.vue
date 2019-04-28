@@ -1,26 +1,26 @@
 <template>
-  <el-row id="grid_singlemember">
+  <el-row id="grid_singlestaff">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/grid/member">网格化管理</el-breadcrumb-item>
-      <el-breadcrumb-item to="/grid/member">行政人员管理</el-breadcrumb-item>
-      <el-breadcrumb-item>{{title}}</el-breadcrumb-item>
+      <el-breadcrumb-item to="/grid/staff">网格化管理</el-breadcrumb-item>
+      <el-breadcrumb-item to="/grid/staff">机构职员管理</el-breadcrumb-item>
+      <el-breadcrumb-item>{{title}} （行政人员）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{title}}</el-row>
+    <el-row class="title">{{title}} （行政人员）</el-row>
 
     <el-form
       :rules="rules"
-      ref="currentMember"
-      :model="currentMember"
+      ref="current"
+      :model="current"
       label-position="left"
       style="margin-top:20px;"
-      label-width="90px"
+      label-width="140px"
     >
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="人员姓名:" prop="name">
-            <el-input :disabled="!edit" v-model="currentMember.name" placeholder="请输入姓名"></el-input>
+            <el-input :disabled="!edit" v-model="current.name" placeholder="请输入姓名"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -28,7 +28,7 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="性别:" prop="sex">
-            <el-radio-group :disabled="!edit" v-model="currentMember.sex">
+            <el-radio-group :disabled="!edit" v-model="current.sex">
               <el-radio :label="1">男</el-radio>
               <el-radio :label="2">女</el-radio>
             </el-radio-group>
@@ -39,7 +39,7 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="状态:" prop="state">
-            <el-radio-group :disabled="!edit" size="small" v-model="currentMember.state">
+            <el-radio-group :disabled="!edit" size="small" v-model="current.state">
               <el-radio :label="1">激活</el-radio>
               <el-radio :label="2">停用</el-radio>
             </el-radio-group>
@@ -50,20 +50,20 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="职务:" prop="job">
-            <el-input :disabled="!edit" v-model="currentMember.job" placeholder="请输入人员职务"></el-input>
+            <el-input :disabled="!edit" v-model="current.job" placeholder="请输入人员职务"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="所属行政级别:" prop="area">
+          <el-form-item label="所属行政级别:">
             <el-cascader
               :disabled="!edit"
               :show-all-levels="false"
-              v-model="currentMember.area"
-              :props="{label:'name',value:'id'}"
-              :options="department.getArea()"
+              v-model="dep"
+              :props="{label:'name',value:'_id'}"
+              :options="cascadeDepData"
               placeholder="选择层级"
               change-on-select
             ></el-cascader>
@@ -82,7 +82,7 @@
           type="primary"
         >{{isNew?"完成新建":"完成编辑"}}</el-button>
         <el-button @click="editCancel" v-if="edit&&!isNew" icon="el-icon-close">取消并还原</el-button>
-        <router-link to="/grid/member">
+        <router-link to="/grid/staff">
           <el-button style="margin-left:20px;">返回行政人员管理</el-button>
         </router-link>
       </el-col>
@@ -91,21 +91,26 @@
 </template>
 
 <script>
+import { dep } from "@/api/dep.js";
+import { staff, emptyStaff } from "@/api/staff.js";
 import { copy } from "@/utils/utils.js";
-import { getStaffByID } from "@/oldAPI/old_staff.js";
-import department from "@/oldAPI/old_area.js";
 
 export default {
-  name: "grid_singlemember",
+  name: "grid_singlestaff",
 
   data() {
     return {
-      department,
-      title: null,
+      title: "",
+
       isNew: null,
       edit: null,
-      currentMember: null,
-      originMemebr: null,
+
+      dep: [],
+      cascadeDepData: [],
+
+      current: emptyStaff(),
+      origin: emptyStaff(),
+
       rules: {
         name: [
           {
@@ -134,61 +139,63 @@ export default {
             message: "必须输入人员职务",
             trigger: ["blur", "change"]
           }
-        ],
-        area: [
-          {
-            required: true,
-            message: "必须输入人员所属行政区域",
-            trigger: ["blur", "change"]
-          }
         ]
       }
     };
   },
 
-  beforeMount() {
-    this.init();
+  async beforeMount() {
+    await this.init();
+  },
+
+  async beforeRouteUpdate(to, from, next) {
+    next();
+    await this.init();
   },
 
   methods: {
-    init() {
-      let gmid = this.$route.params.gridmemberid.trim();
+    async init() {
+      const staffId = this.$route.params.staffid;
+      this.isNew = staffId === "new";
+      this.edit = staffId === "new";
 
-      if (gmid === "new") {
-        this.currentMember = {
-          name: "",
-          sex: 1,
-          state: 1,
-          job: "",
-          area: null
-        };
-        this.isNew = true;
-        this.edit = true;
-        this.title = "新的行政人员";
+      this.cascadeDepData = (await dep(null, false, true)).data;
+      if (!this.isNew) {
+        this.origin = (await staff(staffId)).data;
+        this.dep = (await dep(this.origin.dep)).data._rel;
       } else {
-        let member = copy(getStaffByID(gmid));
+        this.dep = this.cascadeDepData[0]._rel;
+      }
 
-        this.currentMember = {
-          id: gmid,
-          name: member.name,
-          sex: member.sex,
-          state: member.state,
-          job: member.job,
-          area: department.getAreaIDArray(member.area)
-        };
-        this.originMemebr = copy(this.currentMember);
+      this.title = this.isNew ? "新增行政人员" : this.origin.name;
+      this.current = copy(this.origin);
+    },
 
-        this.isNew = false;
-        this.edit = false;
-        this.title = this.currentMember.name;
+    async editOK() {
+      this.origin = (await staff(this.current)).data;
+      if (this.origin._id === this.$store.state.currentUser._id) {
+        this.$store.commit("auth", this.origin);
+      }
+
+      if (this.isNew) {
+        this.$router.push(`/grid/staff/${this.origin._id}`);
+      } else {
+        this.init();
       }
     },
 
-    editOK() {},
-
     editCancel() {
-      this.currentMember = copy(this.originMemebr);
+      this.current = copy(this.origin);
       this.edit = false;
+    }
+  },
+
+  computed: {
+    result() {
+      let resultStaff = copy(this.current);
+      resultStaff.dep = this.dep.slice(-1)[0];
+
+      return resultStaff;
     }
   }
 };

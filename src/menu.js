@@ -30,12 +30,12 @@ let menu = [{
     promission: [2],
     group: [{
         label: '行政区域管理',
-        url: 'area',
+        url: 'department',
         promission: [2]
       },
       {
         label: '行政人员管理',
-        url: 'member',
+        url: 'staff',
         promission: [2]
       }
     ]

@@ -1,28 +1,5 @@
  <template>
   <div id="count_count">
-    <el-row style="margin-bottom:40px" :gutter="8">
-      <el-col :span="10">
-        <el-radio-group style="width:100%;" v-model="range1" size="medium">
-          <el-radio-button label="month">最近1月</el-radio-button>
-          <el-radio-button label="3m">最近3月</el-radio-button>
-          <el-radio-button label="hy">最近半年</el-radio-button>
-          <el-radio-button label="year">最近1年</el-radio-button>
-          <el-radio-button label="3y">最近3年</el-radio-button>
-        </el-radio-group>
-      </el-col>
-
-      <el-col :span="8">
-        <el-date-picker
-          style="width:100%;"
-          v-model="range2"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </el-col>
-    </el-row>
-
     <el-row :gutter="8" class="count_item_box">
       <el-col :span="8">
         <el-card :body-style="{padding:'10px'}" class="count_item">

@@ -1,10 +1,10 @@
 import Vue from 'vue/dist/vue';
 import Router from 'vue-router';
-import Cookies from 'js-cookie';
 import store from './state.js';
 import { auth } from '@/api/action';
 
 import App from '@/app';
+
 import Index from '@/views/index';
 
 import ActionLogin from '@/views/action/login';
@@ -18,9 +18,9 @@ import BaseSingleRiskTemplate from '@/views/base/singlerisktemplate';
 import BaseSingeLaw from '@/views/base/singlelaw';
 
 import GridArea from '@/views/grid/area';
-import GridMember from '@/views/grid/member';
+import GridStaff from '@/views/grid/staff';
 import GridSingleArea from '@/views/grid/singlearea';
-import GridSingleMember from '@/views/grid/singlemember';
+import GridSingleStaff from '@/views/grid/singlestaff';
 
 import SMSList from '@/views/sms/list';
 import SMSPost from '@/views/sms/post';
@@ -104,17 +104,17 @@ let routes = [{
       //网格化管理
 
       {
-        path: '/grid/area',
+        path: '/grid/department',
         component: GridArea
       }, {
-        path: '/grid/member',
-        component: GridMember
+        path: '/grid/staff',
+        component: GridStaff
       }, {
-        path: '/grid/area/:gridareaid',
+        path: '/grid/department/:depid',
         component: GridSingleArea
       }, {
-        path: '/grid/member/:gridmemberid',
-        component: GridSingleMember
+        path: '/grid/staff/:staffid',
+        component: GridSingleStaff
       },
 
       //消息通知管理
@@ -237,8 +237,10 @@ router.beforeEach((to, from, next) => {
       store.commit('auth', null);
       next('/login');
     });
+
   } else if (to.path === '/login' && store.state.currentUser) {
     next(false);
+
   } else {
     next();
   }

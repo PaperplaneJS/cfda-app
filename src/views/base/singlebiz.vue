@@ -394,8 +394,8 @@ export default {
       casecadeDepData: [],
       staffData: [],
 
-      bizKind: bizKind(),
-      bizCategory: bizCategory()
+      bizKind,
+      bizCategory
     };
   },
 

@@ -46,10 +46,6 @@
           <span class="titletext">{{depName}}食品生产经营监管信息化平台</span>
 
           <div id="headmenu">
-            <span>
-              <el-button icon="el-icon-tickets" circle></el-button>
-            </span>
-
             <el-popover
               placement="bottom"
               title="通知和消息"
@@ -103,9 +99,8 @@
 
 <script>
 import { copy, uuid } from "@/utils/utils.js";
-import menu from "@/menu.js";
 import { notice } from "@/oldAPI/old_notice.js";
-import Cookies from "js-cookie";
+import menu from "@/menu.js";
 
 export default {
   name: "app",
@@ -115,6 +110,7 @@ export default {
       depName: process.env.VUE_APP_DEPARTMENT_NAME,
       currentMenuPath: null,
       visible: false,
+
       notice: this.$store.state.notice,
       staff: this.$store.state.currentUser
     };
@@ -164,7 +160,6 @@ export default {
 
     logout() {
       this.$store.commit("logout");
-      Cookies.remove("cfdaId");
       this.$router.push("/login");
     }
   }

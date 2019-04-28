@@ -99,7 +99,7 @@
                 size="mini"
                 type="primary"
               >查看 / 编辑</el-button>
-              <el-button @click="deleteButtonClick(scope.row)" size="mini" type="danger">删除</el-button>
+              <el-button @click="deleteDialog=scope.row" size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -117,6 +117,7 @@
         :total="tableData.length"
       ></el-pagination>
     </el-row>
+    
     <el-dialog title="确认删除" v-if="deleteDialog" :visible="true" width="30%">
       <span>确定要删除食品单位 {{deleteDialog.name}} 吗？</span>
       <br>
@@ -156,8 +157,8 @@ export default {
         pageSizes: [10, 25, 50, 100]
       },
 
-      bizKind: bizKind(),
-      bizCategory: bizCategory(),
+      bizKind,
+      bizCategory,
 
       deleteDialog: null
     };
@@ -239,10 +240,6 @@ export default {
 
     getStateType(state) {
       return ["danger", "success"][state];
-    },
-
-    deleteButtonClick(biz) {
-      this.deleteDialog = biz;
     },
 
     async deleteBiz() {

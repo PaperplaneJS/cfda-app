@@ -1,13 +1,13 @@
 <template>
-  <el-row id="base_singlerisktemplate">
+  <el-row id="base_singletemplate">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/template">基础信息</el-breadcrumb-item>
       <el-breadcrumb-item to="/base/template">模板管理</el-breadcrumb-item>
-      <el-breadcrumb-item>{{title}} (量化分级)</el-breadcrumb-item>
+      <el-breadcrumb-item>{{title}} （量化评级）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{title}} (量化分级)</el-row>
+    <el-row class="title">{{title}} （量化评级）</el-row>
 
     <el-form label-position="left" style="margin-top:20px;" label-width="100px">
       <el-row style="font-size:18px;margin-bottom:15px;" class="section">模板详情</el-row>
@@ -15,7 +15,7 @@
       <el-row :gutter="20">
         <el-col :span="16">
           <el-form-item label="模板名称：" required>
-            <el-input :disabled="!edit" v-model="currentTemplate.name" placeholder="请输入模板名称"></el-input>
+            <el-input :disabled="!edit" v-model="current.name" placeholder="请输入模板名称"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -23,13 +23,13 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="创建人：">
-            <el-input disabled v-model="currentTemplate.staff"></el-input>
+            <el-input disabled v-model="staff.name"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :span="8">
           <el-form-item label="所属科室：">
-            <el-input disabled v-model="currentTemplate.department"></el-input>
+            <el-input disabled v-model="dep.name"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -37,12 +37,19 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item prop="date" label="制定日期：">
-            <el-date-picker disabled style="width:100%" type="date" v-model="currentTemplate.date"></el-date-picker>
+            <el-date-picker
+              disabled
+              style="width:100%"
+              type="date"
+              v-model="createDate"
+              value-format="yyyy-M-d"
+            ></el-date-picker>
           </el-form-item>
         </el-col>
+
         <el-col :span="8">
           <el-form-item prop="date" label="模板类别：">
-            <el-tag size="medium">{{currentTemplate.kind=="daily"?"日常检查":"全量检查"}}</el-tag>
+            <el-tag size="medium">{{current.kind == "daily" ? "日常检查" : "全量检查"}}</el-tag>
           </el-form-item>
         </el-col>
       </el-row>
@@ -50,9 +57,9 @@
       <el-row :gutter="20">
         <el-col :span="16">
           <el-form-item label="激活状态：">
-            <el-radio-group :disabled="!edit" v-model="currentTemplate.state">
+            <el-radio-group :disabled="!edit" v-model="current.state">
               <el-radio :label="1">启用</el-radio>
-              <el-radio :label="2">停用</el-radio>
+              <el-radio :label="0">停用</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -63,7 +70,7 @@
           <el-form-item prop="productaddr" label="备注:">
             <el-input
               :disabled="!edit"
-              v-model="currentTemplate.tips"
+              v-model="current.tips"
               :rows="6"
               type="textarea"
               placeholder="请输入备注信息"
@@ -75,347 +82,7 @@
       <el-row style="font-size:18px;margin-bottom:15px;" class="section">模板内容</el-row>
     </el-form>
 
-    <el-row>
-      <el-col :span="24">
-        <table id="template">
-          <tr>
-            <td class="tablehead">检查项目</td>
-            <td class="tablehead">检查内容</td>
-            <td class="tablehead">提供选项</td>
-            <td class="tablehead">特大、大型餐饮权重(%)</td>
-            <td class="tablehead">中、小、微型餐饮权重(%)</td>
-            <td class="tablehead">集体用餐配送、中央厨房权重(%)</td>
-            <td class="tablehead">单位食堂权重(%)</td>
-            <td v-if="edit" class="tablehead">操作</td>
-          </tr>
-
-          <!-- 普通有内容的行 -->
-          <template v-for="(item,index) of currentTemplate.content">
-            <!-- 带项目标题的大项 -->
-            <tr :key="item.title">
-              <!-- 项目标题 -->
-              <td :rowspan="item.children.length+(edit?1:0)">
-                <el-tag size="mini">{{index+1}}</el-tag>
-                {{item.title}}
-                <el-popover
-                  v-if="item.tips"
-                  placement="top-start"
-                  title="备注"
-                  width="350"
-                  trigger="hover"
-                  :content="item.tips"
-                >
-                  <el-button
-                    style="margin:5px;"
-                    type="warning"
-                    size="mini"
-                    slot="reference"
-                    plain
-                    round
-                  >备注</el-button>
-                </el-popover>
-                <div style="margin-top:30px;" v-if="edit">
-                  <el-button
-                    @click="deleteItem(index)"
-                    size="mini"
-                    type="danger"
-                    icon="el-icon-delete"
-                    circle
-                  ></el-button>
-                  <el-button
-                    @click="editItem(index)"
-                    size="mini"
-                    type="primary"
-                    icon="el-icon-edit"
-                    circle
-                  ></el-button>
-                </div>
-              </td>
-
-              <!-- 有内容的情况,3个单元格 -->
-              <template v-if="item.children&&item.children[0]">
-                <td>
-                  <el-tag size="mini" type="info">{{index+1}}.1</el-tag>
-                  <el-tag
-                    style="margin-left:5px;"
-                    v-if="item.children[0].important"
-                    size="mini"
-                    type="danger"
-                  >重点项</el-tag>
-                  {{item.children[0].content}}
-                </td>
-                <td>
-                  <el-tag
-                    style="margin:3px 3px;"
-                    v-for="result of item.children[0].item"
-                    :type="result.check===null?'':(result.check?'success':'danger')"
-                    :key="result.label"
-                    size="small"
-                  >
-                    {{result.label}}
-                    <strong
-                      v-if="result.point!==undefined"
-                    >[{{result.point | itemText}}]</strong>
-                  </el-tag>
-                  <el-tag
-                    v-if="!item.children[0].required"
-                    style="margin:3px 3px;"
-                    size="small"
-                    type="info"
-                  >留空</el-tag>
-                </td>
-                <!-- <td v-if="edit" style="min-width:70px;">
-                  <el-button @click="deleteDetail(index,0)" size="mini" type="danger" icon="el-icon-delete" circle></el-button>
-                  <el-button @click="editDetail(index,0)" size="mini" type="primary" icon="el-icon-edit" circle></el-button>
-                </td>-->
-                <td>
-                  <el-tag
-                    v-if="item.children[0].risk['特大、大型餐饮']"
-                    size="small"
-                  >{{item.children[0].risk["特大、大型餐饮"]}}</el-tag>
-                </td>
-                <td>
-                  <el-tag
-                    v-if="item.children[0].risk['中、小、微型餐饮']"
-                    size="small"
-                  >{{item.children[0].risk["中、小、微型餐饮"]}}</el-tag>
-                </td>
-                <td>
-                  <el-tag
-                    v-if="item.children[0].risk['集体用餐配送、中央厨房']"
-                    size="small"
-                  >{{item.children[0].risk["集体用餐配送、中央厨房"]}}</el-tag>
-                </td>
-                <td>
-                  <el-tag
-                    v-if="item.children[0].risk['单位食堂']"
-                    size="small"
-                  >{{item.children[0].risk["单位食堂"]}}</el-tag>
-                </td>
-              </template>
-
-              <!-- 添加按钮 -->
-              <template v-else>
-                <td colspan="4">
-                  <el-button
-                    @click="editDetail(index)"
-                    v-if="edit"
-                    icon="el-icon-plus"
-                    size="mini"
-                    type="primary"
-                    round
-                  >添加一项</el-button>
-                  <span v-else>没有内容</span>
-                </td>
-              </template>
-            </tr>
-
-            <!-- 不带有标题格的小项 -->
-            <tr :key="detailIndex.label" v-for="(detailItem,detailIndex) of item.children.slice(1)">
-              <td>
-                <el-tag size="mini" type="info">{{index+1}}.{{detailIndex+2}}</el-tag>
-                <el-tag
-                  style="margin-left:5px;"
-                  v-if="detailItem.important"
-                  size="mini"
-                  type="danger"
-                >重点项</el-tag>
-                {{detailItem.content}}
-              </td>
-              <td>
-                <el-tag
-                  style="margin:3px 3px;"
-                  v-for="result of detailItem.item"
-                  :type="result.check===null?'':(result.check?'success':'danger')"
-                  :key="result.label"
-                  size="small"
-                >
-                  {{result.label}}
-                  <strong
-                    v-if="result.point!==undefined"
-                  >[{{result.point | itemText}}]</strong>
-                </el-tag>
-                <el-tag
-                  v-if="!detailItem.required"
-                  style="margin:3px 3px;"
-                  size="small"
-                  type="info"
-                >留空</el-tag>
-              </td>
-              <!-- <td v-if="edit" style="min-width:70px;">
-                <el-button @click="deleteDetail(index,detailIndex+1)" size="mini" type="danger" icon="el-icon-delete" circle></el-button>
-                <el-button @click="editDetail(index,detailIndex+1)" size="mini" type="primary" icon="el-icon-edit" circle></el-button>
-              </td>-->
-              <td>
-                <el-tag
-                  v-if="detailItem.risk['特大、大型餐饮']"
-                  size="small"
-                >{{detailItem.risk["特大、大型餐饮"]}}</el-tag>
-              </td>
-              <td>
-                <el-tag
-                  v-if="detailItem.risk['中、小、微型餐饮']"
-                  size="small"
-                >{{detailItem.risk["中、小、微型餐饮"]}}</el-tag>
-              </td>
-              <td>
-                <el-tag
-                  v-if="detailItem.risk['集体用餐配送、中央厨房']"
-                  size="small"
-                >{{detailItem.risk["集体用餐配送、中央厨房"]}}</el-tag>
-              </td>
-              <td>
-                <el-tag v-if="detailItem.risk['单位食堂']" size="small">{{detailItem.risk["单位食堂"]}}</el-tag>
-              </td>
-            </tr>
-
-            <!-- 添加按钮 -->
-            <tr v-if="item.children.length>=1&&edit" :key="item.title+'-add'">
-              <td colspan="4">
-                <el-button
-                  @click="editDetail(index)"
-                  icon="el-icon-plus"
-                  size="mini"
-                  type="primary"
-                  round
-                >添加一项</el-button>
-              </td>
-            </tr>
-          </template>
-
-          <!-- 尾部 大项添加按钮 -->
-          <tr v-if="edit">
-            <td colspan="4">
-              <el-button @click="editItem()" icon="el-icon-plus" size="small" type="primary">添加大项</el-button>
-            </td>
-          </tr>
-        </table>
-      </el-col>
-    </el-row>
-
-    <el-dialog
-      v-if="itemPopup"
-      title="编辑大检查项"
-      :visible.sync="itemPopup"
-      width="50%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form label-width="80px">
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="标题：" required>
-              <el-input v-model="itemPopupData.title" placeholder="输入标题"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注：">
-              <el-input :rows="4" type="textarea" placeholder="输入备注信息" v-model="itemPopupData.tips"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="()=>{itemPopup = false;itemPopupData=null;}">取消</el-button>
-        <el-button type="primary" @click="itemPopupOK(itemPopupData.index)">完成</el-button>
-      </span>
-    </el-dialog>
-
-    <el-dialog
-      v-if="detailPopup"
-      title="编辑详细检查项"
-      :visible.sync="detailPopup"
-      width="50%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form label-width="100px">
-        <el-row>
-          <el-col :span="22">
-            <el-form-item label="内容：" required>
-              <el-input
-                :rows="4"
-                type="textarea"
-                placeholder="输入检查项内容"
-                v-model="detailPopupData.content"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="必填项：">
-              <el-checkbox v-model="detailPopupData.required" label="是必填项" border></el-checkbox>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="重点项：">
-              <el-checkbox v-model="detailPopupData.important" label="是重点项" border></el-checkbox>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="分值：">
-              <el-checkbox
-                :disabled="detailPopupData.type==='pingfen'"
-                v-model="detailPopupData.point"
-                label="有分值"
-                border
-              ></el-checkbox>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="可选项：" required>
-              <el-radio-group
-                @change="detailTypeChange"
-                v-model="detailPopupData.type"
-                size="small"
-              >
-                <el-radio-button label="shifou">是/否</el-radio-button>
-                <el-radio-button label="pingfen">评分</el-radio-button>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row v-if="['shifou','fuhe'].includes(detailPopupData.type)">
-          <el-col :push="3" :span="18">
-            <div v-for="item of detailPopupData.item" :key="item.label" class="detailitem">
-              <el-tag
-                :type="item.check?'success':'danger'"
-                style="margin-right:5px;"
-              >「{{item.label}}」选项</el-tag>
-              <span v-if="detailPopupData.point">分值：
-                <el-input v-model.number="item.point" size="small" style="width:60px;"></el-input>
-              </span>
-            </div>
-          </el-col>
-        </el-row>
-
-        <el-row v-if="['pingfen'].includes(detailPopupData.type)">
-          <el-col :push="3" :span="18">
-            <el-tag style="margin-right:5px;">评分</el-tag>
-            <div style="margin-top:20px;">
-              设置评分的上下限范围： 当前 [ {{detailPopupData.limit[0]}} - {{detailPopupData.limit[1]}} ]
-              <el-slider v-model="detailPopupData.limit" range show-stops :min="0" :max="100"></el-slider>
-            </div>
-          </el-col>
-        </el-row>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="()=>{detailPopup = false;detailPopupData=null;}">取消</el-button>
-        <el-button @click="detailPopupOK(detailPopupData.index)" type="primary">完成</el-button>
-      </span>
-    </el-dialog>
+    <cfda-risk-template v-model="current.content" :edit="edit"></cfda-risk-template>
 
     <el-row>
       <el-col :span="24">
@@ -424,8 +91,8 @@
           @click="editOK"
           icon="el-icon-check"
           type="primary"
-        >{{isNew?"完成创建":"完成编辑"}}</el-button>
-        <el-button v-if="!edit" icon="el-icon-edit-outline" type="primary">编辑模板</el-button>
+        >{{isNew ? "完成创建" : "完成编辑"}}</el-button>
+        <el-button v-if="!edit" @click="edit=true" icon="el-icon-edit-outline" type="primary">编辑模板</el-button>
         <el-button
           v-if="edit && !isNew"
           @click="editCancel"
@@ -441,9 +108,15 @@
 </template>
 
 <script>
-import { uuid, copy } from "@/utils/utils.js";
-import { getTemplateByID } from "@/oldAPI/old_template.js";
-import department from "@/oldAPI/old_area.js";
+import { uuid, copy, date } from "@/utils/utils.js";
+import { staff } from "@/api/staff";
+import { dep } from "@/api/dep";
+import {
+  template,
+  templateState,
+  emptyTemplate,
+  emptySubItem
+} from "@/api/template";
 
 export default {
   name: "base_singlerisktemplate",
@@ -453,255 +126,67 @@ export default {
       title: "",
       edit: null,
       isNew: null,
-      currentTemplate: null,
-      originTemplate: null,
 
-      itemPopup: false,
-      itemPopupData: null,
-      detailPopup: false,
-      detailPopupData: null
+      current: emptyTemplate("risk"),
+      origin: emptyTemplate("risk"),
+
+      dep: {},
+      staff: {},
+      createDate: date()
     };
   },
 
-  beforeMount() {
-    this.init();
+  async created() {
+    await this.init();
   },
 
-  filters: {
-    itemText(t) {
-      if (Array.isArray(t)) {
-        return `${t[0]}-${t[1]}分值`;
-      } else {
-        return `${t}分值`;
-      }
-    }
+  async beforeRouteUpdate(to, from, next) {
+    next();
+    await this.init();
   },
 
   methods: {
-    today() {
-      let date = new Date();
+    async init() {
+      const tid = this.$route.params.templateid;
+      this.isNew = tid === "new";
+      this.edit = tid === "new";
 
-      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      if (!this.isNew) {
+        this.origin = (await template(tid)).data;
+        this.createDate = this.origin.data;
+      }
+
+      this.dep = (await dep(
+        this.isNew ? this.$store.state.currentUser.dep : this.origin.dep
+      )).data;
+      this.staff = (await staff(
+        this.isNew ? this.$store.state.currentUser._id : this.origin.staff
+      )).data;
+
+      if (this.isNew) {
+        this.origin.dep = this.dep._id;
+        this.origin.staff = this.staff._id;
+        this.origin.date = this.createDate;
+      }
+
+      this.current = copy(this.origin);
+      this.title = this.isNew ? "新建量化评级模板" : this.origin.name;
     },
 
-    init() {
-      let tid = this.$route.params.templateid;
-      if (tid.trim() === "new") {
-        this.currentTemplate = {
-          name: "",
-          state: 1,
-          content: [],
-          staff: this.$store.state.currentUser.usr_name,
-          department: department.getAreaByID($store.state.currentUser.area)
-            .name,
-          date: this.today(),
-          tips: ""
-        };
-        this.title = "新建检查模板";
-        this.isNew = true;
-        this.edit = true;
+    async editOK() {
+      this.origin = (await template(this.current)).data;
+
+      if (this.isNew) {
+        this.$router.push(`/base/risktemplate/${this.origin._id}`);
       } else {
-        this.currentTemplate = copy(getTemplateByID(tid));
-        this.originTemplate = copy(this.currentTemplate);
-        this.title = this.currentTemplate.name;
-        this.isNew = false;
-        this.edit = false;
+        this.init();
       }
     },
-
-    uuid(t) {
-      return uuid(t);
-    },
-
-    editOK() {},
 
     editCancel() {
-      this.currentTemplate = copy(this.originTemplate);
+      this.current = copy(this.origin);
+      this.title = this.origin.name;
       this.edit = false;
-    },
-
-    deleteDetail(index, detailIndex) {
-      let i = index;
-      let j = detailIndex;
-      this.$confirm(
-        `确定删除模板中的该检查项[${i + 1}.${j + 1}]吗？`,
-        "确认删除",
-        {
-          confirmButtonText: "删除",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      ).then(() => {
-        this.currentTemplate.content[i].children.splice(j, 1);
-      });
-    },
-
-    editDetail(index, detailIndex) {
-      let i = index;
-      let j = detailIndex;
-
-      if (j !== undefined && j !== null) {
-        let popupData = copy(this.currentTemplate.content[i].children[j]);
-        popupData.index = [i, j];
-        popupData.limit = [0, 10];
-        if (popupData.type === "pingfen") {
-          popupData.limit = popupData.item[0].point;
-          popupData.item[0].point = 0;
-        }
-        this.detailPopupData = popupData;
-      } else {
-        this.detailPopupData = {
-          content: "",
-          important: false,
-          required: false,
-          point: false,
-          item: [
-            {
-              label: "是",
-              check: true,
-              point: 0
-            },
-            {
-              label: "否",
-              check: false,
-              point: 0
-            }
-          ],
-          type: "shifou",
-          index: [i],
-          limit: [0, 10]
-        };
-      }
-
-      this.detailPopup = true;
-    },
-
-    deleteItem(index) {
-      let i = index;
-      this.$confirm(
-        `确定删除模板中的大项目[${i + 1}]吗？它的所有内容都将会一并被删除`,
-        "确认删除",
-        {
-          confirmButtonText: "删除",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      ).then(() => {
-        this.currentTemplate.content.splice(i, 1);
-      });
-    },
-
-    editItem(index) {
-      if (index !== undefined && index !== null) {
-        this.itemPopupData = copy(this.currentTemplate.content[index]);
-        this.itemPopupData.index = index;
-      } else {
-        this.itemPopupData = {
-          title: "",
-          tips: "",
-          children: [],
-          limit: [0, 100]
-        };
-      }
-
-      this.itemPopup = true;
-    },
-
-    itemPopupOK(index) {
-      let i = index;
-      Reflect.deleteProperty(this.itemPopupData, "index");
-      if (i !== undefined && i !== null) {
-        this.currentTemplate.content.splice(index, 1, copy(this.itemPopupData));
-      } else {
-        this.currentTemplate.content.push(copy(this.itemPopupData));
-      }
-
-      this.itemPopup = false;
-      this.itemPopupData = null;
-    },
-
-    detailPopupOK([itemIndex, detailIndex]) {
-      let i = itemIndex,
-        j = detailIndex,
-        newDetail = this.editToDetail(copy(this.detailPopupData));
-
-      if (j !== undefined && j !== null) {
-        this.currentTemplate.content[i].children.splice(j, 1, newDetail);
-      } else {
-        this.currentTemplate.content[i].children.push(newDetail);
-      }
-      this.detailPopup = false;
-      this.detailPopupData = null;
-    },
-
-    detailTypeChange(type) {
-      switch (type) {
-        case "shifou":
-          this.detailPopupData.item = [
-            {
-              label: "是",
-              check: true,
-              point: 0
-            },
-            {
-              label: "否",
-              check: false,
-              point: 0
-            }
-          ];
-          break;
-
-        case "fuhe":
-          this.detailPopupData.item = [
-            {
-              label: "符合",
-              check: true,
-              point: 0
-            },
-            {
-              label: "基本符合",
-              check: true,
-              point: 0
-            },
-            {
-              label: "不符合",
-              check: false,
-              point: 0
-            }
-          ];
-          break;
-
-        case "pingfen":
-          this.detailPopupData.point = true;
-          this.detailPopupData.item = [
-            {
-              label: "评分",
-              check: true,
-              point: 0
-            }
-          ];
-          break;
-      }
-    },
-
-    editToDetail(editDetail) {
-      if (!editDetail.point) {
-        editDetail.item.forEach(t => Reflect.deleteProperty(t, "point"));
-      }
-      if (editDetail.type === "pingfen") {
-        editDetail.item[0].point = editDetail.limit;
-      }
-
-      let detail = {
-        content: editDetail.content,
-        important: editDetail.important,
-        required: editDetail.required,
-        point: editDetail.point,
-        item: editDetail.item,
-        type: editDetail.type
-      };
-
-      return detail;
     }
   }
 };
@@ -710,28 +195,5 @@ export default {
 <style lang="scss" scoped>
 .el-row {
   margin-bottom: 0;
-}
-
-#template {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-
-  th,
-  td {
-    border-collapse: collapse;
-    border: 1.5px solid #000;
-    padding: 8px 18px;
-  }
-
-  .tablehead {
-    background-color: #e0e0e0;
-  }
-}
-
-.detailitem {
-  padding: 5px;
-  margin: 5px;
-  border-radius: 3px;
 }
 </style>

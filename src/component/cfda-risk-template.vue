@@ -6,6 +6,10 @@
           <td class="tablehead">检查项目</td>
           <td class="tablehead">检查内容</td>
           <td class="tablehead">提供选项</td>
+          <td class="tablehead" style="max-width:60px;">特大、大型餐饮权重(%)</td>
+          <td class="tablehead" style="max-width:60px;">中、小、微型餐饮权重(%)</td>
+          <td class="tablehead" style="max-width:60px;">集体用餐配送、中央厨房权重(%)</td>
+          <td class="tablehead" style="max-width:60px;">单位食堂权重(%)</td>
           <td v-if="edit" class="tablehead">操作</td>
         </tr>
 
@@ -13,7 +17,11 @@
           <!-- 整行 -->
           <tr :key="`${mainIndex}-${index}`" v-for="index in mainItem.detail.length||1">
             <!-- 检查大项列，需要跨越所有小项行 -->
-            <td style="max-width: 180px;" v-if="index===1" :rowspan="mainItem.detail.length + (edit ? 1 : 0)">
+            <td
+              style="max-width: 180px;"
+              v-if="index===1"
+              :rowspan="mainItem.detail.length + (edit ? 1 : 0)"
+            >
               <el-tag size="mini">{{mainIndex + 1}}</el-tag>
               {{mainItem.title}}
               <el-popover
@@ -56,7 +64,7 @@
             <template v-if="mainItem.detail && mainItem.detail[0]">
               <!-- 详细内容 -->
               <td style="min-width:300px;">
-                <el-tag size="mini" type="info">{{mainIndex+1}}.{{index}}</el-tag>
+                <el-tag size="mini">{{mainIndex+1}}.{{index}}</el-tag>
                 <el-tag
                   style="margin-left:5px;"
                   v-if="mainItem.detail[index-1].important"
@@ -67,35 +75,15 @@
               </td>
 
               <!-- 接受选项 -->
-              <td style="min-width:80px;">
+              <td>
                 <template v-if="mainItem.detail[index-1].type===1">
-                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="small" type="success">
-                    <strong>是</strong>
-                    {{mainItem.detail[index-1].val?`[分值${mainItem.detail[index-1].val[0]}]`:''}}
-                  </el-tag>
-                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="small" type="danger">
-                    <strong>否</strong>
-                    {{mainItem.detail[index-1].val?`[分值${mainItem.detail[index-1].val[1]}]`:''}}
-                  </el-tag>
-                </template>
-                <template v-if="mainItem.detail[index-1].type===2">
-                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="small" type="success">
-                    <strong>符合</strong>
-                    {{mainItem.detail[index-1].val?`[分值${mainItem.detail[index-1].val[0]}]`:''}}
-                  </el-tag>
-                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="small" type="warning">
-                    <strong>基本符合</strong>
-                    {{mainItem.detail[index-1].val?`[分值${mainItem.detail[index-1].val[1]}]`:''}}
-                  </el-tag>
-                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="small" type="danger">
-                    <strong>不符合</strong>
-                    {{mainItem.detail[index-1].val?`[分值${mainItem.detail[index-1].val[2]}]`:''}}
+                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="small">
+                    <strong>是/否</strong>
                   </el-tag>
                 </template>
                 <template v-if="mainItem.detail[index-1].type===3">
-                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="small" type="success">
-                    <strong>灵活评分</strong>
-                    [限评{{mainItem.detail[index-1].val[0]}}-{{mainItem.detail[index-1].val[1]}}分值]
+                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="small" type="info">
+                    <strong>主观评分(0-100)</strong>
                   </el-tag>
                 </template>
                 <el-tag
@@ -104,6 +92,43 @@
                   size="small"
                   type="info"
                 >可留空</el-tag>
+              </td>
+
+              <td>
+                <el-tag
+                  v-if="mainItem.detail[index-1].val[0]"
+                  style="margin-bottom:5px;margin-right:8px;"
+                  size="small"
+                >
+                  <strong>{{mainItem.detail[index-1].val[0]}}</strong>
+                </el-tag>
+              </td>
+              <td>
+                <el-tag
+                  v-if="mainItem.detail[index-1].val[1]"
+                  style="margin-bottom:5px;margin-right:8px;"
+                  size="small"
+                >
+                  <strong>{{mainItem.detail[index-1].val[1]}}</strong>
+                </el-tag>
+              </td>
+              <td>
+                <el-tag
+                  v-if="mainItem.detail[index-1].val[2]"
+                  style="margin-bottom:5px;margin-right:8px;"
+                  size="small"
+                >
+                  <strong>{{mainItem.detail[index-1].val[2]}}</strong>
+                </el-tag>
+              </td>
+              <td>
+                <el-tag
+                  v-if="mainItem.detail[index-1].val[3]"
+                  style="margin-bottom:5px;margin-right:8px;"
+                  size="small"
+                >
+                  <strong>{{mainItem.detail[index-1].val[3]}}</strong>
+                </el-tag>
               </td>
 
               <!-- 操作区 -->
@@ -127,7 +152,7 @@
 
             <!-- 没有内容时候的替代 -->
             <template v-else>
-              <td colspan="4">
+              <td colspan="7">
                 <el-button
                   @click="subEdit(mainIndex)"
                   v-if="edit"
@@ -143,7 +168,7 @@
 
           <!-- 添加子项按钮 -->
           <tr v-if="mainItem.detail.length >= 1 && edit" :key="`${mainIndex}-add`">
-            <td colspan="4">
+            <td colspan="7">
               <el-button
                 @click="subEdit(mainIndex)"
                 icon="el-icon-plus"
@@ -157,7 +182,7 @@
 
         <!-- 添加大项行按钮 -->
         <tr v-if="edit">
-          <td colspan="4">
+          <td colspan="9">
             <el-button @click="mainEdit()" icon="el-icon-plus" size="small" type="primary">添加大项</el-button>
           </td>
         </tr>
@@ -237,25 +262,11 @@
           </el-col>
         </el-row>
 
-        <el-row v-if="subPopupData.type < 3">
-          <el-col :span="24">
-            <el-form-item label="分值：">
-              <el-checkbox
-                :value="subPopupData.val!=null"
-                @change="subWithPointChange"
-                label="有分值"
-                border
-              ></el-checkbox>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
         <el-row>
           <el-col :span="24">
             <el-form-item label="可选项：" required>
-              <el-radio-group @change="subTypeChange" v-model="subPopupData.type" size="small">
+              <el-radio-group v-model="subPopupData.type" size="small">
                 <el-radio-button :label="1">是/否</el-radio-button>
-                <el-radio-button :label="2">符合/基本符合/不符合</el-radio-button>
                 <el-radio-button :label="3">主观评分</el-radio-button>
               </el-radio-group>
             </el-form-item>
@@ -266,49 +277,52 @@
           <el-col v-if="subPopupData.type === 1" :push="3" :span="18">
             <div class="detailitem">
               <el-tag type="success" style="margin-right:5px;">「是」选项</el-tag>
-              <span v-if="subPopupData.val!==null">
-                分值：
-                <el-input v-model.number="subPopupData.val[0]" size="small" style="width:60px;"></el-input>
-              </span>
             </div>
             <div class="detailitem">
               <el-tag type="danger" style="margin-right:5px;">「否」选项</el-tag>
-              <span v-if="subPopupData.val!==null">
-                分值：
-                <el-input v-model.number="subPopupData.val[1]" size="small" style="width:60px;"></el-input>
-              </span>
             </div>
           </el-col>
 
-          <el-col v-if="subPopupData.type === 2" :push="3" :span="18">
+          <el-col v-if="subPopupData.type===3" :push="3" :span="18">
+            <el-tag style="margin-right:5px;">主观评分 (0-100)</el-tag>
+          </el-col>
+        </el-row>
+
+        <el-row style="margin-top:20px;">
+          <el-col :push="3" :span="18">
+            <strong>以下权重项中留空或填写0，则表示不检查此项</strong>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :push="3" :span="18">
             <div class="detailitem">
-              <el-tag type="success" style="margin-right:5px;">「符合」选项</el-tag>
-              <span v-if="subPopupData.val!==null">
-                分值：
+              <el-tag style="margin-right:5px;">特大、大型餐饮权重(%)</el-tag>
+              <span>
+                权重：
                 <el-input v-model.number="subPopupData.val[0]" size="small" style="width:60px;"></el-input>
               </span>
             </div>
             <div class="detailitem">
-              <el-tag type="warning" style="margin-right:5px;">「基本符合」选项</el-tag>
-              <span v-if="subPopupData.val!==null">
-                分值：
+              <el-tag style="margin-right:5px;">中、小、微型餐饮权重(%)</el-tag>
+              <span>
+                权重：
                 <el-input v-model.number="subPopupData.val[1]" size="small" style="width:60px;"></el-input>
               </span>
             </div>
             <div class="detailitem">
-              <el-tag type="danger" style="margin-right:5px;">「不符合」选项</el-tag>
-              <span v-if="subPopupData.val!==null">
-                分值：
+              <el-tag style="margin-right:5px;">集体用餐配送、中央厨房权重(%)</el-tag>
+              <span>
+                权重：
                 <el-input v-model.number="subPopupData.val[2]" size="small" style="width:60px;"></el-input>
               </span>
             </div>
-          </el-col>
-
-          <el-col v-if="subPopupData.type===3&&subPopupData.val!==null" :push="3" :span="18">
-            <el-tag style="margin-right:5px;">灵活评分</el-tag>
-            <div style="margin-top:20px;">
-              设置评分的上下限范围： 当前 [ {{subPopupData.val[0]}} - {{subPopupData.val[1]}} ]
-              <el-slider v-model="subPopupData.val" range show-stops :min="0" :max="20"></el-slider>
+            <div class="detailitem">
+              <el-tag style="margin-right:5px;">单位食堂权重(%)</el-tag>
+              <span>
+                权重：
+                <el-input v-model.number="subPopupData.val[3]" size="small" style="width:60px;"></el-input>
+              </span>
             </div>
           </el-col>
         </el-row>
@@ -326,7 +340,7 @@
 import { uuid, copy } from "@/utils/utils.js";
 import { emptyMainItem, emptySubItem } from "@/api/template.js";
 export default {
-  name: "cfda-template",
+  name: "cfda-risk-template",
   props: ["value", "edit"],
   data() {
     return {
@@ -354,7 +368,7 @@ export default {
       let i = mainIndex;
       let j = subIndex;
 
-      let popupData = emptySubItem();
+      let popupData = emptySubItem("risk");
       if (j !== undefined && j !== null) {
         popupData = copy(this.value[i].detail[j]);
       }
@@ -435,15 +449,6 @@ export default {
       ).then(() => {
         this.value.splice(i, 1);
       });
-    },
-
-    subWithPointChange(withPoint) {
-      this.subPopupData.val = withPoint ? [0, 0, 0] : null;
-    },
-
-    subTypeChange(typeCode) {
-      this.subPopupData.val =
-        this.subPopupData.val || typeCode === 3 ? [0, 0, 0] : null;
     }
   }
 };

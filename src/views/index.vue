@@ -6,11 +6,12 @@
         <el-row>
           <el-col :span="24">
             <el-radio-group size="small" v-model="posKind">
-              <el-radio-button label="全部">全部</el-radio-button>
-              <el-radio-button label="1">食品经营</el-radio-button>
-              <el-radio-button label="2">小作坊</el-radio-button>
-              <el-radio-button label="3">网上商家</el-radio-button>
-              <el-radio-button label="4">餐饮服务</el-radio-button>
+              <el-radio-button :label="'all'">全部</el-radio-button>
+              <el-radio-button
+                v-for="(name,index) of bizKind()"
+                :key="index+1"
+                :label="index+1"
+              >{{name}}</el-radio-button>
             </el-radio-group>
           </el-col>
         </el-row>
@@ -51,21 +52,15 @@
         <el-row :gutter="15">
           <el-col :span="24">
             <el-form-item label="经营个体名：">
-              <el-input v-model="popupItem.com_name" disabled></el-input>
+              <el-input v-model="popupItem.name" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row :gutter="15">
           <el-col :span="12">
-            <el-form-item label="所属行政区域：">
-              <el-input :value="getAreaByID(popupItem.area).name" disabled></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
             <el-form-item label="企业类型：">
-              <el-input :value="kindText(popupItem.com_kind)" disabled></el-input>
+              <el-input :value="bizKind(popupItem.kind)" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -73,13 +68,13 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="联系人员：">
-              <el-input v-model="popupItem.com_contact" disabled></el-input>
+              <el-input v-model="popupItem.contact" disabled></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="联系电话：">
-              <el-input v-model="popupItem.com_contactphone" disabled></el-input>
+              <el-input v-model="popupItem.phone" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -94,7 +89,7 @@
 
           <el-col :span="12">
             <el-form-item label="经营类别：">
-              <el-input v-model="popupItem.com_category" disabled></el-input>
+              <el-input v-model="popupItem.category" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -103,7 +98,7 @@
         <el-button
           size="medium"
           type="primary"
-          @click="$router.push('/base/biz/'+popupItem.com_id)"
+          @click="$router.push('/base/biz/'+popupItem._id)"
         >前往查看</el-button>
         <el-button size="medium" @click="()=>{popup=false;popupItem=null;}">关闭</el-button>
       </span>
@@ -112,19 +107,22 @@
 </template>
 
 <script>
+import echarts from "echarts";
 import { copy } from "@/utils/utils.js";
 import { count } from "@/api/count.js";
-import { getAllBizs } from "@/oldAPI/old_biz.js";
-import { getAreaByID } from "@/oldAPI/old_area.js";
-import echarts from "echarts";
+import { biz, bizKind } from "@/api/biz.js";
+import BMap from "BMap";
 
 export default {
   name: "index",
   data() {
     return {
+      BDKey: process.env.VUE_APP_BDMAP_KEY,
       map: null,
       mappoint: null,
       chart: null,
+
+      bizData: [],
 
       posKind: null,
       chartKind: null,
@@ -132,19 +130,24 @@ export default {
 
       popupItem: null,
       popup: false,
-      getAreaByID
+      bizKind
     };
   },
 
-  mounted() {
-    this.init();
+  async mounted() {
+    await this.init();
+  },
+
+  async beforeRouteUpdate() {
+    next();
+    await this.init();
   },
 
   computed: {
     bizPos() {
-      let result = getAllBizs();
-      if (this.posKind && this.posKind !== "全部") {
-        result = result.filter(t => t.com_kind === this.posKind);
+      let result = copy(this.bizData);
+      if (this.posKind && this.posKind !== "all") {
+        result = result.filter(t => t.kind === this.posKind);
       }
 
       if (this.posText && this.posText.trim().length > 0) {
@@ -171,7 +174,8 @@ export default {
   },
 
   methods: {
-    init() {
+    async init() {
+      this.bizData = (await biz()).data;
       this.map = new BMap.Map("map");
       this.map.centerAndZoom(process.env.VUE_APP_CITY_NAME, 12);
       this.map.addControl(
@@ -187,10 +191,10 @@ export default {
       this.map.addControl(top_left_navigation);
       this.map.enableScrollWheelZoom();
       this.area();
-      this.posKind = "全部";
 
       this.chart = echarts.init(document.getElementById("chart"));
       this.chartKind = "bizCountKind";
+      this.posKind = "all";
     },
 
     pointDraw() {
@@ -198,42 +202,29 @@ export default {
       this.mappoint = [];
 
       this.bizPos.forEach(t => {
-        let imgsrc = "";
-
-        if (t.com_kind === "1") {
-          imgsrc = "jingying";
-        } else if (t.com_kind === "2") {
-          imgsrc = "zuofang";
-        } else if (t.com_kind === "3") {
-          imgsrc = "wangshang";
-        } else if (t.com_kind === "4") {
-          imgsrc = "canyin";
+        if (!t.gps || t.gps.includes(null)) {
+          return;
         }
+        let imgsrc = ["", "jingying", "zuofang", "wangshang", "canyin"][t.kind];
 
-        let [x, y] = t.com_gps.split(",");
+        let [x, y] = t.gps;
         let icon = new BMap.Icon(
           require(`../assets/img/mapsigns/${imgsrc}.png`),
           new BMap.Size(38, 29)
         );
-        let point = new BMap.Marker(
-          new BMap.Point(Number(x.trim()), Number(y.trim())),
-          { icon: icon }
-        );
+        let point = new BMap.Marker(new BMap.Point(x, y), { icon: icon });
 
         point.addEventListener("dblclick", () => {
           this.popupItem = t;
           this.popup = true;
         });
 
-        let getKindText = this.kindText;
         point.addEventListener("click", function() {
           this.openInfoWindow(
             new BMap.InfoWindow(
-              `<strong>${t.com_name}</strong><br/>类型：${getKindText(
-                t.com_kind
-              )}<br/>联系人：${t.com_contact}<br/>联系电话：${
-                t.com_contactphone
-              }`
+              `<strong>${t.name}</strong><br/>类型：${bizKind(
+                t.kind
+              )}<br/>联系人：${t.contact}<br/>联系电话：${t.phone}`
             )
           );
         });
@@ -245,7 +236,7 @@ export default {
 
     area() {
       let bdary = new BMap.Boundary();
-      bdary.get("常熟", rs => {
+      bdary.get(process.env.VUE_APP_CITY_NAME, rs => {
         let count = rs.boundaries.length;
         if (count === 0) {
           return;
@@ -269,19 +260,6 @@ export default {
         return;
       }
       this.mappoint.forEach(t => this.map.removeOverlay(t));
-    },
-
-    kindText(kind) {
-      switch (kind) {
-        case "1":
-          return "食品经营";
-        case "2":
-          return "食品小作坊";
-        case "3":
-          return "网上商家";
-        case "4":
-          return "餐饮服务";
-      }
     }
   }
 };

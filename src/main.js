@@ -9,7 +9,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(Element);
 
 import cfdatemplate from "@/component/cfda-template";
+import cfdarisktemplate from "@/component/cfda-risk-template";
 Vue.component('cfda-template', cfdatemplate);
+Vue.component('cfda-risk-template', cfdarisktemplate);
 
 Vue.config.productionTip = process.env.NODE_ENV !== 'development';
 

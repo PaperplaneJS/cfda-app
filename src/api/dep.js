@@ -17,15 +17,21 @@ const emptyDep = () => ({
 
 
 async function dep(depOpt, isUnder, isCascade) {
-  const underParam = isUnder ? 'under=1' : '';
-  const cascadeParam = isCascade ? '&cascade=1' : '';
+  const param = [];
+  if (isUnder) {
+    param.push('under=1');
+  }
+  if (isCascade) {
+    param.push('cascade=1')
+  }
+  const query = param.join('&');
 
   if (!depOpt) {
-    let url = `/dep?${underParam}&${cascadeParam}`;
+    let url = `/dep?${query}`;
     return await axios.get(url);
 
   } else if (typeof(depOpt) === 'string') {
-    let url = `/dep/${depOpt}?${underParam}&${cascadeParam}`;
+    let url = `/dep/${depOpt}?${query}`;
     return await axios.get(url);
 
   } else if (typeof(depOpt) === 'object') {
