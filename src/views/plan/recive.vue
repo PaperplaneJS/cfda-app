@@ -145,18 +145,15 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="isPopup=false">取消</el-button>
-        <el-button @click.native="acceptPlan" icon="el-icon-check" type="primary">确定接收</el-button>
+        <el-button @click="isPopup=false">取消</el-button>
+        <el-button @click="acceptPlan" icon="el-icon-check" type="primary">确定接收</el-button>
       </div>
     </el-dialog>
   </el-row>
 </template>
 
 <script>
-import department from "@/oldAPI/old_area.js";
-import { getPlans } from "@/oldAPI/old_plan.js";
-import { getTemplates } from "@/oldAPI/old_template.js";
-import { getStaffByID } from "@/oldAPI/old_staff.js";
+
 
 export default {
   name: "plan_recive",
@@ -165,6 +162,7 @@ export default {
     return {
       isPopup: false,
       popupItem: null,
+      
       planTable: {
         page: 1,
         pageSize: 10,

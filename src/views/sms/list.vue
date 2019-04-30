@@ -25,7 +25,7 @@
         <el-checkbox
           style="width:100%;"
           size="small"
-          v-model="search.onlyunread"
+          v-model="search.noread"
           label="只显示未读消息"
           border
         ></el-checkbox>
@@ -56,28 +56,33 @@
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table
+          v-loading="loading"
           :row-class-name="tableRowClassName"
           :data="pageData"
           size="medium"
           style="width: 100%"
         >
-          <el-table-column type="index" label="序号" align="center" width="60px"></el-table-column>
-          <el-table-column label="标题" sortable min-width="250px">
+          <el-table-column label="消息标题" sortable min-width="250px">
             <template slot-scope="scope">
               <el-tag
                 size="small"
                 style="margin-right:10px;"
-                :type="getType(scope.row.read)"
-              >{{scope.row.read?"已读":"未读"}}</el-tag>
+                :type="getReadStateType(scope.row)"
+              >{{isRead(scope.row)?"已读":"未读"}}</el-tag>
               {{scope.row.title}}
             </template>
           </el-table-column>
-          <el-table-column prop="staff" label="发布人" sortable></el-table-column>
-          <el-table-column prop="department" label="发布单位" sortable></el-table-column>
+          <el-table-column label="发布状态" sortable>
+            <template slot-scope="scope">
+              <el-tag size="small">接收/下发：{{scope.row.recive.length}}/{{scope.row.post.length}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="_dep.name" label="发布机构" sortable></el-table-column>
+          <el-table-column prop="_staff.name" label="发布人" sortable></el-table-column>
           <el-table-column prop="date" label="发布日期" align="center" sortable></el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-button @click="$router.push('sms/'+scope.row.id)" size="mini" type="primary">查看消息</el-button>
+              <el-button @click="$router.push('sms/'+scope.row._id)" size="mini" type="primary">查看消息</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -99,17 +104,25 @@
 </template>
 
 <script>
-import SMS from "@/oldAPI/old_sms.js";
+import { sms } from "@/api/sms.js";
+import { staff } from "@/api/staff";
+import { dep } from "@/api/dep";
 
 export default {
   name: "sms_list",
 
   data() {
     return {
+      smsData: [],
+      depData: [],
+      staffData: [],
+
+      loading: true,
+
       search: {
         text: "",
         daterange: [],
-        onlyunread: true
+        noread: true
       },
       smsTable: {
         page: 1,
@@ -119,18 +132,57 @@ export default {
     };
   },
 
+  async beforeMount() {
+    await this.init();
+  },
+
+  methods: {
+    async init() {
+      this.loading = true;
+
+      let smsList = (await sms()).data;
+      this.depData = (await dep()).data;
+      this.staffData = (await staff()).data;
+
+      smsList.forEach(sms => {
+        sms._dep = this.depData.find(t => t._id === sms.dep);
+        sms._staff = this.staffData.find(t => t._id === sms.staff);
+      });
+      this.smsData = smsList;
+
+      this.loading = false;
+    },
+
+    getReadStateType(sms) {
+      return this.isRead(sms) ? "info" : "warning";
+    },
+
+    isRead(sms) {
+      return sms.recive
+        .map(t => t.staff)
+        .includes(this.$store.state.currentUser._id);
+    },
+
+    tableRowClassName({ row }) {
+      return this.isRead(row) ? "" : "noread";
+    }
+  },
+
   computed: {
     tableData() {
-      let tableData = SMS.getAllSMS();
+      let tableData = this.smsData;
 
-      if (this.search.onlyunread) {
-        tableData = tableData.filter(t => !t.read);
+      if (this.search.noread) {
+        tableData = tableData.filter(t => !this.isRead(t));
       }
 
       if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;
         tableData = tableData.filter(
-          t => t.title.includes(searchText) || t.department.includes(searchText)
+          t =>
+            t.title.includes(searchText) ||
+            t._dep.name.includes(searchText) ||
+            t._staff.name.includes(searchText)
         );
       }
 
@@ -155,24 +207,6 @@ export default {
         (this.smsTable.page - 1) * this.smsTable.pageSize,
         this.smsTable.page * this.smsTable.pageSize
       );
-    }
-  },
-
-  methods: {
-    tableRowClassName({ row, rowIndex }) {
-      if (!row.read) {
-        return "noread";
-      }
-      return "";
-    },
-
-    getType(isread) {
-      switch (isread) {
-        case true:
-          return "info";
-        case false:
-          return "warning";
-      }
     }
   }
 };

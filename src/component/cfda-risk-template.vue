@@ -337,8 +337,9 @@
 </template>
 
 <script>
-import { uuid, copy } from "@/utils/utils.js";
+import { copy } from "@/utils/utils.js";
 import { emptyMainItem, emptySubItem } from "@/api/template.js";
+
 export default {
   name: "cfda-risk-template",
   props: ["value", "edit"],
@@ -350,13 +351,12 @@ export default {
       subPopup: false,
       subPopupData: null,
 
-      uuid,
       copy
     };
   },
 
   watch: {
-    value: function(newValue, oldValue) {
+    value: function(newValue) {
       this.$emit("input", newValue);
     }
   },

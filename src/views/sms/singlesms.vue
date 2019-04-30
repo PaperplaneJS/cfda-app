@@ -13,7 +13,7 @@
       <el-row>
         <el-col :span="16">
           <el-form-item label="消息标题：">
-            <el-input disabled v-model="currentSMS.title"></el-input>
+            <el-input readonly v-model="current.title"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -21,13 +21,13 @@
       <el-row>
         <el-col :span="6">
           <el-form-item label="下发单位：">
-            <el-input disabled v-model="currentSMS.department"></el-input>
+            <el-input readonly v-model="current._dep.name"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :push="2" :span="6">
           <el-form-item label="下发人：">
-            <el-input disabled v-model="currentSMS.staff"></el-input>
+            <el-input readonly v-model="current._staff.name"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -35,7 +35,7 @@
       <el-row>
         <el-col :span="6">
           <el-form-item label="发布时间：">
-            <el-date-picker disabled v-model="currentSMS.date" type="datetime"></el-date-picker>
+            <el-date-picker readonly v-model="current.date" type="datetime"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -43,7 +43,34 @@
       <el-row>
         <el-col :span="16">
           <el-form-item label="消息内容：">
-            <el-input disabled :rows="10" v-model="currentSMS.content" type="textarea"></el-input>
+            <el-input readonly :rows="10" v-model="current.content" type="textarea"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col :span="16">
+          <el-form-item label="已接收职员：">
+            <el-tag
+              style="margin:5px;"
+              size="small"
+              v-for="s in current.recive"
+              :key="s.staff"
+            >{{getStaffInfo(s.staff).name}} | {{s.date}}</el-tag>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col :span="16">
+          <el-form-item label="未接收职员：">
+            <el-tag
+              style="margin:5px;"
+              type="warning"
+              size="small"
+              v-for="staffId in norecive"
+              :key="staffId"
+            >{{getStaffInfo(staffId).name}}</el-tag>
           </el-form-item>
         </el-col>
       </el-row>
@@ -60,8 +87,9 @@
 </template>
 
 <script>
-import { copy } from "@/utils/utils.js";
-import { getSMSByID } from "@/oldAPI/old_sms.js";
+import { sms } from "@/api/sms.js";
+import { dep } from "@/api/dep.js";
+import { staff } from "@/api/staff.js";
 
 export default {
   name: "sms_singlesms",
@@ -69,19 +97,51 @@ export default {
   data() {
     return {
       title: null,
-      currentSMS: null
+
+      staffData: [],
+
+      current: {
+        _staff: {},
+        _dep: {}
+      }
     };
   },
 
-  beforeMount() {
-    this.init();
+  async beforeMount() {
+    await this.init();
+  },
+
+  async beforeRouteUpdate(to, from, next) {
+    next();
+    await this.init();
   },
 
   methods: {
-    init() {
-      let smsid = this.$route.params.smsid;
-      this.currentSMS = copy(getSMSByID(smsid));
-      this.title = this.currentSMS.title;
+    async init() {
+      const smsid = this.$route.params.smsid;
+
+      this.staffData = (await staff()).data;
+
+      let currentSms = (await sms(smsid)).data;
+      currentSms._dep = (await dep(currentSms.dep)).data;
+      currentSms._staff = (await staff(currentSms.staff)).data;
+      this.current = currentSms;
+
+      this.title = this.current.title;
+    },
+
+    getStaffInfo(staffId) {
+      return this.staffData.find(t => t._id === staffId);
+    }
+  },
+
+  computed: {
+    norecive() {
+      if (!this.current.recive) {
+        return [];
+      }
+      let reciveStaffIds = this.current.recive.map(t => t.staff);
+      return this.current.post.filter(t => !reciveStaffIds.includes(t));
     }
   }
 };

@@ -42,7 +42,7 @@
 
             <el-col :span="4">
               <el-select size="small" v-model="search.kind" clearable placeholder="按类别筛选">
-                <el-option v-for="(v,k) in templateKind" :key="k" :label="v" :value="k"></el-option>
+                <el-option v-for="(v,k) in templateKind()" :key="k" :label="v" :value="k"></el-option>
               </el-select>
             </el-col>
 
@@ -118,9 +118,9 @@
 </template>
 
 <script>
-import { templateState, templateKind, template, del } from "@/api/template";
-import { staff } from "@/api/staff";
-import { dep } from "@/api/dep";
+import { templateState, templateKind, template, del } from "@/api/template.js";
+import { staff } from "@/api/staff.js";
+import { dep } from "@/api/dep.js";
 
 export default {
   name: "base_template",

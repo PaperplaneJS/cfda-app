@@ -9,7 +9,8 @@
     <el-row class="title">{{title}} ({{riskYear}}年度记录)</el-row>
 
     <el-form v-if="currentRisk" label-position="left" style="margin-top:20px;" label-width="100px">
-      <el-row style="font-size:18px;margin-bottom:15px;" class="section">企业单位信息
+      <el-row style="font-size:18px;margin-bottom:15px;" class="section">
+        企业单位信息
         <router-link :to="`/base/biz/${currentRisk.biz.id}`">
           <el-button type="text" size="mini">前往查看</el-button>
         </router-link>
@@ -282,10 +283,11 @@ export default {
       let risk = null;
 
       Object.entries(getAllRisks()).forEach(([key, value]) => {
+        let riskYear = this.riskYear;
         value.forEach(t => {
           if (t.id == this.riskid) {
             risk = copy(t);
-            this.riskYear = Number(key);
+            riskYear = Number(key);
             return false;
           }
         });

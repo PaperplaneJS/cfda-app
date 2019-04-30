@@ -97,7 +97,6 @@
 
 <script>
 import { dep, del, depState } from "@/api/dep.js";
-import { copy } from "@/utils/utils.js";
 
 export default {
   name: "grid_area",
@@ -131,9 +130,30 @@ export default {
     stateText: state => depState(state)
   },
 
+  methods: {
+    async init() {
+      this.loading = true;
+      this.depData = (await dep()).data;
+      this.loading = false;
+    },
+
+    getStateType(state) {
+      return ["danger", "success"][state];
+    },
+
+    async deleteDep() {
+      if (!this.deleteDialog) {
+        return;
+      }
+      await del(this.deleteDialog._id);
+      this.deleteDialog = null;
+      this.init();
+    }
+  },
+
   computed: {
     tableData() {
-      let tableData = copy(this.depData);
+      let tableData = this.depData;
       if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;
         tableData = tableData.filter(
@@ -153,27 +173,6 @@ export default {
         (this.depTable.page - 1) * this.depTable.pageSize,
         this.depTable.page * this.depTable.pageSize
       );
-    }
-  },
-
-  methods: {
-    async init() {
-      this.loading = true;
-      this.depData = (await dep()).data;
-      this.loading = false;
-    },
-
-    getStateType(state) {
-      return ["danger", "success"][state];
-    },
-
-    async deleteDep() {
-      if (!this.deleteDialog) {
-        return;
-      }
-      await del(this.deleteDialog._id);
-      this.deleteDialog = null;
-      this.init();
     }
   }
 };

@@ -1,22 +1,40 @@
 <template>
-  <el-row id="plan_post">
+  <el-row id="plan_list">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/plan/post">检查计划管理</el-breadcrumb-item>
-      <el-breadcrumb-item>计划分发</el-breadcrumb-item>
+      <el-breadcrumb-item to="/plan">检查计划管理</el-breadcrumb-item>
+      <el-breadcrumb-item>所有计划</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">计划分发</el-row>
+    <el-row class="title">查看与制定检查计划</el-row>
+    <el-row class="action" :gutter="15">
+      <el-col :span="2">
+        <router-link to="/plan/new">
+          <el-button type="primary" size="small" icon="el-icon-plus">制定新的计划</el-button>
+        </router-link>
+      </el-col>
+    </el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
         <el-input
-          v-model="search.text"
-          size="small"
           clearable
+          size="small"
+          v-model="search.text"
           placeholder="搜索计划内容/标题/来源等"
           prefix-icon="el-icon-search"
         ></el-input>
+      </el-col>
+
+      <el-col :span="4">
+        <el-select size="small" clearable v-model="search.state" placeholder="按状态筛选">
+          <el-option
+            v-for="(name,index) in planState()"
+            :key="index+1"
+            :label="name"
+            :value="index+1"
+          ></el-option>
+        </el-select>
       </el-col>
 
       <el-col :span="4">
@@ -25,15 +43,15 @@
         </el-select>
       </el-col>
 
-      <el-col :span="8">
+      <el-col :span="6">
         <el-date-picker
-          v-model="search.daterange"
-          clearable
           size="small"
+          clearable
+          v-model="search.daterange"
           type="daterange"
           range-separator="至"
-          start-placeholder="起始日期"
-          end-placeholder="截止日期"
+          start-placeholder="制定日期范围"
+          end-placeholder="截止"
         ></el-date-picker>
       </el-col>
     </el-row>
@@ -59,18 +77,73 @@
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
               <el-tag
-                size="small"
+                size="mini"
                 :type="getStateType(scope.row.state)"
               >{{planState(scope.row.state)}}</el-tag>
+              <el-popover
+                v-if="scope.row.state!==1"
+                placement="top-start"
+                title="分发情况"
+                width="600"
+                trigger="hover"
+              >
+                <table>
+                  <tr>
+                    <td>
+                      <strong>已接收单位：</strong>
+                    </td>
+                    <td>
+                      <template v-if="scope.row.recive.length>0">
+                        <el-tag
+                          v-for="d in scope.row.recive"
+                          :key="d.dep"
+                          size="mini"
+                          type="primary"
+                          style="margin:5px;"
+                        >{{getDepName(t.dep)}} | {{t.date}}</el-tag>
+                      </template>
+                      <el-tag v-else size="mini" type="info" style="margin:5px;">无</el-tag>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>未接收单位：</strong>
+                    </td>
+                    <td>
+                      <template v-if="norecive(scope.row).length>0">
+                        <el-tag
+                          v-for="d in norecive(scope.row)"
+                          :key="d.staff"
+                          size="mini"
+                          type="warning"
+                          style="margin:5px;"
+                        >{{getDepName(d)}}</el-tag>
+                      </template>
+                      <el-tag v-else size="mini" type="info" style="margin:5px;">无</el-tag>
+                    </td>
+                  </tr>
+                </table>
+                <el-button
+                  type="text"
+                  size="small"
+                  slot="reference"
+                >接收/分发：{{scope.row.recive.length}}/{{scope.row.post.length}}</el-button>
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
               <el-button
-                @click="$router.push(`/plan/post/${scope.row._id}`)"
+                @click="$router.push(`/plan/${scope.row._id}`)"
                 size="mini"
                 type="primary"
-              >分发计划</el-button>
+              >查看 / 编辑</el-button>
+              <el-button
+                @click="deleteDialog=scope.row"
+                :disabled="scope.row.state!==1"
+                size="mini"
+                type="danger"
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -79,8 +152,8 @@
 
     <el-row>
       <el-pagination
-        background
         @size-change="t=>planTable.pageSize=t"
+        background
         :current-page.sync="planTable.page"
         :page-sizes="planTable.pageSizes"
         :page-size="planTable.pageSize"
@@ -88,6 +161,16 @@
         :total="tableData.length"
       ></el-pagination>
     </el-row>
+
+    <el-dialog title="确认删除" v-if="deleteDialog" :visible="true" width="30%">
+      <span>确定要删除检查计划 {{deleteDialog.name}} 吗？</span>
+      <br>
+      <span>只有待分发状态的计划可以删除。此操作无法复原。</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialog=null" type="normal">取消</el-button>
+        <el-button @click="deletePlan()" type="danger">确定</el-button>
+      </span>
+    </el-dialog>
   </el-row>
 </template>
 
@@ -97,7 +180,7 @@ import { dep } from "@/api/dep.js";
 import { staff } from "@/api/staff.js";
 
 export default {
-  name: "plan_post",
+  name: "plan_list",
 
   data() {
     return {
@@ -133,7 +216,7 @@ export default {
     async init() {
       this.loading = true;
 
-      let planList = (await plan()).data.filter(t => t.state === 1);
+      let planList = (await plan()).data;
       this.depData = (await dep()).data;
       this.staffData = (await staff()).data;
 
@@ -226,3 +309,4 @@ export default {
   }
 };
 </script>
+

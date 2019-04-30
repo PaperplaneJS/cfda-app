@@ -196,7 +196,6 @@
 </template>
 
 <script>
-import { copy } from "@/utils/utils.js";
 import { count } from "@/api/count.js";
 import echarts from "echarts";
 export default {
@@ -225,27 +224,27 @@ export default {
   },
 
   watch: {
-    increase(newVal, oldVal) {
+    increase(newVal) {
       this.charts.increase.clear();
       this.charts.increase.setOption(count[newVal]);
     },
-    cover(newVal, oldVal) {
+    cover(newVal) {
       this.charts.cover.clear();
       this.charts.cover.setOption(count[newVal]);
     },
-    bizCount(newVal, oldVal) {
+    bizCount(newVal) {
       this.charts.bizCount.clear();
       this.charts.bizCount.setOption(count[newVal]);
     },
-    result(newVal, oldVal) {
+    result(newVal) {
       this.charts.result.clear();
       this.charts.result.setOption(count[newVal]);
     },
-    month(newVal, oldVal) {
+    month(newVal) {
       this.charts.month.clear();
       this.charts.month.setOption(count[newVal]);
     },
-    licCover(newVal, oldVal) {
+    licCover(newVal) {
       this.charts.licCover.clear();
       this.charts.licCover.setOption(count[newVal]);
     }

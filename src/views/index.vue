@@ -138,7 +138,7 @@ export default {
     await this.init();
   },
 
-  async beforeRouteUpdate() {
+  async beforeRouteUpdate(to, from, next) {
     next();
     await this.init();
   },
@@ -159,15 +159,15 @@ export default {
   },
 
   watch: {
-    posKind(newVal, oldVal) {
+    posKind() {
       this.pointDraw();
     },
 
-    posText(newVal, oldVal) {
+    posText() {
       this.pointDraw();
     },
 
-    chartKind(newVal, oldVal) {
+    chartKind(newVal) {
       this.chart.clear();
       this.chart.setOption(count[newVal]);
     }
@@ -180,13 +180,13 @@ export default {
       this.map.centerAndZoom(process.env.VUE_APP_CITY_NAME, 12);
       this.map.addControl(
         new BMap.MapTypeControl({
-          mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
-          anchor: BMAP_ANCHOR_TOP_LEFT
+          mapTypes: [window.BMAP_NORMAL_MAP, window.BMAP_HYBRID_MAP],
+          anchor: window.BMAP_ANCHOR_TOP_LEFT
         })
       );
       let top_left_navigation = new BMap.NavigationControl({
-        anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
-        type: BMAP_NAVIGATION_CONTROL_SMALL
+        anchor: window.BMAP_ANCHOR_BOTTOM_RIGHT,
+        type: window.BMAP_NAVIGATION_CONTROL_SMALL
       });
       this.map.addControl(top_left_navigation);
       this.map.enableScrollWheelZoom();

@@ -90,10 +90,10 @@
 </template>
 
 <script>
-import { copy, date } from "@/utils/utils";
-import { dep } from "@/api/dep";
-import { staff } from "@/api/staff";
-import { law, emptyLaw, lawState } from "@/api/law";
+import { copy, date } from "@/utils/utils.js";
+import { dep } from "@/api/dep.js";
+import { staff } from "@/api/staff.js";
+import { law, emptyLaw } from "@/api/law.js";
 
 export default {
   name: "base_singlelaw",

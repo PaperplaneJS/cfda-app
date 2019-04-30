@@ -9,7 +9,7 @@
 
     <el-row class="title">
       {{title}}
-      <el-button @click="$router.push('/plan/list/'+currentPlan.id)" type="text">编辑计划</el-button>
+      <el-button @click="$router.push(`/plan/${current._id}`)" type="text">查看计划</el-button>
     </el-row>
 
     <el-form label-position="left" style="margin-top:20px;" label-width="100px">
@@ -17,7 +17,7 @@
       <el-row>
         <el-col :span="16">
           <el-form-item label="计划标题：">
-            <el-input v-model="currentPlan.title" disabled></el-input>
+            <el-input v-model="current.title" readonly></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -25,16 +25,20 @@
       <el-row :gutter="15">
         <el-col :span="8">
           <el-form-item label="计划类别：">
-            <el-select style="width:100%;" disabled v-model="currentPlan.kind" placeholder="请选择">
-              <el-option label="日常检查" value="daily"></el-option>
-              <el-option label="专项检查" value="special"></el-option>
-              <el-option label="全量检查(风险评级)" value="risk"></el-option>
-            </el-select>
+            <el-input :value="planKind(current.kind)" readonly></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="制定日期：">
-            <el-date-picker style="width:100%;" disabled type="date" v-model="currentPlan.date"></el-date-picker>
+            <el-date-picker
+              style="width:100%;"
+              readonly
+              :value="current.date"
+              type="datetime"
+              format="yyyy-MM-dd HH:mm"
+              value-format="yyyy-MM-dd HH:mm"
+              placeholder="计划制定日期"
+            ></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -44,8 +48,10 @@
           <el-form-item label="执行期限：">
             <el-date-picker
               style="width:100%;"
-              v-model="currentPlan.limit"
-              disabled
+              v-model="current.limit"
+              readonly
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
               type="daterange"
               range-separator="至"
               start-placeholder="起始日期"
@@ -57,29 +63,8 @@
 
       <el-row :gutter="15">
         <el-col :span="16">
-          <el-form-item label="选择模板：" required>
-            <el-select disabled style="width:100%;" v-model="currentPlan.template">
-              <el-option
-                v-for="item of taskTemplate"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-col :span="16">
-          <el-form-item label="检查描述：">
-            <el-input
-              v-model="currentPlan.desc"
-              :rows="4"
-              type="textarea"
-              disabled
-              placeholder="选填,检查工作的简要描述"
-            ></el-input>
+          <el-form-item label="计划标题：">
+            <el-input v-model="current.template.name" readonly></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -88,30 +73,45 @@
         <el-col :span="16">
           <el-form-item label="备注：">
             <el-input
-              v-model="currentPlan.remark"
+              v-model="current.remark"
               :rows="4"
               type="textarea"
-              disabled
+              readonly
               placeholder="选填,工作备注"
             ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
-      <el-row style="font-size:18px;margin-bottom:15px;" class="section">分发对象</el-row>
+      <el-row v-if="current.kind==='special'">
+        <el-col :span="16">
+          <el-form-item label="专项通知：">
+            <el-input
+              v-model="current.special"
+              :rows="4"
+              type="textarea"
+              readonly
+              placeholder="专项检查相关通告"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row style="font-size:18px;margin-bottom:10px;" class="section">分发对象</el-row>
       <el-row>
         <el-col :span="16">
-          <el-form-item label="分发给：" required>
+          <el-form-item label="分发到：" required>
             <el-tree
               @check="checkChange"
               :expand-on-click-node="false"
-              ref="tree"
+              ref="depTree"
+              v-model="current.post"
               :check-strictly="true"
-              :default-expanded-keys="[treeData[0].id]"
+              :default-expanded-keys="defaultExpanded"
               :props="{label:'name'}"
-              style="margin-bottom:20px;"
-              node-key="id"
-              :data="treeData"
+              style="margin-bottom:20px;margin-top:20px;"
+              node-key="_id"
+              :data="cascadeDepData"
               show-checkbox
             >
               <span class="custom-tree-node" slot-scope="{ node }">
@@ -133,7 +133,7 @@
 
     <el-row>
       <el-col :span="24">
-        <el-button icon="el-icon-check" type="primary">确认分发</el-button>
+        <el-button @click="postPlan" icon="el-icon-check" type="primary">确认分发</el-button>
         <router-link to="/plan/post">
           <el-button style="margin-left:20px;">返回计划列表</el-button>
         </router-link>
@@ -143,10 +143,9 @@
 </template>
 
 <script>
-import { copy } from "@/utils/utils.js";
-import { getArea } from "@/oldAPI/old_area.js";
-import { getPlanByID } from "@/oldAPI/old_plan.js";
-import { getTemplates } from "@/oldAPI/old_template.js";
+import { plan, emptyPlan, planKind } from "@/api/plan.js";
+import { dep } from "@/api/dep.js";
+import { copy, datetime } from "@/utils/utils.js";
 
 export default {
   name: "plan_singleplan",
@@ -154,39 +153,49 @@ export default {
   data() {
     return {
       title: null,
-      currentPlan: null
+
+      depData: [],
+      cascadeDepData: [],
+      staffData: [],
+
+      dep: {},
+
+      defaultExpanded: [],
+      current: emptyPlan(),
+
+      planKind
     };
   },
 
-  beforeMount() {
-    this.init();
-  },
-
-  computed: {
-    treeData() {
-      return getArea();
-    },
-
-    planDetail() {
-      return this.$refs.tree.getCheckedNodes().map(t => "" + t.id);
-    },
-
-    taskTemplate() {
-      return getTemplates().map(t => {
-        return { id: t.id, name: t.name };
-      });
-    }
+  async beforeMount() {
+    await this.init();
   },
 
   methods: {
-    init() {
-      let planid = this.$route.params.planid;
-      this.currentPlan = getPlanByID(planid);
-      this.title = this.currentPlan.title;
+    async init() {
+      const planId = this.$route.params.planid;
+
+      let currentPlan = (await plan(planId)).data;
+      this.dep = (await dep(currentPlan.dep)).data;
+
+      this.cascadeDepData = (await dep(currentPlan.dep, true, true)).data;
+
+      this.current = currentPlan;
+      this.title = this.current.title;
+      this.defaultExpanded.push(this.cascadeDepData[0]._id);
+    },
+
+    async postPlan() {
+      let planData = copy(this.current);
+      planData.state = 2;
+      planData.post = this.$refs.depTree.getCheckedKeys();
+
+      await plan(planData);
+      this.$router.push(`/plan/${this.current._id}`);
     },
 
     checkChange(data) {
-      let node = this.$refs.tree.getNode(data);
+      let node = this.$refs.depTree.getNode(data);
       this.setChildren(node, node.checked);
       if (node.checked) {
         node.expanded = true;
@@ -198,6 +207,18 @@ export default {
       if (node.childNodes) {
         node.childNodes.forEach(t => this.setChildren(t, target));
       }
+    }
+  },
+
+  computed: {
+    planDetail() {
+      return this.$refs.depTree.getCheckedNodes().map(t => "" + t.id);
+    },
+
+    taskTemplate() {
+      return getTemplates().map(t => {
+        return { id: t.id, name: t.name };
+      });
     }
   }
 };

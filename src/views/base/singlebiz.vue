@@ -33,7 +33,7 @@
                   :show-all-levels="false"
                   :props="{label:'name',value:'_id'}"
                   v-model="current.dep"
-                  :options="casecadeDepData"
+                  :options="cascadeDepData"
                   placeholder="选择行政区域"
                   style="width:100%;"
                   change-on-select
@@ -56,7 +56,7 @@
               <el-form-item label="企业类型：" required>
                 <el-select v-model="current.kind" style="width:100%" placeholder="请选择">
                   <el-option
-                    v-for="(name,index) of bizKind"
+                    v-for="(name,index) of bizKind()"
                     :key="index+1"
                     :label="name"
                     :value="index+1"
@@ -68,7 +68,7 @@
             <el-col :span="8">
               <el-form-item label="经营类别：" required>
                 <el-select v-model="current.category" style="width:100%" placeholder="请选择">
-                  <el-option v-for="name of bizCategory" :key="name" :label="name" :value="name"></el-option>
+                  <el-option v-for="name of bizCategory()" :key="name" :label="name" :value="name"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -185,7 +185,7 @@
                   :show-all-levels="false"
                   :props="{label:'name',value:'_id'}"
                   v-model="current.lic.dep"
-                  :options="casecadeDepData"
+                  :options="cascadeDepData"
                   placeholder="选择日常监管机构"
                   style="width:100%;"
                   change-on-select
@@ -245,7 +245,7 @@
                   :show-all-levels="false"
                   :props="{label:'name',value:'_id'}"
                   v-model="current.lic.send"
-                  :options="casecadeDepData"
+                  :options="cascadeDepData"
                   placeholder="请选择此许可证颁发机关"
                   style="width:100%;"
                   change-on-select
@@ -363,17 +363,10 @@
 </template>
 
 <script>
-import { copy } from "@/utils/utils";
-import {
-  biz,
-  emptyBiz,
-  emptyLic,
-  bizKind,
-  bizCategory,
-  bizState
-} from "@/api/biz";
-import { dep } from "@/api/dep";
-import { staff, staffByDep } from "@/api/staff";
+import { copy } from "@/utils/utils.js";
+import { biz, emptyBiz, emptyLic, bizKind, bizCategory } from "@/api/biz.js";
+import { dep } from "@/api/dep.js";
+import { staff } from "@/api/staff.js";
 
 export default {
   name: "base_singlebiz",
@@ -391,7 +384,7 @@ export default {
       origin: emptyBiz(),
 
       depData: [],
-      casecadeDepData: [],
+      cascadeDepData: [],
       staffData: [],
 
       bizKind,
@@ -415,7 +408,7 @@ export default {
       this.edit = bizid === "new";
 
       this.depData = (await dep()).data;
-      this.casecadeDepData = (await dep(null, false, true)).data;
+      this.cascadeDepData = (await dep(null, false, true)).data;
       this.staffData = (await staff()).data;
 
       if (!this.isNew) {

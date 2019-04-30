@@ -98,8 +98,6 @@
 </template>
 
 <script>
-import { copy, uuid } from "@/utils/utils.js";
-import { notice } from "@/oldAPI/old_notice.js";
 import menu from "@/menu.js";
 
 export default {
@@ -151,7 +149,7 @@ export default {
       this.currentMenuPath = menuPath;
     },
 
-    openNotice(nid) {},
+    openNotice() {},
 
     closeNotice(nid) {
       let i = this.$store.state.notice.findIndex(t => t.id === nid);

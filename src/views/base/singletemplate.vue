@@ -42,7 +42,8 @@
               style="width:100%"
               type="date"
               v-model="createDate"
-              value-format="yyyy-M-d"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
             ></el-date-picker>
           </el-form-item>
         </el-col>
@@ -108,15 +109,10 @@
 </template>
 
 <script>
-import { uuid, copy, date } from "@/utils/utils.js";
-import { staff } from "@/api/staff";
-import { dep } from "@/api/dep";
-import {
-  template,
-  templateState,
-  emptyTemplate,
-  emptySubItem
-} from "@/api/template";
+import { copy, date } from "@/utils/utils.js";
+import { staff } from "@/api/staff.js";
+import { dep } from "@/api/dep.js";
+import { template, emptyTemplate } from "@/api/template";
 
 export default {
   name: "base_singletemplate",
@@ -136,7 +132,7 @@ export default {
     };
   },
 
-  async created() {
+  async beforeMount() {
     await this.init();
   },
 
@@ -153,7 +149,7 @@ export default {
 
       if (!this.isNew) {
         this.origin = (await template(tid)).data;
-        this.createDate = this.origin.data;
+        this.createDate = this.origin.date;
       }
 
       this.dep = (await dep(

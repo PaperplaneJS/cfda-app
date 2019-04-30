@@ -99,7 +99,6 @@
 <script>
 import { staff, del } from "@/api/staff.js";
 import { dep } from "@/api/dep.js";
-import { copy } from "@/utils/utils.js";
 
 export default {
   name: "grid_staff",
@@ -163,7 +162,7 @@ export default {
 
   computed: {
     tableData() {
-      let tableData = copy(this.staffData);
+      let tableData = this.staffData;
 
       if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;

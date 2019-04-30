@@ -35,7 +35,7 @@
           :show-all-levels="false"
           :props="{label:'name',value:'_id'}"
           v-model="search.area"
-          :options="casecadeDepData"
+          :options="cascadeDepData"
           placeholder="行政区域"
           change-on-select
         ></el-cascader>
@@ -43,13 +43,13 @@
 
       <el-col :span="3">
         <el-select size="small" v-model="search.kind" clearable placeholder="选择类别">
-          <el-option v-for="(name,index) of bizKind" :key="index+1" :label="name" :value="index+1"></el-option>
+          <el-option v-for="(name,index) in bizKind()" :key="index+1" :label="name" :value="index+1"></el-option>
         </el-select>
       </el-col>
 
       <el-col :span="3">
         <el-select size="small" v-model="search.category" clearable placeholder="经营种类">
-          <el-option v-for="name of bizCategory" :key="name" :label="name" :value="name"></el-option>
+          <el-option v-for="name in bizCategory()" :key="name" :label="name" :value="name"></el-option>
         </el-select>
       </el-col>
 
@@ -62,8 +62,8 @@
 
       <el-col :span="3">
         <el-select size="small" v-model="search.state" clearable placeholder="状态">
-          <el-option label="正常" value="1"></el-option>
-          <el-option label="关闭" value="0"></el-option>
+          <el-option label="正常" :value="1"></el-option>
+          <el-option label="关闭" :value="0"></el-option>
         </el-select>
       </el-col>
     </el-row>
@@ -131,8 +131,8 @@
 </template>
 
 <script>
-import { biz, del, bizKind, bizCategory, bizState } from "@/api/biz";
-import { dep } from "@/api/dep";
+import { biz, del, bizKind, bizCategory, bizState } from "@/api/biz.js";
+import { dep } from "@/api/dep.js";
 
 export default {
   name: "base_biz",
@@ -140,7 +140,7 @@ export default {
     return {
       bizData: [],
       depData: [],
-      casecadeDepData: [],
+      cascadeDepData: [],
       loading: true,
 
       search: {
@@ -171,6 +171,34 @@ export default {
   filters: {
     stateText: state => bizState(state),
     kindText: kind => bizKind(kind)
+  },
+
+  methods: {
+    async init() {
+      this.loading = true;
+      this.depData = (await dep()).data;
+      this.cascadeDepData = (await dep(null, false, true)).data;
+      let bizList = (await biz()).data;
+
+      bizList.forEach(biz => {
+        biz["_dep"] = this.depData.find(t => t._id === biz.dep);
+      });
+      this.bizData = bizList;
+      this.loading = false;
+    },
+
+    getStateType(state) {
+      return ["danger", "success"][state];
+    },
+
+    async deleteBiz() {
+      if (!this.deleteDialog) {
+        return;
+      }
+      await del(this.deleteDialog._id);
+      this.deleteDialog = null;
+      this.init();
+    }
   },
 
   computed: {
@@ -221,34 +249,6 @@ export default {
         (this.bizTable.page - 1) * this.bizTable.pageSize,
         this.bizTable.page * this.bizTable.pageSize
       );
-    }
-  },
-
-  methods: {
-    async init() {
-      this.loading = true;
-      this.depData = (await dep()).data;
-      this.casecadeDepData = (await dep(null, false, true)).data;
-      let bizList = (await biz()).data;
-
-      bizList.forEach(biz => {
-        biz["_dep"] = this.depData.find(t => t._id === biz.dep);
-      });
-      this.bizData = bizList;
-      this.loading = false;
-    },
-
-    getStateType(state) {
-      return ["danger", "success"][state];
-    },
-
-    async deleteBiz() {
-      if (!this.deleteDialog) {
-        return;
-      }
-      await del(this.deleteDialog._id);
-      this.deleteDialog = null;
-      this.init();
     }
   }
 };

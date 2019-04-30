@@ -14,7 +14,7 @@
       <el-row :gutter="15">
         <el-col :span="16">
           <el-form-item label="消息标题：" required>
-            <el-input placeholder="请输入消息的标题"></el-input>
+            <el-input v-model="current.title" placeholder="请输入消息的标题"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -22,7 +22,7 @@
       <el-row :gutter="15">
         <el-col :span="16">
           <el-form-item label="消息内容：" required>
-            <el-input :rows="8" placeholder="请输入消息的内容" type="textarea"></el-input>
+            <el-input :rows="8" v-model="current.content" placeholder="请输入消息的内容" type="textarea"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -30,13 +30,29 @@
       <el-row :gutter="15">
         <el-col :span="6">
           <el-form-item label="发布单位：">
-            <el-input disabled v-model="department.getAreaByID($store.state.currentUser.area).name"></el-input>
+            <el-input disabled :value="dep.name"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :push="2" :span="6">
           <el-form-item label="发布人：">
-            <el-input disabled :value="$store.state.currentUser.name"></el-input>
+            <el-input disabled :value="staff.name"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="15">
+        <el-col :span="6">
+          <el-form-item label="发布时间：">
+            <el-date-picker
+              disabled
+              style="width:100%"
+              type="datetime"
+              placeholder="发布于"
+              v-model="datetime"
+              format="yyyy-MM-dd HH:mm"
+              value-format="yyyy-MM-dd HH:mm"
+            ></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -47,13 +63,13 @@
             <el-tree
               @check="checkChange"
               :expand-on-click-node="false"
-              ref="tree"
+              ref="depTree"
               :check-strictly="true"
-              :default-expanded-keys="[treeData[0].id]"
+              :default-expanded-keys="defaultExpanded"
               :props="{label:'name'}"
-              style="margin-bottom:20px;"
-              node-key="id"
-              :data="treeData"
+              style="margin-bottom:20px;margin-top:10px;"
+              node-key="_id"
+              :data="cascadeDep"
               show-checkbox
             >
               <span class="custom-tree-node" slot-scope="{ node }">
@@ -75,7 +91,7 @@
 
     <el-row>
       <el-col :span="24">
-        <el-button type="primary" icon="el-icon-check">发布消息</el-button>
+        <el-button @click="postSms" type="primary" icon="el-icon-check">发布消息</el-button>
         <router-link style="margin-left:20px;" to="/sms/list">
           <el-button>返回消息列表</el-button>
         </router-link>
@@ -85,24 +101,42 @@
 </template>
 
 <script>
-import department from "@/oldAPI/old_area.js";
+import { sms, emptySms } from "@/api/sms.js";
+import { dep } from "@/api/dep.js";
+import { staffByDep } from "@/api/staff.js";
+import { datetime } from "@/utils/utils.js";
+import { Promise } from "q";
 
 export default {
   name: "sms_post",
 
   data() {
-    return { department };
+    return {
+      current: emptySms(),
+      dep: {},
+      staff: {},
+      datetime: datetime(),
+
+      cascadeDep: [],
+      defaultExpanded: []
+    };
   },
 
-  computed: {
-    treeData() {
-      return department.getArea();
-    }
+  async beforeMount() {
+    await this.init();
   },
 
   methods: {
+    async init() {
+      this.cascadeDep = (await dep(null, false, true)).data;
+      this.dep = (await dep(this.$store.state.currentUser.dep)).data;
+      this.staff = this.$store.state.currentUser;
+
+      this.defaultExpanded.push(this.cascadeDep[0]._id);
+    },
+
     checkChange(data) {
-      let node = this.$refs.tree.getNode(data);
+      let node = this.$refs.depTree.getNode(data);
       this.setChildren(node, node.checked);
       if (node.checked) {
         node.expanded = true;
@@ -114,6 +148,48 @@ export default {
       if (node.childNodes) {
         node.childNodes.forEach(t => this.setChildren(t, target));
       }
+    },
+
+    async postSms() {
+      let postDeps = [];
+      let treeRoot = this.$refs.depTree.getNode(this.defaultExpanded[0]);
+      function getId(node) {
+        if (node.checked) {
+          postDeps.push(node.data._id);
+          return;
+        }
+        if (node.childNodes) {
+          node.childNodes.forEach(t => getId(t));
+        }
+      }
+
+      getId(treeRoot);
+
+      let postStaffs = [];
+      await Promise.all(
+        postDeps.map(async depId => {
+          (await staffByDep(depId, true)).data.forEach(staff =>
+            postStaffs.push(staff._id)
+          );
+        })
+      );
+
+      if (!postStaffs.includes(this.$store.state.currentUser._id)) {
+        postStaffs.push(this.$store.state.currentUser._id);
+      }
+
+      let currentSms = Object.assign(this.current, {
+        dep: this.dep._id,
+        staff: this.staff._id,
+        date: this.datetime,
+        post: postStaffs,
+        recive: [
+          { staff: this.$store.state.currentUser._id, date: this.datetime }
+        ]
+      });
+
+      await sms(currentSms);
+      this.$router.push(`/sms`);
     }
   }
 };

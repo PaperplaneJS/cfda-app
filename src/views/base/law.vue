@@ -83,8 +83,8 @@
 </template>
 
 <script>
-import { law, del, lawState } from "@/api/law";
-import { dep } from "@/api/dep";
+import { law, del, lawState } from "@/api/law.js";
+import { dep } from "@/api/dep.js";
 
 export default {
   name: "base_law",
@@ -120,6 +120,35 @@ export default {
     }
   },
 
+  
+  methods: {
+    async init() {
+      this.loading = true;
+      let lawList = (await law()).data;
+      this.depData = (await dep()).data;
+
+      lawList.forEach(law => {
+        law["_dep"] = this.depData.find(t => t._id === law.dep);
+      });
+
+      this.lawData = lawList;
+      this.loading = false;
+    },
+    
+    async deleteLaw() {
+      if (!this.deleteDialog) {
+        return;
+      }
+      await del(this.deleteDialog._id);
+      this.deleteDialog = null;
+      this.init();
+    },
+
+    getStateType(state) {
+      return ["danger", "success"][state];
+    }
+  },
+
   computed: {
     tableData() {
       let tableData = this.lawData;
@@ -146,34 +175,6 @@ export default {
         (this.lawTable.page - 1) * this.lawTable.pageSize,
         this.lawTable.page * this.lawTable.pageSize
       );
-    }
-  },
-
-  methods: {
-    async init() {
-      this.loading = true;
-      let lawList = (await law()).data;
-      this.depData = (await dep()).data;
-
-      lawList.forEach(law => {
-        law["_dep"] = this.depData.find(t => t._id === law.dep);
-      });
-
-      this.lawData = lawList;
-      this.loading = false;
-    },
-    
-    async deleteLaw() {
-      if (!this.deleteDialog) {
-        return;
-      }
-      await del(this.deleteDialog._id);
-      this.deleteDialog = null;
-      this.init();
-    },
-
-    getStateType(state) {
-      return ["danger", "success"][state];
     }
   }
 };

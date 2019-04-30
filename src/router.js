@@ -1,60 +1,58 @@
-import Vue from 'vue/dist/vue';
+import Vue from 'vue';
 import Router from 'vue-router';
-import store from './state.js';
-import { auth } from '@/api/action';
+import store from '@/state.js';
+import { auth } from '@/api/action.js';
 
-import App from '@/app';
+import App from '@/app.vue';
 
-import Index from '@/views/index';
+import Index from '@/views/index.vue';
 
-import ActionLogin from '@/views/action/login';
+import ActionLogin from '@/views/action/login.vue';
 
-import BaseBiz from '@/views/base/biz';
-import BaseTemplate from '@/views/base/template';
-import BaseLaw from '@/views/base/law';
-import BaseSingleBiz from '@/views/base/singlebiz';
-import BaseSingleTemplate from '@/views/base/singletemplate';
-import BaseSingleRiskTemplate from '@/views/base/singlerisktemplate';
-import BaseSingeLaw from '@/views/base/singlelaw';
+import BaseBiz from '@/views/base/biz.vue';
+import BaseTemplate from '@/views/base/template.vue';
+import BaseLaw from '@/views/base/law.vue';
+import BaseSingleBiz from '@/views/base/singlebiz.vue';
+import BaseSingleTemplate from '@/views/base/singletemplate.vue';
+import BaseSingleRiskTemplate from '@/views/base/singlerisktemplate.vue';
+import BaseSingeLaw from '@/views/base/singlelaw.vue';
 
-import GridArea from '@/views/grid/area';
-import GridStaff from '@/views/grid/staff';
-import GridSingleArea from '@/views/grid/singlearea';
-import GridSingleStaff from '@/views/grid/singlestaff';
+import GridArea from '@/views/grid/area.vue';
+import GridStaff from '@/views/grid/staff.vue';
+import GridSingleArea from '@/views/grid/singlearea.vue';
+import GridSingleStaff from '@/views/grid/singlestaff.vue';
 
-import SMSList from '@/views/sms/list';
-import SMSPost from '@/views/sms/post';
-import SMSSingleSMS from '@/views/sms/singlesms';
+import SMSList from '@/views/sms/list.vue';
+import SMSPost from '@/views/sms/post.vue';
+import SMSSingleSMS from '@/views/sms/singlesms.vue';
 
-import PlanList from '@/views/plan/list';
-import PlanPost from '@/views/plan/post';
-import PlanRecive from '@/views/plan/recive';
-import PlanSinglePlan from '@/views/plan/singleplan';
-import PlanSinglePost from '@/views/plan/singlepost';
+import PlanList from '@/views/plan/plan.vue';
+import PlanPost from '@/views/plan/post.vue';
+import PlanRecive from '@/views/plan/recive.vue';
+import PlanSinglePlan from '@/views/plan/singleplan.vue';
+import PlanSinglePost from '@/views/plan/singlepost.vue';
 
-import DailyPost from '@/views/daily/post';
-import DailyMonitor from '@/views/daily/monitor';
-import DailyMonitorList from '@/views/daily/monitorlist';
-import DailySinglePost from '@/views/daily/singlepost';
-import DailySingleMonitor from '@/views/daily/singlemonitor';
+import DailyPost from '@/views/daily/post.vue';
+import DailyMonitor from '@/views/daily/monitor.vue';
+import DailyMonitorList from '@/views/daily/monitorlist.vue';
+import DailySinglePost from '@/views/daily/singlepost.vue';
+import DailySingleMonitor from '@/views/daily/singlemonitor.vue';
 
-import SpecialPost from '@/views/special/post';
-import SpecialMonitor from '@/views/special/monitor';
-import SpecialMonitorList from '@/views/special/monitorlist';
-import SpecialSinglePost from '@/views/special/singlepost';
-import SpecialSingleMonitor from '@/views/special/singlemonitor';
+import SpecialPost from '@/views/special/post.vue';
+import SpecialMonitor from '@/views/special/monitor.vue';
+import SpecialMonitorList from '@/views/special/monitorlist.vue';
+import SpecialSinglePost from '@/views/special/singlepost.vue';
+import SpecialSingleMonitor from '@/views/special/singlemonitor.vue';
 
-import RiskRisk from '@/views/risk/risk';
-import RiskSingleRisk from '@/views/risk/singlerisk';
+import RiskRisk from '@/views/risk/risk.vue';
+import RiskSingleRisk from '@/views/risk/singlerisk.vue';
 
-import RectifyRectify from '@/views/rectify/rectify';
-import RectifySingleRectify from '@/views/rectify/singlerectify';
+import RectifyRectify from '@/views/rectify/rectify.vue';
+import RectifySingleRectify from '@/views/rectify/singlerectify.vue';
 
-import TraceTrace from '@/views/trace/trace';
+import TraceTrace from '@/views/trace/trace.vue';
 
-import CountCount from '@/views/count/count';
-
-Vue.use(Router);
+import CountCount from '@/views/count/count.vue';
 
 let routes = [{
     path: '/',
@@ -133,11 +131,8 @@ let routes = [{
       //检查计划管理
 
       {
-        path: '/plan/list',
+        path: '/plan',
         component: PlanList
-      }, {
-        path: '/plan/list/:planid',
-        component: PlanSinglePlan
       }, {
         path: '/plan/post',
         component: PlanPost
@@ -147,6 +142,9 @@ let routes = [{
       }, {
         path: '/plan/recive',
         component: PlanRecive
+      }, {
+        path: '/plan/:planid',
+        component: PlanSinglePlan
       },
 
       //日常检查
@@ -223,6 +221,8 @@ let routes = [{
     ]
   }
 ];
+
+Vue.use(Router);
 
 let router = new Router({
   routes

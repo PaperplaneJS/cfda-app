@@ -17,9 +17,13 @@ function copy(item) {
   return JSON.parse(JSON.stringify(item));
 }
 
-function date(datetime = new Date()) {
-  return `${datetime.getFullYear()}-${datetime.getMonth()+1}-${datetime.getDate()}`;
+function date(dt = new Date()) {
+  return `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`;
 }
 
-export default { uuid, copy, date }
-export { uuid, copy, date }
+function datetime(dt = new Date()) {
+  return `${date(dt)} ${dt.getHours()}:${dt.getMinutes()}`;
+}
+
+export default { uuid, copy, date, datetime }
+export { uuid, copy, date, datetime }

@@ -1,4 +1,4 @@
-let menu = [{
+const menu = [{
     label: '首页',
     url: 'index',
     icon: 'el-icon-star-off',
@@ -63,8 +63,8 @@ let menu = [{
     icon: 'el-icon-document',
     promission: [1, 2],
     group: [{
-        label: '查看制定',
-        url: 'list',
+        label: '所有计划',
+        url: '',
         promission: [2]
       },
       {

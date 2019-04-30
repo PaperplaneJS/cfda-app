@@ -13,7 +13,11 @@
           <!-- 整行 -->
           <tr :key="`${mainIndex}-${index}`" v-for="index in mainItem.detail.length||1">
             <!-- 检查大项列，需要跨越所有小项行 -->
-            <td style="max-width: 180px;" v-if="index===1" :rowspan="mainItem.detail.length + (edit ? 1 : 0)">
+            <td
+              style="max-width: 180px;"
+              v-if="index===1"
+              :rowspan="mainItem.detail.length + (edit ? 1 : 0)"
+            >
               <el-tag size="mini">{{mainIndex + 1}}</el-tag>
               {{mainItem.title}}
               <el-popover
@@ -342,7 +346,7 @@ export default {
   },
 
   watch: {
-    value: function(newValue, oldValue) {
+    value: function(newValue) {
       this.$emit("input", newValue);
     }
   },
