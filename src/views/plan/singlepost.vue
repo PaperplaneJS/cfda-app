@@ -97,6 +97,22 @@
         </el-col>
       </el-row>
 
+      <el-row :gutter="15">
+        <el-col :span="8">
+          <el-form-item label="分发日期：">
+            <el-date-picker
+              style="width:100%;"
+              readonly
+              :value="current.postdate"
+              type="datetime"
+              format="yyyy-MM-dd HH:mm"
+              value-format="yyyy-MM-dd HH:mm"
+              placeholder="计划分发日期"
+            ></el-date-picker>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
       <el-row style="font-size:18px;margin-bottom:10px;" class="section">分发对象</el-row>
       <el-row>
         <el-col :span="16">
@@ -176,6 +192,7 @@ export default {
       const planId = this.$route.params.planid;
 
       let currentPlan = (await plan(planId)).data;
+      currentPlan.postdate = datetime();
       this.dep = (await dep(currentPlan.dep)).data;
 
       this.cascadeDepData = (await dep(currentPlan.dep, true, true)).data;

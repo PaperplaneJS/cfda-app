@@ -10,16 +10,16 @@
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="pageData" size="medium" style="width: 100%">
+        <el-table v-loading="loading" :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" sortable min-width="180px"></el-table-column>
           <el-table-column label="计划类别" align="center" sortable>
             <template slot-scope="scope">
-              <el-tag size="small">{{scope.row.kind | planKindText}}</el-tag>
+              <el-tag :type="getKindType(scope.row.kind)" size="small">{{planKind(scope.row.kind)}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="stf" label="制定人员" sortable></el-table-column>
-          <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="post.date" label="下发日期" sortable align="center"></el-table-column>
+          <el-table-column prop="_staff.name" label="制定人员" sortable></el-table-column>
+          <el-table-column prop="_dep.name" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="postdate" label="下发日期" sortable align="center"></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
@@ -28,15 +28,16 @@
           </el-table-column>
           <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
-              <el-tag
-                size="small"
-                :type="getPlanType(scope.row.state)"
-              >{{scope.row.state | planStateText}}</el-tag>
+              <el-tag size="small">{{planState(scope.row.state)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-button @click.native="recivePlan(scope.row)" size="mini" type="primary">查看和接收</el-button>
+              <el-button
+                @click="()=>{currentPlan=scope.row;isPopup=true;}"
+                size="mini"
+                type="primary"
+              >查看和接收</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -51,7 +52,7 @@
         :page-sizes="planTable.pageSizes"
         :page-size="planTable.pageSize"
         layout="total, prev, pager, next, sizes"
-        :total="tableData.length"
+        :total="planData.length"
       ></el-pagination>
     </el-row>
 
@@ -60,7 +61,7 @@
         <el-row :gutter="15">
           <el-col :span="24">
             <el-form-item label="计划标题:">
-              <el-input v-model="popupItem.title" disabled></el-input>
+              <el-input v-model="currentPlan.title" readonly></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -68,30 +69,34 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="制定科室:">
-              <el-input v-model="popupItem.dep" disabled></el-input>
+              <el-input v-model="currentPlan._dep.name" readonly></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="制定人员:">
-              <el-input v-model="popupItem.stf" disabled></el-input>
+              <el-input v-model="currentPlan._staff.name" readonly></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row :gutter="15">
           <el-col :span="12">
-            <el-form-item label="计划类别:">
-              <el-select style="width:100%;" disabled v-model="popupItem.kind">
-                <el-option label="日常检查" value="daily"></el-option>
-                <el-option label="专项检查" value="special"></el-option>
-                <el-option label="全量检查(风险评级)" value="risk"></el-option>
-              </el-select>
+            <el-form-item label="制定日期:">
+              <el-date-picker
+                style="width:100%;"
+                format="yyyy-MM-dd HH:mm"
+                value-format="yyyy-MM-dd HH:mm"
+                readonly
+                type="datetime"
+                v-model="currentPlan.date"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
-            <el-form-item label="制定日期:">
-              <el-date-picker style="width:100%;" disabled type="datetime" v-model="popupItem.date"></el-date-picker>
+            <el-form-item label="计划类别:">
+              <el-input :value="planKind(currentPlan.kind)" readonly></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -101,23 +106,18 @@
             <el-form-item label="下发日期:">
               <el-date-picker
                 style="width:100%;"
-                disabled
+                format="yyyy-MM-dd HH:mm"
+                value-format="yyyy-MM-dd HH:mm"
+                readonly
                 type="date"
-                v-model="popupItem.post.date"
+                v-model="currentPlan.postdate"
               ></el-date-picker>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="使用模板：">
-              <el-select disabled style="width:100%;" v-model="popupItem.template">
-                <el-option
-                  v-for="item of taskTemplate"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
+              <el-input :value="currentPlan.template.name" readonly></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -127,8 +127,8 @@
             <el-form-item label="执行期限:">
               <el-date-picker
                 style="width:100%;"
-                v-model="popupItem.limit"
-                disabled
+                v-model="currentPlan.limit"
+                readonly
                 type="daterange"
                 range-separator="至"
               ></el-date-picker>
@@ -139,13 +139,33 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注:">
-              <el-input v-model="popupItem.remark" resize="none" :rows="4" type="textarea" disabled></el-input>
+              <el-input
+                v-model="currentPlan.remark"
+                resize="none"
+                :rows="4"
+                type="textarea"
+                readonly
+              ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row v-if="currentPlan.kind==='special'">
+          <el-col :span="24">
+            <el-form-item label="专项通告:">
+              <el-input
+                v-model="currentPlan.special"
+                resize="none"
+                :rows="4"
+                type="textarea"
+                readonly
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="isPopup=false">取消</el-button>
+        <el-button @click="()=>{isPopup=false;currentPlan=null}">取消</el-button>
         <el-button @click="acceptPlan" icon="el-icon-check" type="primary">确定接收</el-button>
       </div>
     </el-dialog>
@@ -153,7 +173,10 @@
 </template>
 
 <script>
-
+import { plan, forRecive, planState, planKind } from "@/api/plan.js";
+import { dep } from "@/api/dep.js";
+import { staff } from "@/api/staff.js";
+import { copy, datetime } from "@/utils/utils.js";
 
 export default {
   name: "plan_recive",
@@ -161,93 +184,78 @@ export default {
   data() {
     return {
       isPopup: false,
-      popupItem: null,
-      
+      currentPlan: null,
+
+      loading: true,
+
+      planData: [],
+      depData: [],
+      staffData: [],
+
       planTable: {
         page: 1,
         pageSize: 10,
         pageSizes: [10, 25, 50, 100]
-      }
+      },
+
+      planState,
+      planKind
     };
   },
 
-  filters: {
-    planStateText(state) {
-      switch (state) {
-        case 1:
-          return "待分发";
-        case 2:
-          return "待接收";
-        case 3:
-          return "执行中";
-        case 4:
-          return "已完成";
-        default:
-          return "未知";
-      }
+  async beforeMount() {
+    await this.init();
+  },
+
+  methods: {
+    async init() {
+      this.loading = true;
+      this.depData = (await dep()).data;
+      this.staffData = (await staff()).data;
+
+      let planList = (await forRecive(this.$store.state.currentUser.dep)).data;
+      planList.forEach(plan => {
+        plan._staff = this.staffData.find(t => t._id === plan.staff);
+        plan._dep = this.depData.find(t => t._id === plan.dep);
+      });
+
+      this.planData = planList;
+
+      this.loading = false;
     },
 
-    planKindText(kind) {
-      switch (kind) {
-        case "daily":
-          return "日常检查";
-        case "special":
-          return "专项检查";
-        case "risk":
-          return "全量检查";
-        default:
-          return kind;
-      }
+    async acceptPlan() {
+      let current = copy(this.currentPlan);
+      delete current["_staff"];
+      delete current["_dep"];
+
+      current.recive.push({
+        dep: this.$store.state.currentUser.dep,
+        date: datetime()
+      });
+
+      await plan(current);
+      this.isPopup = false;
+      this.currentPlan = null;
+
+      await this.init();
+    },
+
+    getKindType(kind) {
+      return {
+        daily: "primary",
+        special: "warning",
+        risk: "danger"
+      }[kind];
     }
   },
 
   computed: {
-    tableData() {
-      let tableData = getPlans(2);
-
-      tableData.forEach(t => {
-        t.dep = department.getAreaByID(t.department).name;
-        t.stf = getStaffByID(t.staff).name;
-      });
-
-      return tableData;
-    },
-
     pageData() {
-      return this.tableData.slice(
+      return this.planData.slice(
         (this.planTable.page - 1) * this.planTable.pageSize,
         this.planTable.page * this.planTable.pageSize
       );
-    },
-
-    taskTemplate() {
-      return getTemplates().map(t => {
-        return { id: t.id, name: t.name };
-      });
-    }
-  },
-
-  methods: {
-    getPlanType(state) {
-      switch (state) {
-        case 1:
-          return "warning";
-        case 2:
-          return "warning";
-        case 3:
-          return "";
-        case 4:
-          return "success";
-        default:
-          return "info";
-      }
-    },
-
-    acceptPlan() {},
-
-    recivePlan(item) {
-      this.popupItem = item;
-      this.isPopup = true;
     }
   }
 };

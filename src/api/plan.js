@@ -30,6 +30,7 @@ const emptyPlan = (kind = 'daily') => Object.assign({
   date: '',
   limit: [],
   post: [],
+  postdate: '',
   recive: []
 }, kind === 'special' ? { special: '' } : {})
 
@@ -56,4 +57,8 @@ async function del(planId) {
   return await axios.delete(`/plan/${planId}`);
 }
 
-export { planKind, planState, emptyPlan, plan, del }
+async function forRecive(depId) {
+  return await axios.get(`/plan?recive=${depId}`);
+}
+
+export { planKind, planState, emptyPlan, plan, del, forRecive }

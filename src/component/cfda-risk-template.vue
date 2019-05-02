@@ -18,7 +18,7 @@
           <tr :key="`${mainIndex}-${index}`" v-for="index in mainItem.detail.length||1">
             <!-- 检查大项列，需要跨越所有小项行 -->
             <td
-              style="max-width: 180px;"
+              style="max-width:180px;min-width:100px;"
               v-if="index===1"
               :rowspan="mainItem.detail.length + (edit ? 1 : 0)"
             >
@@ -446,9 +446,12 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }
-      ).then(() => {
-        this.value.splice(i, 1);
-      });
+      ).then(
+        () => {
+          this.value.splice(i, 1);
+        },
+        () => {}
+      );
     }
   }
 };

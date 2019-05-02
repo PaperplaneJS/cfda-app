@@ -12,7 +12,10 @@
       <el-row style="margin-bottom:50px;">
         <el-col :span="16">
           <div style="width:100%;" v-if="!isNew">
-            <el-steps :active="Math.min(4,origin.state)" :finish-status="origin.state==5?'danger':'success'">
+            <el-steps
+              :active="Math.min(4,origin.state)"
+              :finish-status="origin.state==5?'danger':'success'"
+            >
               <el-step title="制定计划"></el-step>
               <el-step title="计划分发"></el-step>
               <el-step title="执行中"></el-step>
@@ -154,7 +157,23 @@
       <template v-if="origin.state>1">
         <el-row style="margin-bottom:20px;" :gutter="15">
           <el-col :span="16">
-            <el-alert show-icon title="当前任务已被分发，以下是接收情况。" type="info"></el-alert>
+            <el-alert show-icon title="当前任务已被下发，以下是接收情况。" type="info"></el-alert>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="15">
+          <el-col :span="8">
+            <el-form-item label="下发日期:" required>
+              <el-date-picker
+                style="width:100%;"
+                disabled
+                :value="current.postdate"
+                type="datetime"
+                format="yyyy-MM-dd HH:mm"
+                value-format="yyyy-MM-dd HH:mm"
+                placeholder="计划制定日期"
+              ></el-date-picker>
+            </el-form-item>
           </el-col>
         </el-row>
 

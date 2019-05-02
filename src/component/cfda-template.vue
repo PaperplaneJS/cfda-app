@@ -71,7 +71,7 @@
               </td>
 
               <!-- 接受选项 -->
-              <td style="min-width:80px;">
+              <td style="min-width:140px;">
                 <template v-if="mainItem.detail[index-1].type===1">
                   <el-tag style="margin-bottom:5px;margin-right:8px;" size="small" type="success">
                     <strong>是</strong>
@@ -436,9 +436,12 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }
-      ).then(() => {
-        this.value.splice(i, 1);
-      });
+      ).then(
+        () => {
+          this.value.splice(i, 1);
+        },
+        () => {}
+      );
     },
 
     subWithPointChange(withPoint) {

@@ -100,7 +100,7 @@
                           size="mini"
                           type="primary"
                           style="margin:5px;"
-                        >{{getDepName(t.dep)}} | {{t.date}}</el-tag>
+                        >{{getDepName(d.dep)}} | {{d.date}}</el-tag>
                       </template>
                       <el-tag v-else size="mini" type="info" style="margin:5px;">无</el-tag>
                     </td>

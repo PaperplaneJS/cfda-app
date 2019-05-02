@@ -1,3 +1,5 @@
+import { copy, uuid } from '@/utils/utils.js';
+
 const menu = [{
     label: '首页',
     url: 'index',
@@ -91,7 +93,7 @@ const menu = [{
       },
       {
         label: '检查进度',
-        url: 'monitor',
+        url: '',
         promission: [1, 2]
       }
     ]
@@ -108,7 +110,7 @@ const menu = [{
       },
       {
         label: '检查进度',
-        url: 'monitor',
+        url: '',
         promission: [1, 2]
       }
     ]
@@ -139,12 +141,6 @@ const menu = [{
   }
 ];
 
-function getMenu() {
-  return menu;
-}
-
-import { copy, uuid } from '@/utils/utils.js';
-
 function getMenuWithPath(promission = null) {
   let m = copy(menu);
   let genPath = function(menuItem, index, fatherItem, basePath, basePathArray) {
@@ -154,7 +150,7 @@ function getMenuWithPath(promission = null) {
       return;
     }
 
-    menuItem.id = uuid(6, 16);
+    menuItem.id = uuid();
 
     if (menuItem.url.trim().length > 0) {
       menuItem.path = `${basePath}/${menuItem.url}`;
@@ -174,11 +170,9 @@ function getMenuWithPath(promission = null) {
 }
 
 export {
-  getMenuWithPath,
-  getMenu
+  getMenuWithPath
 }
 
 export default {
-  getMenuWithPath,
-  getMenu
+  getMenuWithPath
 }
