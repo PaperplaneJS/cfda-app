@@ -1,14 +1,13 @@
 <template>
-  <el-row id="daily_monitorlist">
+  <el-row id="daily_singletask">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/monitor">日常检查</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/monitor">检查监督</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/monitor">{{plantitle}} (计划)</el-breadcrumb-item>
-      <el-breadcrumb-item>{{title}} (任务)</el-breadcrumb-item>
+      <el-breadcrumb-item to="/daily">日常检查</el-breadcrumb-item>
+      <el-breadcrumb-item :to="`/daily/${plan._id}`">{{plan.title}}</el-breadcrumb-item>
+      <el-breadcrumb-item :to="`/daily/${plan._id}/${task._id}`">{{task.title}}（任务）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">{{title}}</el-row>
+    <el-row class="title action">{{title}}（检查任务）</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="3">
@@ -25,10 +24,22 @@
         ></el-input>
       </el-col>
 
-      <el-select size="small" v-model="search.kind" clearable placeholder="按检查结果筛选">
-        <el-option value="符合">符合</el-option>
-        <el-option value="基本符合">基本符合</el-option>
-        <el-option value="不符合">不符合</el-option>
+      <el-select size="small" v-model="search.result" clearable placeholder="按检查结果筛选">
+        <el-option
+          v-for="(name,index) in recordResult()"
+          :key="index+1"
+          :label="name"
+          :value="index+1"
+        ></el-option>
+      </el-select>
+
+      <el-select size="small" v-model="search.handle" clearable placeholder="按处理方式筛选">
+        <el-option
+          v-for="(name,index) in recordHandle()"
+          :key="index+1"
+          :label="name"
+          :value="index+1"
+        ></el-option>
       </el-select>
 
       <el-col :span="10">
@@ -49,21 +60,26 @@
         <el-table
           :data="pageData"
           :row-class-name="tableRowClassName"
+          v-loading="loading"
           size="medium"
           style="width: 100%;margin-bottom:20px;"
         >
           <el-table-column label="单位名称" min-width="180px" sortable>
             <template slot-scope="scope">
+              <el-tag v-if="!scope.row.result" type="warning" size="mini">
+                <strong>尚未检查</strong>
+              </el-tag>
               {{scope.row.bizname}}
-              <el-tag v-if="!scope.row.result" type="warning" size="mini">尚未检查</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="执法人员" sortable>
+          <el-table-column label="检查人员" sortable>
             <template slot-scope="scope">
-              <div v-if="scope.row.staffinfo">主检查人：
+              <div v-if="scope.row.staffinfo">
+                主检查人：
                 <el-tag size="mini">{{scope.row.staffinfo[0]}}</el-tag>
               </div>
-              <div v-if="scope.row.staffinfo">协同检查：
+              <div v-if="scope.row.staffinfo">
+                协同检查：
                 <el-tag size="mini">{{scope.row.staffinfo[1]}}</el-tag>
               </div>
             </template>
@@ -96,7 +112,6 @@
                 size="mini"
                 type="primary"
               >查看记录</el-button>
-              <el-button v-if="!scope.row.notchecked" size="mini" type="danger">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -106,10 +121,10 @@
     <el-row>
       <el-pagination
         background
-        @size-change="t=>taskDetailTable.pageSize=t"
-        :current-page.sync="taskDetailTable.page"
-        :page-sizes="taskDetailTable.pageSizes"
-        :page-size="taskDetailTable.pageSize"
+        @size-change="t=>taskBizTable.pageSize=t"
+        :current-page.sync="taskBizTable.page"
+        :page-sizes="taskBizTable.pageSizes"
+        :page-size="taskBizTable.pageSize"
         layout="total, prev, pager, next, sizes"
         :total="tableData.length"
       ></el-pagination>
@@ -118,29 +133,26 @@
 </template>
 
 <script>
-import { copy, uuid } from "@/utils/utils.js";
-import { getAllBizs } from "@/oldAPI/old_biz.js";
-import { getAreaIDArray } from "@/oldAPI/old_area.js";
-import { getTaskItems } from "@/oldAPI/old_task.js";
-import { getStaffByID } from "@/oldAPI/old_staff.js";
-import { getPlanByID } from "@/oldAPI/old_plan.js";
-
 export default {
-  name: "daily_monitorlist",
+  name: "daily_singletask",
 
   data() {
     return {
-      bizData: [],
       title: null,
-      plantitle: null,
-      currentTask: null,
+      plan: {},
+      task: {},
+
+      bizData: [],
+
+      loading: true,
 
       search: {
         text: "",
         daterange: [],
-        kind: ""
+        result: "",
+        handle: ""
       },
-      taskDetailTable: {
+      taskBizTable: {
         page: 1,
         pageSize: 10,
         pageSizes: [10, 25, 50, 100]
@@ -148,80 +160,21 @@ export default {
     };
   },
 
-  beforeMount() {
-    this.init();
+  async beforeMount() {
+    await this.init();
   },
 
-  computed: {
-    tableData() {
-      if (!this.currentTask || !this.currentTask.detail) {
-        return [];
-      }
-
-      let tableData = copy(this.currentTask.detail);
-
-      tableData.forEach(t => {
-        t.bizname = this.bizData.find(biz => biz.com_id == t.bizid).com_name;
-        t.staffinfo = [
-          getStaffByID(t.staff[0].id).name,
-          getStaffByID(t.staff[1].id).name
-        ];
-      });
-
-      if (!this.search.onlychecked) {
-        this.currentTask.checklist.forEach(t => {
-          tableData.push({
-            id: uuid(6, 16),
-            bizname: this.bizData.find(biz => biz.com_id == t).com_name,
-            notchecked: true
-          });
-        });
-      }
-
-      if (this.search.text && this.search.text.trim().length > 0) {
-        let searchText = this.search.text;
-        tableData = tableData.filter(
-          t =>
-            t.bizname.includes(searchText) ||
-            t.staffinfo[0].includes(searchText) ||
-            t.staffinfo[1].includes(searchText) ||
-            t.handle.includes(searchText) ||
-            t.result.includes(searchText)
-        );
-      }
-
-      if (this.search.kind && this.search.kind != "") {
-        tableData = tableData.filter(t => t.result === this.search.kind);
-      }
-
-      if (
-        this.search.daterange &&
-        (this.search.daterange[0] || this.search.daterange[1])
-      ) {
-        tableData = tableData.filter(t => {
-          let dt = new Date(t.date);
-          return (
-            dt.getTime() >= this.search.daterange[0].getTime() &&
-            dt.getTime() <= this.search.daterange[1].getTime()
-          );
-        });
-      }
-
-      return tableData;
-    },
-
-    pageData() {
-      return this.tableData.slice(
-        (this.taskDetailTable.page - 1) * this.taskDetailTable.pageSize,
-        this.taskDetailTable.page * this.taskDetailTable.pageSize
-      );
-    }
+  async beforeRouteUpdate(to, from, next) {
+    next();
+    await this.init();
   },
 
   methods: {
-    init() {
+    async init() {
+      const planId = this.$route.params.planid;
+      const taskId = this.$route.params.taskid;
+
       this.bizData = getAllBizs();
-      let taskid = this.$route.params.taskid;
 
       getTaskItems().forEach(t => {
         let taskItem = t.tasklist.find(ti => ti.id == taskid);
@@ -255,6 +208,52 @@ export default {
         case "停业整顿":
           return "danger";
       }
+    }
+  },
+
+  computed: {
+    tableData() {
+      let tableData = this.bizData;
+
+      // if (!this.search.onlychecked) {
+      //   this.currentTask.checklist.forEach(t => {
+      //     tableData.push({
+      //       id: uuid(6, 16),
+      //       bizname: this.bizData.find(biz => biz.com_id == t).com_name,
+      //       notchecked: true
+      //     });
+      //   });
+      // }
+
+      if (this.search.result && this.search.result != "") {
+        tableData = tableData.filter(t => t.result === this.search.result);
+      }
+
+      if (this.search.handle && this.search.handle != "") {
+        tableData = tableData.filter(t => t.handle === this.search.handle);
+      }
+
+      if (
+        this.search.daterange &&
+        (this.search.daterange[0] || this.search.daterange[1])
+      ) {
+        tableData = tableData.filter(t => {
+          let dt = new Date(t.date);
+          return (
+            dt.getTime() >= this.search.daterange[0].getTime() &&
+            dt.getTime() <= this.search.daterange[1].getTime()
+          );
+        });
+      }
+
+      return tableData;
+    },
+
+    pageData() {
+      return this.tableData.slice(
+        (this.taskBizTable.page - 1) * this.taskBizTable.pageSize,
+        this.taskBizTable.page * this.taskBizTable.pageSize
+      );
     }
   }
 };

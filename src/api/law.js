@@ -8,6 +8,7 @@ const lawState = (state) => {
   allStates.reverse;
   return allStates;
 }
+
 const emptyLaw = () => ({
   num: '',
   state: 1,
@@ -18,7 +19,7 @@ const emptyLaw = () => ({
   content: ''
 })
 
-async function law(lawOpt) {
+const law = async (lawOpt) => {
   if (!lawOpt) {
     return await axios.get('/law');
 
@@ -37,7 +38,7 @@ async function law(lawOpt) {
   return void 0;
 }
 
-async function del(lawId) {
+const del = async (lawId) => {
   return await axios.delete(`/law/${lawId}`);
 }
 

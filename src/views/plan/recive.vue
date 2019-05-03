@@ -173,7 +173,7 @@
 </template>
 
 <script>
-import { plan, forRecive, planState, planKind } from "@/api/plan.js";
+import { plan, planState, planKind } from "@/api/plan.js";
 import { dep } from "@/api/dep.js";
 import { staff } from "@/api/staff.js";
 import { copy, datetime } from "@/utils/utils.js";
@@ -213,7 +213,10 @@ export default {
       this.depData = (await dep()).data;
       this.staffData = (await staff()).data;
 
-      let planList = (await forRecive(this.$store.state.currentUser.dep)).data;
+      let planList = (await plan(
+        null,
+        `recive=${this.$store.state.currentUser.dep}`
+      )).data;
       planList.forEach(plan => {
         plan._staff = this.staffData.find(t => t._id === plan.staff);
         plan._dep = this.depData.find(t => t._id === plan.dep);

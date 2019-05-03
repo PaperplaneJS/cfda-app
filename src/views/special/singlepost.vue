@@ -1,5 +1,5 @@
 <template>
-  <el-row id="special_singleplan">
+  <el-row id="special_singlepost">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/special/post">专项检查</el-breadcrumb-item>
@@ -338,7 +338,7 @@ import { getPlanByID } from "@/oldAPI/old_plan.js";
 import { getAllStaffs } from "@/oldAPI/old_staff.js";
 
 export default {
-  name: "special_singleplan",
+  name: "special_singlepost",
 
   data() {
     return {

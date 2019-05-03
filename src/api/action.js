@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-async function login(loginData) {
+const login = async (loginData) => {
   return await axios.post('/login', loginData);
 }
 
-async function auth() {
+const auth = async () => {
   return await axios.post('/auth');
 }
 

@@ -1,32 +1,33 @@
 <template>
-  <el-row id="daily_post">
+  <el-row id="daily_plan">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/post">日常检查</el-breadcrumb-item>
-      <el-breadcrumb-item>任务分派</el-breadcrumb-item>
+      <el-breadcrumb-item to="/daily">日常检查</el-breadcrumb-item>
+      <el-breadcrumb-item>检查进度（计划）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">任务分派</el-row>
+    <el-row class="title action">检查进度（计划）</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
         <el-input
-          size="small"
           v-model="search.text"
           clearable
-          placeholder="搜索计划内容/标题/来源等"
+          size="small"
+          placeholder="搜索检查计划标题/类型/制定人等"
           prefix-icon="el-icon-search"
         ></el-input>
       </el-col>
 
-      <el-col :span="8">
+      <el-col :span="10">
         <el-date-picker
-          size="small"
           v-model="search.daterange"
+          clearable
+          size="small"
           type="daterange"
           range-separator="至"
-          start-placeholder="接收起始"
-          end-placeholder="接收截止"
+          start-placeholder="制定日期范围"
+          end-placeholder="截止日期"
         ></el-date-picker>
       </el-col>
     </el-row>
@@ -54,15 +55,10 @@
           <el-table-column align="right" label="操作" min-width="120px">
             <template slot-scope="scope">
               <el-button
-                v-if="scope.row._task.length>0"
                 @click.native="$router.push(`/daily/${scope.row._id}`)"
                 size="mini"
-              >查看已分派任务</el-button>
-              <el-button
-                @click.native="$router.push(`/daily/post/${scope.row._id}`)"
-                size="mini"
                 type="primary"
-              >分派任务</el-button>
+              >查看任务</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -91,15 +87,15 @@ import { dep } from "@/api/dep.js";
 import { Promise } from "q";
 
 export default {
-  name: "daily_post",
+  name: "daily_plan",
 
   data() {
     return {
       loading: true,
 
-      planData: [],
-      staffData: [],
       depData: [],
+      staffData: [],
+      planData: [],
 
       search: {
         text: "",
@@ -146,6 +142,11 @@ export default {
     tableData() {
       let tableData = this.planData;
 
+      tableData.forEach(t => {
+        t.dep = department.getAreaByID(t.department).name;
+        t.stf = getStaffByID(t.staff).name;
+      });
+
       if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;
         tableData = tableData.filter(
@@ -161,7 +162,7 @@ export default {
         (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
-          let dt = new Date(t._recivedate);
+          let dt = new Date(t.task.recive);
           return (
             dt.getTime() >= this.search.daterange[0].getTime() &&
             dt.getTime() <= this.search.daterange[1].getTime()
@@ -181,3 +182,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.progresstip {
+  margin: 5px 0;
+}
+</style>

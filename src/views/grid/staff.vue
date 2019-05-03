@@ -45,7 +45,7 @@
         <el-table v-loading="loading" :data="pageData" size="medium" style="width: 100%">
           <el-table-column prop="name" label="人员姓名" sortable></el-table-column>
           <el-table-column label="性别" sortable>
-            <template slot-scope="scope">{{scope.row.sex|sex}}</template>
+            <template slot-scope="scope">{{staffSex(scope.row.sex)}}</template>
           </el-table-column>
           <el-table-column prop="_dep.name" label="所属机构" sortable></el-table-column>
           <el-table-column prop="_dep._rel.length" label="机构级别" sortable></el-table-column>
@@ -55,7 +55,7 @@
               <el-tag
                 size="small"
                 :type="getStateType(scope.row.state)"
-              >{{scope.row.state|stateText}}</el-tag>
+              >{{staffState(scope.row.state)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="100px">
@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { staff, del } from "@/api/staff.js";
+import { staff, del, staffSex, staffState } from "@/api/staff.js";
 import { dep } from "@/api/dep.js";
 
 export default {
@@ -121,17 +121,14 @@ export default {
         pageSizes: [10, 25, 50, 100]
       },
 
-      deleteDialog: null
+      deleteDialog: null,
+      staffSex,
+      staffState
     };
   },
 
   async beforeMount() {
     await this.init();
-  },
-
-  filters: {
-    sex: s => ["-", "男", "女"][s],
-    stateText: state => ["停用", "激活"][state]
   },
 
   methods: {

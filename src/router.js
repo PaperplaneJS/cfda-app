@@ -33,16 +33,18 @@ import PlanSinglePlan from '@/views/plan/singleplan.vue';
 import PlanSinglePost from '@/views/plan/singlepost.vue';
 
 import DailyPost from '@/views/daily/post.vue';
-import DailyMonitor from '@/views/daily/monitor.vue';
-import DailyMonitorList from '@/views/daily/monitorlist.vue';
 import DailySinglePost from '@/views/daily/singlepost.vue';
-import DailySingleMonitor from '@/views/daily/singlemonitor.vue';
+import DailyPlan from '@/views/daily/plan.vue';
+import DailyTask from '@/views/daily/task.vue';
+import DailySingleTask from '@/views/daily/singletask.vue';
+import DailyRecord from '@/views/daily/record.vue';
 
 import SpecialPost from '@/views/special/post.vue';
-import SpecialMonitor from '@/views/special/monitor.vue';
-import SpecialMonitorList from '@/views/special/monitorlist.vue';
 import SpecialSinglePost from '@/views/special/singlepost.vue';
-import SpecialSingleMonitor from '@/views/special/singlemonitor.vue';
+import SpecialPlan from '@/views/special/plan.vue';
+import SpecialTask from '@/views/special/task.vue';
+import SpecialSingleTask from '@/views/special/singletask.vue';
+import SpecialRecord from '@/views/special/record.vue';
 
 import RiskRisk from '@/views/risk/risk.vue';
 import RiskSingleRisk from '@/views/risk/singlerisk.vue';
@@ -153,17 +155,20 @@ let routes = [{
         path: '/daily/post',
         component: DailyPost
       }, {
-        path: '/daily/monitor',
-        component: DailyMonitor
-      }, {
-        path: '/daily/post/:postid',
+        path: '/daily/post/:planid',
         component: DailySinglePost
       }, {
-        path: '/daily/monitor/:taskid',
-        component: DailyMonitorList
+        path: '/daily',
+        component: DailyPlan
       }, {
-        path: '/daily/monitor/:taskid/:taskrecordid',
-        component: DailySingleMonitor
+        path: '/daily/:planid',
+        component: DailyTask
+      }, {
+        path: '/daily/:planid/:taskid',
+        component: DailySingleTask
+      },{
+        path: '/daily/:planid/:taskid/:bizid',
+        component: DailyRecord
       },
 
       //专项检查
@@ -172,17 +177,20 @@ let routes = [{
         path: '/special/post',
         component: SpecialPost
       }, {
-        path: '/special/post/:postid',
+        path: '/special/post/:planid',
         component: SpecialSinglePost
       }, {
-        path: '/special/monitor',
-        component: SpecialMonitor
+        path: '/special',
+        component: SpecialPlan
       }, {
-        path: '/special/monitor/:taskid',
-        component: SpecialMonitorList
+        path: '/special/:planid',
+        component: SpecialTask
       }, {
-        path: '/special/monitor/:taskid/:taskrecordid',
-        component: SpecialSingleMonitor
+        path: '/special/:planid/:taskid',
+        component: SpecialSingleTask
+      },{
+        path: '/special/:planid/:taskid/:recordid',
+        component: SpecialRecord
       },
 
       //风险评级

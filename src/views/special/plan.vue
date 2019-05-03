@@ -1,12 +1,12 @@
 <template>
-  <el-row id="daily_monitor">
+  <el-row id="special_plan">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/daily/monitor">日常检查</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special/monitor">专项检查</el-breadcrumb-item>
       <el-breadcrumb-item>检查监督</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">日常检查监督</el-row>
+    <el-row class="title action">专项检查监督</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
@@ -19,7 +19,7 @@
         ></el-input>
       </el-col>
 
-      <el-col :span="10">
+      <el-col :span="6">
         <el-date-picker
           v-model="search.daterange"
           clearable
@@ -38,7 +38,7 @@
           <el-table-column prop="title" label="计划标题" min-width="140px" sortable></el-table-column>
           <el-table-column prop="stf" label="制定人" sortable></el-table-column>
           <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="task.recive" label="接收日期" sortable align="center"></el-table-column>
+          <el-table-column prop="task.recive" label="接收日期" align="center" sortable></el-table-column>
           <el-table-column label="执行期限" align="center" width="140px">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
@@ -47,7 +47,7 @@
           </el-table-column>
           <el-table-column label="状态与进度">
             <template slot-scope="scope">
-              <div>检查企业：
+              <div>检查单位：
                 <el-tag
                   size="mini"
                 >{{progress(scope.row.task.tasklist)[0]}} / {{progress(scope.row.task.tasklist)[1]}}</el-tag>
@@ -103,7 +103,7 @@ import { getStaffByID } from "@/oldAPI/old_staff.js";
 import department from "@/oldAPI/old_area.js";
 
 export default {
-  name: "daily_monitor",
+  name: "special_plan",
 
   data() {
     return {
@@ -132,16 +132,11 @@ export default {
         ) {
           let taskItem = copy(t);
           let planItem = copy(getPlanByID(t.planid));
-          if (planItem.kind === "daily") {
+          if (planItem.kind === "special") {
             planItem.task = taskItem;
             tableData.push(planItem);
           }
         }
-      });
-
-      tableData.forEach(t => {
-        t.dep = department.getAreaByID(t.department).name;
-        t.stf = getStaffByID(t.staff).name;
       });
 
       if (this.search.text && this.search.text.trim().length > 0) {

@@ -14,7 +14,7 @@
           <tr :key="`${mainIndex}-${index}`" v-for="index in mainItem.detail.length||1">
             <!-- 检查大项列，需要跨越所有小项行 -->
             <td
-              style="max-width: 180px;"
+              style="max-width:180px;min-width:160px;"
               v-if="index===1"
               :rowspan="mainItem.detail.length + (edit ? 1 : 0)"
             >

@@ -8,6 +8,7 @@ const depState = (state) => {
   allStates.reverse;
   return allStates;
 }
+
 const emptyDep = () => ({
   code: '',
   name: '',
@@ -15,8 +16,7 @@ const emptyDep = () => ({
   _rel: []
 })
 
-
-async function dep(depOpt, isUnder, isCascade) {
+const dep = async (depOpt, isUnder, isCascade) => {
   const param = [];
   if (isUnder) {
     param.push('under=1');
@@ -45,7 +45,7 @@ async function dep(depOpt, isUnder, isCascade) {
   return void 0;
 }
 
-async function del(depId) {
+const del = async (depId) => {
   return await axios.delete(`/dep/${depId}`);
 }
 

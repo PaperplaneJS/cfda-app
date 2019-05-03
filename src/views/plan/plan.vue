@@ -1,5 +1,5 @@
 <template>
-  <el-row id="plan_list">
+  <el-row id="plan_plan">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/plan">检查计划管理</el-breadcrumb-item>
@@ -180,7 +180,7 @@ import { dep } from "@/api/dep.js";
 import { staff } from "@/api/staff.js";
 
 export default {
-  name: "plan_list",
+  name: "plan_plan",
 
   data() {
     return {

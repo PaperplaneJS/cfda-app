@@ -43,7 +43,12 @@
 
       <el-col :span="3">
         <el-select size="small" v-model="search.kind" clearable placeholder="选择类别">
-          <el-option v-for="(name,index) in bizKind()" :key="index+1" :label="name" :value="index+1"></el-option>
+          <el-option
+            v-for="(name,index) in bizKind()"
+            :key="index+1"
+            :label="name"
+            :value="index+1"
+          ></el-option>
         </el-select>
       </el-col>
 
@@ -73,7 +78,7 @@
         <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%;">
           <el-table-column prop="name" label="企业名称" min-width="150px" sortable></el-table-column>
           <el-table-column label="类型" sortable>
-            <template slot-scope="scope">{{scope.row.kind | kindText}}</template>
+            <template slot-scope="scope">{{bizKind(scope.row.kind)}}</template>
           </el-table-column>
           <el-table-column label="行政区域" prop="_dep.name" sortable></el-table-column>
           <el-table-column prop="contact" label="联系人" sortable></el-table-column>
@@ -89,7 +94,7 @@
               <el-tag
                 size="small"
                 :type="getStateType(scope.row.state)"
-              >{{scope.row.state|stateText}}</el-tag>
+              >{{bizState(scope.row.state)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="110px">
@@ -117,7 +122,7 @@
         :total="tableData.length"
       ></el-pagination>
     </el-row>
-    
+
     <el-dialog title="确认删除" v-if="deleteDialog" :visible="true" width="30%">
       <span>确定要删除食品单位 {{deleteDialog.name}} 吗？</span>
       <br>
@@ -159,6 +164,7 @@ export default {
 
       bizKind,
       bizCategory,
+      bizState,
 
       deleteDialog: null
     };
@@ -166,11 +172,6 @@ export default {
 
   async beforeMount() {
     await this.init();
-  },
-
-  filters: {
-    stateText: state => bizState(state),
-    kindText: kind => bizKind(kind)
   },
 
   methods: {

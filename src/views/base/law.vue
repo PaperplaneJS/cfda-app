@@ -46,7 +46,7 @@
               <el-tag
                 size="small"
                 :type="getStateType(scope.row.state)"
-              >{{scope.row.state | stateText}}</el-tag>
+              >{{lawState(scope.row.state)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作" min-width="110px">
@@ -113,13 +113,6 @@ export default {
   async beforeMount() {
     await this.init();
   },
-
-  filters: {
-    stateText(state) {
-      return lawState(state);
-    }
-  },
-
   
   methods: {
     async init() {

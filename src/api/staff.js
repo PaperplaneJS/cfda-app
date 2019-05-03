@@ -9,6 +9,23 @@ const emptyStaff = () => ({
   dep: null
 });
 
+const staffSex = (sex) => {
+  const allSexs = ['男', '女'];
+  if (sex !== undefined) {
+    return ['未知', ...allSexs][sex];
+  }
+  return allSexs;
+}
+
+const staffState = (state) => {
+  const allStates = ['停用', '激活'];
+  if (state !== undefined) {
+    return allStates[state];
+  }
+  allStates.reverse;
+  return allStates;
+}
+
 async function staff(staffOpt) {
   if (!staffOpt) {
     return await axios.get('/staff');
@@ -28,19 +45,21 @@ async function staff(staffOpt) {
   return void 0;
 }
 
-async function staffByDep(depId, isUnder) {
+const staffByDep = async (depId, isUnder) => {
   const underParam = isUnder ? `under=1` : ``;
   const url = `/staff?dep=${depId}&${underParam}`;
   return await axios.get(url);
 }
 
-async function del(staffId) {
+const del = async (staffId) => {
   return await axios.delete(`/staff/${staffId}`);
 }
 
 export {
   staff,
   staffByDep,
+  staffState,
+  staffSex,
   del,
   emptyStaff
 };

@@ -89,7 +89,7 @@
           </div>
         </el-header>
 
-        <el-main class="main">
+        <el-main class="main" id="main">
           <router-view></router-view>
         </el-main>
       </el-container>

@@ -63,7 +63,7 @@
                     <el-tag
                       size="small"
                       :type="scope.row.kind==='daily'?'primary':'warning'"
-                    >{{scope.row.kind | kindText}}</el-tag>
+                    >{{templateKind(scope.row.kind)}}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column prop="_dep.name" label="制定部门" sortable></el-table-column>
@@ -74,7 +74,7 @@
                     <el-tag
                       size="small"
                       :type="getStateTag(scope.row.state)"
-                    >{{scope.row.state|stateText}}</el-tag>
+                    >{{templateState(scope.row.state)}}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column align="center" label="操作" min-width="90px">
@@ -145,22 +145,13 @@ export default {
         pageSizes: [10, 25, 50, 100]
       },
 
+      templateState,
       templateKind
     };
   },
 
   async beforeMount() {
     await this.init();
-  },
-
-  filters: {
-    stateText(state) {
-      return templateState(state);
-    },
-
-    kindText(kind) {
-      return templateKind(kind);
-    }
   },
 
   methods: {

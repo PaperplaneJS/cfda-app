@@ -8,6 +8,7 @@ const bizKind = (kind) => {
 
   return allKinds;
 }
+
 const bizCategory = (category) => {
   const allCategory = ['餐馆', '快餐店', '小吃店', '饮品店', '食堂'];
   if (category) {
@@ -16,6 +17,7 @@ const bizCategory = (category) => {
 
   return allCategory;
 }
+
 const bizState = (state) => {
   const allStates = ['关闭', '正常'];
   if (state !== undefined) {
@@ -24,6 +26,7 @@ const bizState = (state) => {
   allStates.reverse;
   return allStates;
 }
+
 const emptyBiz = () => ({
   name: '',
   state: 1,
@@ -37,6 +40,7 @@ const emptyBiz = () => ({
   gps: [null, null],
   lic: null
 })
+
 const emptyLic = () => ({
   code: '',
   biz: '',
@@ -51,12 +55,12 @@ const emptyLic = () => ({
   daterange: ['', '']
 })
 
-async function biz(bizOpt) {
+const biz = async (bizOpt, props = '') => {
   if (!bizOpt) {
-    return await axios.get('/biz');
+    return await axios.get(`/biz?${props}`);
 
   } else if (typeof(bizOpt) === 'string') {
-    return await axios.get(`/biz/${bizOpt}`);
+    return await axios.get(`/biz/${bizOpt}?${props}`);
 
   } else if (typeof(bizOpt) === 'object') {
     const isNew = !bizOpt._id || bizOpt._id.length === 0;
@@ -70,7 +74,7 @@ async function biz(bizOpt) {
   return void 0;
 }
 
-async function del(bizId) {
+const del = async (bizId) => {
   return await axios.delete(`/biz/${bizId}`);
 }
 

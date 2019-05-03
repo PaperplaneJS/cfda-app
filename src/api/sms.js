@@ -10,7 +10,7 @@ const emptySms = () => ({
   recive: []
 })
 
-async function sms(smsOpt) {
+const sms = async (smsOpt) => {
   if (!smsOpt) {
     return await axios.get('/sms');
 

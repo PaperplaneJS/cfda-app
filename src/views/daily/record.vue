@@ -1,5 +1,5 @@
 <template>
-  <el-row id="daily_singlemonitor">
+  <el-row id="daily_record">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
       <el-breadcrumb-item to="/daily/monitor">日常检查</el-breadcrumb-item>
@@ -423,7 +423,7 @@ import { getBizByID } from "@/oldAPI/old_biz.js";
 import { getStaffByID } from "@/oldAPI/old_staff.js";
 
 export default {
-  name: "daily_singlemonitor",
+  name: "daily_record",
 
   data() {
     return {

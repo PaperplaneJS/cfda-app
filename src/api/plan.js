@@ -11,6 +11,7 @@ const planKind = (kind) => {
   }
   return allKinds;
 }
+
 const planState = (state) => {
   const allStates = ['待分发', '未开始', '执行中', '已完成', '已终止'];
   if (state) {
@@ -19,6 +20,7 @@ const planState = (state) => {
 
   return allStates;
 }
+
 const emptyPlan = (kind = 'daily') => Object.assign({
   title: '',
   kind,
@@ -34,12 +36,12 @@ const emptyPlan = (kind = 'daily') => Object.assign({
   recive: []
 }, kind === 'special' ? { special: '' } : {})
 
-async function plan(planOpt) {
+const plan = async (planOpt, props = '') => {
   if (!planOpt) {
-    return await axios.get('/plan');
+    return await axios.get(`/plan?${props}`);
 
   } else if (typeof(planOpt) === 'string') {
-    return await axios.get(`/plan/${planOpt}`);
+    return await axios.get(`/plan/${planOpt}?${props}`);
 
   } else if (typeof(planOpt) === 'object') {
     const isNew = !planOpt._id || planOpt._id.length === 0;
@@ -53,12 +55,8 @@ async function plan(planOpt) {
   return void 0;
 }
 
-async function del(planId) {
+const del = async (planId) => {
   return await axios.delete(`/plan/${planId}`);
 }
 
-async function forRecive(depId) {
-  return await axios.get(`/plan?recive=${depId}`);
-}
-
-export { planKind, planState, emptyPlan, plan, del, forRecive }
+export { planKind, planState, emptyPlan, plan, del }

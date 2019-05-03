@@ -8,6 +8,7 @@ const templateState = (state) => {
   allStates.reverse;
   return allStates;
 }
+
 const templateKind = (kind) => {
   const kinds = {
     'daily': '常规模板',
@@ -18,6 +19,7 @@ const templateKind = (kind) => {
   }
   return kinds;
 }
+
 const emptyTemplate = (kind = 'daily') => ({
   name: '',
   state: 1,
@@ -28,11 +30,13 @@ const emptyTemplate = (kind = 'daily') => ({
   tips: '',
   content: []
 })
+
 const emptyMainItem = () => ({
   title: '',
   remark: '',
   detail: []
 })
+
 const emptySubItem = (kind = 'daily') => ({
   content: '',
   required: false,
@@ -41,7 +45,7 @@ const emptySubItem = (kind = 'daily') => ({
   val: kind === 'daily' ? null : [0, 0, 0, 0]
 })
 
-async function template(templateOpt) {
+const template = async (templateOpt) => {
   if (!templateOpt) {
     return await axios.get('/template');
 
@@ -60,7 +64,7 @@ async function template(templateOpt) {
   return void 0;
 }
 
-async function del(lawId) {
+const del = async (lawId) => {
   return await axios.delete(`/template/${lawId}`);
 }
 
