@@ -59,7 +59,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="制定单位：">
-                <el-input v-if="plan._dep" :value="plan._dep.name" readonly></el-input>
+                <el-input v-if="plan.$dep" :value="plan.$dep.name" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -249,7 +249,7 @@
                 <el-table-column label="类型" sortable>
                   <template slot-scope="scope">{{bizKind(scope.row.kind)}}</template>
                 </el-table-column>
-                <el-table-column prop="_dep.name" label="行政区域" sortable></el-table-column>
+                <el-table-column prop="$dep.name" label="行政区域" sortable></el-table-column>
                 <el-table-column prop="contact" label="联系人" sortable></el-table-column>
                 <el-table-column prop="phone" label="联系电话"></el-table-column>
                 <el-table-column label="许可证编号">
@@ -382,12 +382,12 @@ export default {
       this.depData = (await dep()).data;
 
       let planData = (await plan(planId)).data;
-      planData._dep = this.depData.find(t => t._id === planData.dep);
+      planData.$dep = this.depData.find(t => t._id === planData.dep);
       this.plan = planData;
 
       this.current.date = datetime();
       this.current._plan = this.plan._id;
-      this.current.staff = this.$store.state.currentUser.dep;
+      this.current.staff = this.$store.state.currentUser._id;
 
       const postBizIds = [];
       const tasks = (await task(this.current._plan)).data;
@@ -398,11 +398,11 @@ export default {
       });
       let bizList = (await biz()).data;
       bizList.forEach(biz => {
-        biz["_dep"] = this.depData.find(t => t._id === biz.dep);
+        biz["$dep"] = this.depData.find(t => t._id === biz.dep);
       });
       bizList = bizList.filter(
         biz =>
-          biz._dep._rel.includes(this.$store.state.currentUser.dep) &&
+          biz.$dep._rel.includes(this.$store.state.currentUser.dep) &&
           !postBizIds.includes(biz._id)
       );
 

@@ -66,8 +66,8 @@
                     >{{templateKind(scope.row.kind)}}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="_dep.name" label="制定部门" sortable></el-table-column>
-                <el-table-column prop="_staff.name" label="制定人" sortable></el-table-column>
+                <el-table-column prop="$dep.name" label="制定部门" sortable></el-table-column>
+                <el-table-column prop="$staff.name" label="制定人" sortable></el-table-column>
                 <el-table-column prop="date" label="创建日期" align="center" sortable></el-table-column>
                 <el-table-column label="状态" align="center">
                   <template slot-scope="scope">
@@ -162,10 +162,10 @@ export default {
 
       let currentTemplate = (await template()).data;
       currentTemplate.forEach(template => {
-        template["_staff"] = this.staffData.find(t => t._id === template.staff);
+        template["$staff"] = this.staffData.find(t => t._id === template.staff);
       });
       currentTemplate.forEach(template => {
-        template["_dep"] = this.depData.find(t => t._id === template.dep);
+        template["$dep"] = this.depData.find(t => t._id === template.dep);
       });
 
       this.templateData = currentTemplate;
@@ -199,8 +199,8 @@ export default {
         tableData = tableData.filter(
           t =>
             t.name.includes(searchText) ||
-            t._dep.name.includes(searchText) ||
-            t._staff.name.includes(searchText)
+            t.$dep.name.includes(searchText) ||
+            t.$staff.name.includes(searchText)
         );
       }
 

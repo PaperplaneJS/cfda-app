@@ -47,8 +47,8 @@
           <el-table-column label="性别" sortable>
             <template slot-scope="scope">{{staffSex(scope.row.sex)}}</template>
           </el-table-column>
-          <el-table-column prop="_dep.name" label="所属机构" sortable></el-table-column>
-          <el-table-column prop="_dep._rel.length" label="机构级别" sortable></el-table-column>
+          <el-table-column prop="$dep.name" label="所属机构" sortable></el-table-column>
+          <el-table-column prop="$dep._rel.length" label="机构级别" sortable></el-table-column>
           <el-table-column prop="job" label="职务" sortable></el-table-column>
           <el-table-column label="状态" align="center" sortabl>
             <template slot-scope="scope">
@@ -139,7 +139,7 @@ export default {
       let staffList = (await staff()).data;
 
       staffList.forEach(staff => {
-        staff["_dep"] = this.depData.find(t => t._id === staff.dep);
+        staff["$dep"] = this.depData.find(t => t._id === staff.dep);
       });
       this.staffData = staffList;
       this.loading = false;
@@ -170,7 +170,7 @@ export default {
 
       if (this.search.dep && this.search.dep.length > 0) {
         let areaSearch = this.search.dep.slice(-1)[0];
-        tableData = tableData.filter(t => t._dep._rel.includes(areaSearch));
+        tableData = tableData.filter(t => t.$dep._rel.includes(areaSearch));
       }
 
       return tableData;

@@ -329,14 +329,6 @@
 </template>
 
 <script>
-import { copy } from "@/utils/utils.js";
-import department from "@/oldAPI/old_area.js";
-import { getTemplates } from "@/oldAPI/old_template.js";
-import { getAllBizs } from "@/oldAPI/old_biz.js";
-import { getTaskItems, getTaskItem } from "@/oldAPI/old_task.js";
-import { getPlanByID } from "@/oldAPI/old_plan.js";
-import { getAllStaffs } from "@/oldAPI/old_staff.js";
-
 export default {
   name: "special_singlepost",
 

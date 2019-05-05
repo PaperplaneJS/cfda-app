@@ -1,13 +1,11 @@
 import Vuex from 'vuex';
 import Vue from 'vue';
 
-import { notice } from "@/oldAPI/old_notice.js";
-
 Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     currentUser: null,
-    notice
+    notice: []
   },
 
   mutations: {
@@ -21,6 +19,10 @@ const store = new Vuex.Store({
 
     logout(state) {
       state.currentUser = null;
+    },
+
+    addNotice(notice) {
+      state.notice.push(notice);
     }
   }
 });

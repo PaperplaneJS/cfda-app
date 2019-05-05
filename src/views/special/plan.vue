@@ -95,13 +95,6 @@
 </template>
 
 <script>
-import { copy } from "@/utils/utils.js";
-import { getTaskItems } from "@/oldAPI/old_task.js";
-import { getPlanByID } from "@/oldAPI/old_plan.js";
-import { getAreaIDArray } from "@/oldAPI/old_area.js";
-import { getStaffByID } from "@/oldAPI/old_staff.js";
-import department from "@/oldAPI/old_area.js";
-
 export default {
   name: "special_plan",
 

@@ -39,7 +39,7 @@
         <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%">
           <el-table-column prop="num" label="法令法规编号" sortable></el-table-column>
           <el-table-column prop="name" label="法令法规名称" min-width="240px" sortable></el-table-column>
-          <el-table-column prop="_dep.name" label="创建单位" sortable></el-table-column>
+          <el-table-column prop="$dep.name" label="创建单位" sortable></el-table-column>
           <el-table-column prop="date" label="创建日期" align="center" sortable></el-table-column>
           <el-table-column label="状态" align="center" sortable>
             <template slot-scope="scope">
@@ -121,7 +121,7 @@ export default {
       this.depData = (await dep()).data;
 
       lawList.forEach(law => {
-        law["_dep"] = this.depData.find(t => t._id === law.dep);
+        law["$dep"] = this.depData.find(t => t._id === law.dep);
       });
 
       this.lawData = lawList;
@@ -152,7 +152,7 @@ export default {
           t =>
             t.name.includes(searchText) ||
             t.num.includes(searchText) ||
-            t._dep.name.includes(searchText)
+            t.$dep.name.includes(searchText)
         );
       }
 

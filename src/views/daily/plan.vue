@@ -6,7 +6,7 @@
       <el-breadcrumb-item>检查进度（计划）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">检查进度（计划）</el-row>
+    <el-row class="title action">检查进度（所有进行中的计划）</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
@@ -36,9 +36,9 @@
       <el-col :span="24">
         <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" min-width="160px" sortable></el-table-column>
-          <el-table-column prop="_staff.name" label="制定人" sortable></el-table-column>
-          <el-table-column prop="_dep.name" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="_recivedate" label="接收日期" sortable align="center"></el-table-column>
+          <el-table-column prop="$staff.name" label="制定人" sortable></el-table-column>
+          <el-table-column prop="$dep.name" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="$recive.date" label="接收日期" sortable align="center"></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
@@ -49,7 +49,7 @@
             <template slot-scope="scope">
               <el-tag
                 size="small"
-              >{{scope.row._task.length>0?`已分派${scope.row._task.length}项任务`:'待分派'}}</el-tag>
+              >{{scope.row.$task.length>0?`已分派${scope.row.$task.length}项任务`:'待分派'}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="right" label="操作" min-width="120px">
@@ -123,13 +123,13 @@ export default {
 
       let planList = (await plan(null, `posttask=${currentDepId}`)).data;
       planList.forEach(plan => {
-        plan._recivedate = plan.recive.find(t => t.dep === currentDepId).date;
-        plan._staff = this.staffData.find(t => t._id === plan.staff);
-        plan._dep = this.depData.find(t => t._id === plan.dep);
+        plan.$recive = plan.recive.find(t => t.dep === currentDepId);
+        plan.$staff = this.staffData.find(t => t._id === plan.staff);
+        plan.$dep = this.depData.find(t => t._id === plan.dep);
       });
       await Promise.all(
         planList.map(async plan => {
-          plan._task = (await task(plan._id)).data;
+          plan.$task = (await task(plan._id)).data;
         })
       );
       this.planData = planList;
@@ -141,11 +141,6 @@ export default {
   computed: {
     tableData() {
       let tableData = this.planData;
-
-      tableData.forEach(t => {
-        t.dep = department.getAreaByID(t.department).name;
-        t.stf = getStaffByID(t.staff).name;
-      });
 
       if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;

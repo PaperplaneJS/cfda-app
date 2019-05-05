@@ -7,7 +7,7 @@
       <el-breadcrumb-item :to="`/daily/${plan._id}/${task._id}`">{{task.title}}（任务）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">{{title}}（检查任务）</el-row>
+    <el-row class="title action">{{task.title}}（当前检查任务）</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="3">
@@ -74,13 +74,13 @@
           </el-table-column>
           <el-table-column label="检查人员" sortable>
             <template slot-scope="scope">
-              <div v-if="scope.row.staffinfo">
+              <div v-if="scope.row.staff1">
                 主检查人：
-                <el-tag size="mini">{{scope.row.staffinfo[0]}}</el-tag>
+                <el-tag size="mini">{{scope.row.$staff1.name}}</el-tag>
               </div>
-              <div v-if="scope.row.staffinfo">
+              <div v-if="scope.row.staff2">
                 协同检查：
-                <el-tag size="mini">{{scope.row.staffinfo[1]}}</el-tag>
+                <el-tag size="mini">{{scope.row.$staff2.name}}</el-tag>
               </div>
             </template>
           </el-table-column>
@@ -133,12 +133,14 @@
 </template>
 
 <script>
+import { record, recordResult, recordHandle } from "@/api/record.js";
+import { biz } from "@/api/biz.js";
+
 export default {
   name: "daily_singletask",
 
   data() {
     return {
-      title: null,
       plan: {},
       task: {},
 
@@ -156,7 +158,10 @@ export default {
         page: 1,
         pageSize: 10,
         pageSizes: [10, 25, 50, 100]
-      }
+      },
+
+      recordHandle,
+      recordResult
     };
   },
 
@@ -175,16 +180,6 @@ export default {
       const taskId = this.$route.params.taskid;
 
       this.bizData = getAllBizs();
-
-      getTaskItems().forEach(t => {
-        let taskItem = t.tasklist.find(ti => ti.id == taskid);
-        if (taskItem) {
-          this.currentTask = copy(taskItem);
-          this.plantitle = getPlanByID(t.planid).title;
-          return false;
-        }
-      });
-      this.title = this.currentTask.title;
     },
 
     tableRowClassName({ row }) {
@@ -194,7 +189,7 @@ export default {
       return "";
     },
 
-    getResultType(text) {
+    getResultType(type) {
       switch (text) {
         case "符合":
         case "通过":

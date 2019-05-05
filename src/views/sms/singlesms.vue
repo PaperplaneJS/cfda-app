@@ -21,13 +21,13 @@
       <el-row>
         <el-col :span="6">
           <el-form-item label="下发单位：">
-            <el-input readonly v-model="current._dep.name"></el-input>
+            <el-input readonly v-model="current.$dep.name"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :push="2" :span="6">
           <el-form-item label="下发人：">
-            <el-input readonly v-model="current._staff.name"></el-input>
+            <el-input readonly v-model="current.$staff.name"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -101,8 +101,8 @@ export default {
       staffData: [],
 
       current: {
-        _staff: {},
-        _dep: {}
+        $staff: {},
+        $dep: {}
       }
     };
   },
@@ -123,8 +123,8 @@ export default {
       this.staffData = (await staff()).data;
 
       let currentSms = (await sms(smsid)).data;
-      currentSms._dep = (await dep(currentSms.dep)).data;
-      currentSms._staff = (await staff(currentSms.staff)).data;
+      currentSms.$dep = (await dep(currentSms.dep)).data;
+      currentSms.$staff = (await staff(currentSms.staff)).data;
       this.current = currentSms;
 
       this.title = this.current.title;

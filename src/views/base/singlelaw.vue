@@ -34,12 +34,12 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="创建单位：">
-            <el-input disabled size="small" v-model="current._dep" placeholder="该法规创建机构"></el-input>
+            <el-input disabled size="small" v-model="current.$dep" placeholder="该法规创建机构"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="创建人：">
-            <el-input disabled size="small" v-model="current._staff" placeholder="该法规创建人"></el-input>
+            <el-input disabled size="small" v-model="current.$staff" placeholder="该法规创建人"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -126,11 +126,11 @@ export default {
 
       const currentLaw = this.isNew ? emptyLaw() : (await law(lawid)).data;
       currentLaw.date = this.isNew ? date() : currentLaw.date;
-      currentLaw._dep = (await dep(
+      currentLaw.$dep = (await dep(
         this.isNew ? this.$store.state.currentUser.dep : currentLaw.dep
       )).data.name;
 
-      currentLaw._staff = (await staff(
+      currentLaw.$staff = (await staff(
         this.isNew ? this.$store.state.currentUser._id : currentLaw.staff
       )).data.name;
 
@@ -163,8 +163,8 @@ export default {
         currentLaw.dep = this.$store.state.currentUser.dep;
         currentLaw.staff = this.$store.state.currentUser._id;
       }
-      delete currentLaw["_dep"];
-      delete currentLaw["_staff"];
+      delete currentLaw["$dep"];
+      delete currentLaw["$staff"];
 
       return currentLaw;
     }

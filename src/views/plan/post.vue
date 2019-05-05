@@ -47,8 +47,8 @@
               <el-tag :type="getKindType(scope.row.kind)" size="small">{{planKind(scope.row.kind)}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="_staff.name" label="制定人" sortable></el-table-column>
-          <el-table-column prop="_dep.name" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="$staff.name" label="制定人" sortable></el-table-column>
+          <el-table-column prop="$dep.name" label="制定单位" sortable></el-table-column>
           <el-table-column prop="date" label="制定日期" sortable align="center"></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
@@ -138,8 +138,8 @@ export default {
       this.staffData = (await staff()).data;
 
       planList.forEach(plan => {
-        plan._dep = this.depData.find(t => t._id === plan.dep);
-        plan._staff = this.staffData.find(t => t._id === plan.staff);
+        plan.$dep = this.depData.find(t => t._id === plan.dep);
+        plan.$staff = this.staffData.find(t => t._id === plan.staff);
       });
       this.planData = planList;
 
@@ -188,8 +188,8 @@ export default {
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
-            t._dep.name.includes(searchText) ||
-            t._staff.name.includes(searchText)
+            t.$dep.name.includes(searchText) ||
+            t.$staff.name.includes(searchText)
         );
       }
 

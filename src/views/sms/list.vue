@@ -77,8 +77,8 @@
               <el-tag size="small">接收/下发：{{scope.row.recive.length}}/{{scope.row.post.length}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="_dep.name" label="发布机构" sortable></el-table-column>
-          <el-table-column prop="_staff.name" label="发布人" sortable></el-table-column>
+          <el-table-column prop="$dep.name" label="发布机构" sortable></el-table-column>
+          <el-table-column prop="$staff.name" label="发布人" sortable></el-table-column>
           <el-table-column prop="date" label="发布日期" align="center" sortable></el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
@@ -145,8 +145,8 @@ export default {
       this.staffData = (await staff()).data;
 
       smsList.forEach(sms => {
-        sms._dep = this.depData.find(t => t._id === sms.dep);
-        sms._staff = this.staffData.find(t => t._id === sms.staff);
+        sms.$dep = this.depData.find(t => t._id === sms.dep);
+        sms.$staff = this.staffData.find(t => t._id === sms.staff);
       });
       this.smsData = smsList;
 
@@ -181,8 +181,8 @@ export default {
         tableData = tableData.filter(
           t =>
             t.title.includes(searchText) ||
-            t._dep.name.includes(searchText) ||
-            t._staff.name.includes(searchText)
+            t.$dep.name.includes(searchText) ||
+            t.$staff.name.includes(searchText)
         );
       }
 

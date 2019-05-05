@@ -80,7 +80,7 @@
           <el-table-column label="类型" sortable>
             <template slot-scope="scope">{{bizKind(scope.row.kind)}}</template>
           </el-table-column>
-          <el-table-column label="行政区域" prop="_dep.name" sortable></el-table-column>
+          <el-table-column label="行政区域" prop="$dep.name" sortable></el-table-column>
           <el-table-column prop="contact" label="联系人" sortable></el-table-column>
           <el-table-column prop="phone" label="联系电话"></el-table-column>
           <el-table-column label="许可证编号">
@@ -182,7 +182,7 @@ export default {
       let bizList = (await biz()).data;
 
       bizList.forEach(biz => {
-        biz["_dep"] = this.depData.find(t => t._id === biz.dep);
+        biz["$dep"] = this.depData.find(t => t._id === biz.dep);
       });
       this.bizData = bizList;
       this.loading = false;

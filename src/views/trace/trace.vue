@@ -204,14 +204,6 @@
 </template>
 
 <script>
-import { copy } from "@/utils/utils.js";
-import { getStaffByID } from "@/oldAPI/old_staff.js";
-import { getAreaByID } from "@/oldAPI/old_area.js";
-import { getBizByID } from "@/oldAPI/old_biz.js";
-import { getTaskItems } from "@/oldAPI/old_task.js";
-import { getPlans } from "@/oldAPI/old_plan.js";
-import { getAllRisks } from "@/oldAPI/old_risk.js";
-
 export default {
   name: "trace_trace",
 

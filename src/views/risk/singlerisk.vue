@@ -179,13 +179,6 @@
 </template>
 
 <script>
-import { copy } from "@/utils/utils.js";
-import { getAllRisks, getRisksByYear } from "@/oldAPI/old_risk.js";
-import { getAreaByID } from "@/oldAPI/old_area.js";
-import { getAllBizs } from "@/oldAPI/old_biz.js";
-import { getStaffByID } from "@/oldAPI/old_staff.js";
-import { getTemplateByID } from "@/oldAPI/old_template.js";
-
 export default {
   name: "risk_singlerisk",
 

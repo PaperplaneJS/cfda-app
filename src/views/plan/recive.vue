@@ -17,8 +17,8 @@
               <el-tag :type="getKindType(scope.row.kind)" size="small">{{planKind(scope.row.kind)}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="_staff.name" label="制定人员" sortable></el-table-column>
-          <el-table-column prop="_dep.name" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="$staff.name" label="制定人员" sortable></el-table-column>
+          <el-table-column prop="$dep.name" label="制定单位" sortable></el-table-column>
           <el-table-column prop="postdate" label="下发日期" sortable align="center"></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
@@ -57,7 +57,7 @@
     </el-row>
 
     <el-dialog title="查看和接收计划" v-if="isPopup" :visible.sync="isPopup">
-      <el-form id="popup" label-position="left" label-width="100px">
+      <el-form id="popup" label-position="left" label-width="140px">
         <el-row :gutter="15">
           <el-col :span="24">
             <el-form-item label="计划标题:">
@@ -69,13 +69,13 @@
         <el-row :gutter="15">
           <el-col :span="12">
             <el-form-item label="制定科室:">
-              <el-input v-model="currentPlan._dep.name" readonly></el-input>
+              <el-input v-model="currentPlan.$dep.name" readonly></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="制定人员:">
-              <el-input v-model="currentPlan._staff.name" readonly></el-input>
+              <el-input v-model="currentPlan.$staff.name" readonly></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -163,6 +163,26 @@
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="`辖区内单位(${bizData.length}):`">
+              <el-tag
+                style="margin:5px;"
+                size="small"
+                :type="item.state===1?'primary':'danger'"
+                v-for="item in bizData"
+                :key="item._id"
+              >{{item.name}}</el-tag>
+              <el-tag
+                style="margin:5px;"
+                size="small"
+                type="info"
+                v-if="bizData.length<=0"
+              >没有单位</el-tag>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="()=>{isPopup=false;currentPlan=null}">取消</el-button>
@@ -176,6 +196,7 @@
 import { plan, planState, planKind } from "@/api/plan.js";
 import { dep } from "@/api/dep.js";
 import { staff } from "@/api/staff.js";
+import { biz } from "@/api/biz.js";
 import { copy, datetime } from "@/utils/utils.js";
 
 export default {
@@ -191,6 +212,7 @@ export default {
       planData: [],
       depData: [],
       staffData: [],
+      bizData: [],
 
       planTable: {
         page: 1,
@@ -213,13 +235,20 @@ export default {
       this.depData = (await dep()).data;
       this.staffData = (await staff()).data;
 
+      let bizList = (await biz()).data;
+      this.bizData = bizList.filter(biz =>
+        this.depData
+          .find(t => t._id === biz.dep)
+          ._rel.includes(this.$store.state.currentUser.dep)
+      );
+
       let planList = (await plan(
         null,
         `recive=${this.$store.state.currentUser.dep}`
       )).data;
       planList.forEach(plan => {
-        plan._staff = this.staffData.find(t => t._id === plan.staff);
-        plan._dep = this.depData.find(t => t._id === plan.dep);
+        plan.$staff = this.staffData.find(t => t._id === plan.staff);
+        plan.$dep = this.depData.find(t => t._id === plan.dep);
       });
 
       this.planData = planList;
@@ -229,12 +258,13 @@ export default {
 
     async acceptPlan() {
       let current = copy(this.currentPlan);
-      delete current["_staff"];
-      delete current["_dep"];
+      delete current["$staff"];
+      delete current["$dep"];
 
       current.recive.push({
         dep: this.$store.state.currentUser.dep,
-        date: datetime()
+        date: datetime(),
+        biz: this.bizData.map(t => t._id)
       });
 
       await plan(current);

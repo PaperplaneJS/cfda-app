@@ -35,9 +35,9 @@
       <el-col :span="24">
         <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" min-width="160px" sortable></el-table-column>
-          <el-table-column prop="_staff.name" label="制定人" sortable></el-table-column>
-          <el-table-column prop="_dep.name" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="_recivedate" label="接收日期" sortable align="center"></el-table-column>
+          <el-table-column prop="$staff.name" label="制定人" sortable></el-table-column>
+          <el-table-column prop="$dep.name" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="$recive.date" label="接收日期" sortable align="center"></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
@@ -47,14 +47,15 @@
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
               <el-tag
-                size="small"
-              >{{scope.row._task.length>0?`已分派${scope.row._task.length}项任务`:'待分派'}}</el-tag>
+                size="mini"
+              >{{scope.row.$task.length>0?`已分派${scope.row.$task.length}项任务`:'待分派'}}</el-tag>
+              <el-tag size="mini">覆盖率：{{coverPercent(scope.row)}}%</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="right" label="操作" min-width="120px">
             <template slot-scope="scope">
               <el-button
-                v-if="scope.row._task.length>0"
+                v-if="scope.row.$task.length>0"
                 @click.native="$router.push(`/daily/${scope.row._id}`)"
                 size="mini"
               >查看已分派任务</el-button>
@@ -127,18 +128,24 @@ export default {
 
       let planList = (await plan(null, `posttask=${currentDepId}`)).data;
       planList.forEach(plan => {
-        plan._recivedate = plan.recive.find(t => t.dep === currentDepId).date;
-        plan._staff = this.staffData.find(t => t._id === plan.staff);
-        plan._dep = this.depData.find(t => t._id === plan.dep);
+        plan.$recive = plan.recive.find(t => t.dep === currentDepId);
+        plan.$staff = this.staffData.find(t => t._id === plan.staff);
+        plan.$dep = this.depData.find(t => t._id === plan.dep);
       });
       await Promise.all(
         planList.map(async plan => {
-          plan._task = (await task(plan._id)).data;
+          plan.$task = (await task(plan._id)).data;
         })
       );
       this.planData = planList;
 
       this.loading = false;
+    },
+
+    coverPercent(plan) {
+      let bizSum = 0;
+      plan.$task.forEach(t => (bizSum += t.taskbiz.length));
+      return ((bizSum / plan.$recive.biz.length) * 100).toFixed(2);
     }
   },
 
@@ -161,7 +168,7 @@ export default {
         (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
-          let dt = new Date(t._recivedate);
+          let dt = new Date(t.$recive.date);
           return (
             dt.getTime() >= this.search.daterange[0].getTime() &&
             dt.getTime() <= this.search.daterange[1].getTime()

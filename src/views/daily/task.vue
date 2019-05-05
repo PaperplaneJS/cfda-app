@@ -6,13 +6,13 @@
       <el-breadcrumb-item :to="`/daily/${plan._id}`">{{plan.title}}（计划）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{plan.title}}（检查计划）</el-row>
+    <el-row class="title action">{{plan.title}}（当前检查计划）</el-row>
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
         <el-table :data="taskData" v-loading="loading" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" min-width="160px" sortable></el-table-column>
-          <el-table-column prop="_staff.name" label="制定人" sortable></el-table-column>
+          <el-table-column prop="$staff.name" label="制定人" sortable></el-table-column>
           <el-table-column prop="date" label="制定日期" sortable align="center"></el-table-column>
           <el-table-column label="任务限期" align="center">
             <template slot-scope="scope">
@@ -85,7 +85,7 @@ export default {
       this.staffData = (await staff()).data;
       let taskList = (await task(planId)).data;
       taskList.forEach(task => {
-        task._staff = this.staffData.find(t => t._id === task.staff);
+        task.$staff = this.staffData.find(t => t._id === task.staff);
       });
       this.taskData = taskList;
 

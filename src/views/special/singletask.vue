@@ -118,13 +118,6 @@
 </template>
 
 <script>
-import { copy, uuid } from "@/utils/utils.js";
-import { getAllBizs } from "@/oldAPI/old_biz.js";
-import { getAreaIDArray } from "@/oldAPI/old_area.js";
-import { getTaskItems } from "@/oldAPI/old_task.js";
-import { getStaffByID } from "@/oldAPI/old_staff.js";
-import { getPlanByID } from "@/oldAPI/old_plan.js";
-
 export default {
   name: "special_singletask",
 
