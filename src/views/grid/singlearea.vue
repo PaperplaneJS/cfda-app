@@ -110,7 +110,7 @@ export default {
       this.isNew = depId === "new";
       this.edit = depId === "new";
 
-      this.cascadeDepData = (await dep(null, false, true)).data;
+      this.cascadeDepData = (await dep(null, "cascade=1")).data;
       if (!this.isNew) {
         this.origin = (await dep(depId)).data;
         this.origin._rel.pop();

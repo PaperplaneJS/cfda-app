@@ -92,7 +92,7 @@
     <el-row>
       <el-col :span="24">
         <el-button @click="postSms" type="primary" icon="el-icon-check">发布消息</el-button>
-        <router-link style="margin-left:20px;" to="/sms/list">
+        <router-link style="margin-left:20px;" to="/sms">
           <el-button>返回消息列表</el-button>
         </router-link>
       </el-col>
@@ -103,7 +103,7 @@
 <script>
 import { sms, emptySms } from "@/api/sms.js";
 import { dep } from "@/api/dep.js";
-import { staffByDep } from "@/api/staff.js";
+import { staff } from "@/api/staff.js";
 import { datetime } from "@/utils/utils.js";
 import { Promise } from "q";
 
@@ -128,7 +128,7 @@ export default {
 
   methods: {
     async init() {
-      this.cascadeDep = (await dep(null, false, true)).data;
+      this.cascadeDep = (await dep(null, "cascade=1")).data;
       this.dep = (await dep(this.$store.state.currentUser.dep)).data;
       this.staff = this.$store.state.currentUser;
 
@@ -168,7 +168,7 @@ export default {
       let postStaffs = [];
       await Promise.all(
         postDeps.map(async depId => {
-          (await staffByDep(depId, true)).data.forEach(staff =>
+          (await staff(null, `dep=${depId}`, "under=1")).data.forEach(staff =>
             postStaffs.push(staff._id)
           );
         })

@@ -30,8 +30,20 @@ const emptyRecord = () => ({
   report: null
 });
 
-const record = async (recordOpt) => {
+const record = async (recordOpt, ...props) => {
+  if (typeof(recordOpt) === 'array') {
+    return await axios.get(`/task/${recordOpt[0]}/record/${recordOpt[1]}?${props.join('&')}`);
 
+  } else if (typeof(recordOpt) === 'string') {
+    return await axios.get(`/record/${recordOpt}?${props.join('&')}`);
+
+  } else if (typeof(recordOpt) === 'object') {
+    return await axios.post(`/record?${props.join('&')}`, recordOpt);
+  }
 }
 
-export { recordResult, recordHandle, emptyRecord, record }
+const list = async (taskId) => {
+  return await axios(`/task/${taskId}/record`);
+}
+
+export { recordResult, recordHandle, emptyRecord, record, list }

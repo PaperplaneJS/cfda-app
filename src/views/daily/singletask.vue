@@ -7,14 +7,21 @@
       <el-breadcrumb-item :to="`/daily/${plan._id}/${task._id}`">{{task.title}}（任务）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">{{task.title}}（当前检查任务）</el-row>
+    <el-row class="title action">
+      {{task.title}}（当前任务
+      <span v-if="task.progress">，进度{{task.progress[0]}}/{{task.progress[1]}}</span>）
+    </el-row>
 
     <el-row type="flex" :gutter="15">
-      <el-col :span="3">
-        <el-checkbox size="small" v-model="search.onlychecked" label="只显示已检查的" border></el-checkbox>
+      <el-col :span="5">
+        <el-radio-group v-model="search.checked" size="small">
+          <el-radio-button :label="1">显示全部</el-radio-button>
+          <el-radio-button :label="2">仅已检查</el-radio-button>
+          <el-radio-button :label="3">仅未检查</el-radio-button>
+        </el-radio-group>
       </el-col>
 
-      <el-col :span="6">
+      <el-col :span="4">
         <el-input
           v-model="search.text"
           size="small"
@@ -24,25 +31,18 @@
         ></el-input>
       </el-col>
 
-      <el-select size="small" v-model="search.result" clearable placeholder="按检查结果筛选">
-        <el-option
-          v-for="(name,index) in recordResult()"
-          :key="index+1"
-          :label="name"
-          :value="index+1"
-        ></el-option>
-      </el-select>
+      <el-col :span="4">
+        <el-select size="small" v-model="search.result" clearable placeholder="按检查结果筛选">
+          <el-option
+            v-for="(name,index) in recordResult()"
+            :key="index+1"
+            :label="name"
+            :value="index+1"
+          ></el-option>
+        </el-select>
+      </el-col>
 
-      <el-select size="small" v-model="search.handle" clearable placeholder="按处理方式筛选">
-        <el-option
-          v-for="(name,index) in recordHandle()"
-          :key="index+1"
-          :label="name"
-          :value="index+1"
-        ></el-option>
-      </el-select>
-
-      <el-col :span="10">
+      <el-col :span="8">
         <el-date-picker
           v-model="search.daterange"
           size="small"
@@ -66,52 +66,51 @@
         >
           <el-table-column label="单位名称" min-width="180px" sortable>
             <template slot-scope="scope">
-              <el-tag v-if="!scope.row.result" type="warning" size="mini">
+              <el-tag v-if="!scope.row.checked" type="warning" size="mini">
                 <strong>尚未检查</strong>
               </el-tag>
-              {{scope.row.bizname}}
+              {{scope.row.$biz.name}}
             </template>
           </el-table-column>
           <el-table-column label="检查人员" sortable>
             <template slot-scope="scope">
-              <div v-if="scope.row.staff1">
+              <div v-if="scope.row.$record.staff1">
                 主检查人：
-                <el-tag size="mini">{{scope.row.$staff1.name}}</el-tag>
+                <el-tag size="mini">{{scope.row.$record.$staff1.name}}</el-tag>
               </div>
-              <div v-if="scope.row.staff2">
+              <div v-if="scope.row.$record.staff2">
                 协同检查：
-                <el-tag size="mini">{{scope.row.$staff2.name}}</el-tag>
+                <el-tag size="mini">{{scope.row.$record.$staff2.name}}</el-tag>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="date" label="检查日期" align="center" sortable></el-table-column>
+          <el-table-column prop="$record.date" label="检查日期" align="center" sortable></el-table-column>
           <el-table-column align="center" label="检查结果">
             <template slot-scope="scope">
               <el-tag
-                v-if="scope.row.result"
+                v-if="scope.row.checked"
                 size="small"
-                :type="getResultType(scope.row.result)"
-              >{{scope.row.result}}</el-tag>
+                :type="getResultType(scope.row.$record.result)"
+              >{{recordResult(scope.row.$record.result)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="处理方式">
             <template slot-scope="scope">
               <el-tag
-                v-if="scope.row.handle"
+                v-if="scope.row.checked"
                 size="small"
-                :type="getResultType(scope.row.handle)"
-              >{{scope.row.handle}}</el-tag>
+                :type="getResultType(scope.row.$record.handle)"
+              >{{recordHandle(scope.row.$record.handle)}}</el-tag>
             </template>
           </el-table-column>
 
           <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
               <el-button
-                v-if="!scope.row.notchecked"
-                @click.native="$router.push($route.path+'/'+scope.row.id)"
+                @click.native="$router.push(`/daily/${plan._id}/${task._id}/${scope.row.$biz._id}`)"
                 size="mini"
                 type="primary"
-              >查看记录</el-button>
+              >{{scope.row.checked?`查看`:`录入`}}记录</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -133,8 +132,12 @@
 </template>
 
 <script>
-import { record, recordResult, recordHandle } from "@/api/record.js";
+import { record, list, recordResult, recordHandle } from "@/api/record.js";
 import { biz } from "@/api/biz.js";
+import { task } from "@/api/task.js";
+import { plan } from "@/api/plan.js";
+import { staff } from "@/api/staff.js";
+import { Promise } from "q";
 
 export default {
   name: "daily_singletask",
@@ -145,6 +148,8 @@ export default {
       task: {},
 
       bizData: [],
+      staffData: [],
+      recordData: [],
 
       loading: true,
 
@@ -152,7 +157,7 @@ export default {
         text: "",
         daterange: [],
         result: "",
-        handle: ""
+        checked: 1
       },
       taskBizTable: {
         page: 1,
@@ -160,8 +165,8 @@ export default {
         pageSizes: [10, 25, 50, 100]
       },
 
-      recordHandle,
-      recordResult
+      recordResult,
+      recordHandle
     };
   },
 
@@ -176,56 +181,66 @@ export default {
 
   methods: {
     async init() {
+      this.loading = true;
+
       const planId = this.$route.params.planid;
       const taskId = this.$route.params.taskid;
+      this.plan = (await plan(planId)).data;
+      this.task = (await task(taskId)).data;
 
-      this.bizData = getAllBizs();
+      this.staffData = (await staff()).data;
+      this.bizData = (await biz()).data;
+      let recordList = (await list(taskId)).data;
+
+      let records = [];
+      this.task.taskbiz.forEach(bizId => {
+        const isChecked = this.task.completebiz.includes(bizId);
+        let recordInfo = isChecked
+          ? recordList.find(t => t._biz === bizId)
+          : {};
+        let bizInfo = this.bizData.find(t => t._id === bizId);
+
+        if (isChecked) {
+          recordInfo.$staff1 = recordInfo.staff1
+            ? this.staffData.find(t => t._id === recordInfo.staff1)
+            : {};
+          recordInfo.$staff2 = recordInfo.staff2
+            ? this.staffData.find(t => t._id === recordInfo.staff2)
+            : {};
+        }
+
+        records.push({
+          $biz: bizInfo,
+          $record: recordInfo,
+          checked: isChecked
+        });
+      });
+      this.recordData = records;
+
+      this.loading = false;
     },
 
     tableRowClassName({ row }) {
-      if (row.notchecked) {
-        return "notchecked";
-      }
-      return "";
+      return row.checked ? "" : "notchecked";
     },
 
     getResultType(type) {
-      switch (text) {
-        case "符合":
-        case "通过":
-          return "success";
-
-        case "基本符合":
-        case "通知整改":
-          return "warning";
-
-        case "不符合":
-        case "停业整顿":
-          return "danger";
-      }
+      return ["info", "success", "warning", "danger"][type];
     }
   },
 
   computed: {
     tableData() {
-      let tableData = this.bizData;
+      let tableData = this.recordData;
 
-      // if (!this.search.onlychecked) {
-      //   this.currentTask.checklist.forEach(t => {
-      //     tableData.push({
-      //       id: uuid(6, 16),
-      //       bizname: this.bizData.find(biz => biz.com_id == t).com_name,
-      //       notchecked: true
-      //     });
-      //   });
-      // }
-
-      if (this.search.result && this.search.result != "") {
-        tableData = tableData.filter(t => t.result === this.search.result);
+      if (this.search.checked !== 1) {
+        tableData = tableData.filter(
+          t => t.checked === (this.search.checked === 2)
+        );
       }
 
-      if (this.search.handle && this.search.handle != "") {
-        tableData = tableData.filter(t => t.handle === this.search.handle);
+      if (this.search.result && this.search.result !== "") {
+        tableData = tableData.filter(t => t.result === this.search.result);
       }
 
       if (
@@ -255,7 +270,7 @@ export default {
 </script>
 
 <style lang="scss">
-#daily_monitorlist {
+#daily_singletask {
   .notchecked {
     background: #f0f9eb !important;
   }

@@ -16,28 +16,17 @@ const emptyDep = () => ({
   _rel: []
 })
 
-const dep = async (depOpt, isUnder, isCascade) => {
-  const param = [];
-  if (isUnder) {
-    param.push('under=1');
-  }
-  if (isCascade) {
-    param.push('cascade=1')
-  }
-  const query = param.join('&');
-
+const dep = async (depOpt, ...props) => {
   if (!depOpt) {
-    let url = `/dep?${query}`;
-    return await axios.get(url);
+    return await axios.get(`/dep?${props.join('&')}`);
 
   } else if (typeof(depOpt) === 'string') {
-    let url = `/dep/${depOpt}?${query}`;
-    return await axios.get(url);
+    return await axios.get(`/dep/${depOpt}?${props.join('&')}`);
 
   } else if (typeof(depOpt) === 'object') {
     const isNew = !depOpt._id || depOpt._id.length === 0;
     const method = isNew ? 'post' : 'put';
-    let url = isNew ? '/dep' : `/dep/${depOpt._id}`;
+    let url = isNew ? `/dep?${props.join('&')}` : `/dep/${depOpt._id}?${props.join('&')}`;
 
     return await axios[method](url, depOpt);
   }

@@ -45,17 +45,17 @@ const emptySubItem = (kind = 'daily') => ({
   val: kind === 'daily' ? null : [0, 0, 0, 0]
 })
 
-const template = async (templateOpt) => {
+const template = async (templateOpt, ...props) => {
   if (!templateOpt) {
-    return await axios.get('/template');
+    return await axios.get(`/template?${props.join('&')}`);
 
   } else if (typeof(templateOpt) === 'string') {
-    return await axios.get(`/template/${templateOpt}`);
+    return await axios.get(`/template/${templateOpt}?${props.join('&')}`);
 
   } else if (typeof(templateOpt) === 'object') {
     const isNew = !templateOpt._id || templateOpt._id.length === 0;
 
-    const url = isNew ? '/template' : `/template/${templateOpt._id}`;
+    const url = isNew ? `/template?${props.join('&')}` : `/template/${templateOpt._id}?${props.join('&')}`;
     const method = isNew ? 'post' : 'put';
 
     return await axios[method](url, templateOpt);

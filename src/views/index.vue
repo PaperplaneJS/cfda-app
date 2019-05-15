@@ -177,7 +177,7 @@ export default {
     async init() {
       this.bizData = (await biz()).data;
       this.map = new BMap.Map("map");
-      this.map.centerAndZoom(process.env.VUE_APP_CITY_NAME, 12);
+      this.map.centerAndZoom(process.env.VUE_APP_MAP_CITY, 12);
       this.map.addControl(
         new BMap.MapTypeControl({
           mapTypes: [window.BMAP_NORMAL_MAP, window.BMAP_HYBRID_MAP],
@@ -236,7 +236,7 @@ export default {
 
     area() {
       let bdary = new BMap.Boundary();
-      bdary.get(process.env.VUE_APP_CITY_NAME, rs => {
+      bdary.get(process.env.VUE_APP_MAP_CITY, rs => {
         let count = rs.boundaries.length;
         if (count === 0) {
           return;

@@ -28,8 +28,11 @@
               >{{taskState(scope.row.state)}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="任务进度" align="center">
-            <template slot-scope="scope">{{scope.row.progress[0]}} / {{scope.row.progress[1]}}</template>
+          <el-table-column label="任务进度">
+            <template slot-scope="scope">
+              <el-tag size="mini">进度：{{scope.row.progress[0]}} / {{scope.row.progress[1]}}</el-tag>
+              <el-tag size="mini">完成率：{{coverPercent(scope.row)}}%</el-tag>
+            </template>
           </el-table-column>
           <el-table-column align="right" label="操作" min-width="100px">
             <template slot-scope="scope">
@@ -47,7 +50,7 @@
 </template>
 
 <script>
-import { task, taskState } from "@/api/task.js";
+import { list, taskState } from "@/api/task.js";
 import { staff } from "@/api/staff.js";
 import { plan } from "@/api/plan.js";
 
@@ -83,13 +86,17 @@ export default {
       const planId = this.$route.params.planid;
       this.plan = (await plan(planId)).data;
       this.staffData = (await staff()).data;
-      let taskList = (await task(planId)).data;
+      let taskList = (await list(planId)).data;
       taskList.forEach(task => {
         task.$staff = this.staffData.find(t => t._id === task.staff);
       });
       this.taskData = taskList;
 
       this.loading = false;
+    },
+
+    coverPercent(task) {
+      return ((task.progress[0] / task.progress[1]) * 100).toFixed(2);
     },
 
     getStateType: state =>

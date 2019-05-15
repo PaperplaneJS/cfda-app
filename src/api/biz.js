@@ -55,17 +55,17 @@ const emptyLic = () => ({
   daterange: ['', '']
 })
 
-const biz = async (bizOpt, props = '') => {
+const biz = async (bizOpt, ...props) => {
   if (!bizOpt) {
-    return await axios.get(`/biz?${props}`);
+    return await axios.get(`/biz?${props.join('&')}`);
 
   } else if (typeof(bizOpt) === 'string') {
-    return await axios.get(`/biz/${bizOpt}?${props}`);
+    return await axios.get(`/biz/${bizOpt}?${props.join('&')}`);
 
   } else if (typeof(bizOpt) === 'object') {
     const isNew = !bizOpt._id || bizOpt._id.length === 0;
 
-    const url = isNew ? '/biz' : `/biz/${bizOpt._id}`;
+    const url = isNew ? `/biz?${props.join('&')}` : `/biz/${bizOpt._id}?${props.join('&')}`;
     const method = isNew ? 'post' : 'put';
 
     return await axios[method](url, bizOpt);

@@ -10,19 +10,18 @@ const emptySms = () => ({
   recive: []
 })
 
-const sms = async (smsOpt) => {
+const sms = async (smsOpt, ...props) => {
   if (!smsOpt) {
-    return await axios.get('/sms');
+    return await axios.get(`/sms?${props.join('&')}`);
 
   } else if (typeof(smsOpt) === 'string') {
-    return await axios.get(`/sms/${smsOpt}`);
+    return await axios.get(`/sms/${smsOpt}?${props.join('&')}`);
 
   } else if (typeof(smsOpt) === 'object') {
-    return await axios.post(`/sms`, smsOpt);
+    return await axios.post(`/sms?${props.join('&')}`, smsOpt);
   }
 
   return void 0;
 }
-
 
 export { sms, emptySms };

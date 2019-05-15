@@ -70,6 +70,14 @@
           </el-form-item>
         </el-col>
       </el-row>
+
+      <el-row v-if="isNew" :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="账户密码:" prop="pwd" required>
+            <el-input :disabled="!edit" show-password v-model="pwd" placeholder="请输入密码"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
 
     <el-row>
@@ -110,6 +118,7 @@ export default {
 
       current: emptyStaff(),
       origin: emptyStaff(),
+      pwd: "",
 
       rules: {
         name: [
@@ -172,7 +181,9 @@ export default {
     },
 
     async editOK() {
-      this.origin = (await staff(this.current)).data;
+      this.origin = (await staff(
+        Object.assign({ pwd: this.pwd }, this.current)
+      )).data;
       if (this.origin._id === this.$store.state.currentUser._id) {
         this.$store.commit("auth", this.origin);
       }

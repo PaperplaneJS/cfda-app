@@ -321,9 +321,9 @@
 <script>
 import { copy, datetime } from "@/utils/utils.js";
 import { plan, planKind } from "@/api/plan.js";
-import { task, emptyTask } from "@/api/task.js";
+import { task, list, emptyTask } from "@/api/task.js";
 import { biz, bizKind, bizCategory, bizState } from "@/api/biz.js";
-import { staffByDep } from "@/api/staff.js";
+import { staff } from "@/api/staff.js";
 import { dep } from "@/api/dep.js";
 
 export default {
@@ -372,9 +372,10 @@ export default {
     async init() {
       const planId = this.$route.params.planid;
 
-      let staffList = (await staffByDep(
-        this.$store.state.currentUser.dep,
-        true
+      let staffList = (await staff(
+        null,
+        `dep=${this.$store.state.currentUser.dep}`,
+        "under=1"
       )).data;
       staffList.forEach(t => (t.checked = true));
       this.staffData = staffList;
@@ -390,7 +391,7 @@ export default {
       this.current.staff = this.$store.state.currentUser._id;
 
       const postBizIds = [];
-      const tasks = (await task(this.current._plan)).data;
+      const tasks = (await list(this.current._plan)).data;
       tasks.forEach(task => {
         task.taskbiz.forEach(t => {
           postBizIds.push(t);

@@ -36,17 +36,17 @@ const emptyPlan = (kind = 'daily') => Object.assign({
   recive: []
 }, kind === 'special' ? { special: '' } : {})
 
-const plan = async (planOpt, props = '') => {
+const plan = async (planOpt, ...props) => {
   if (!planOpt) {
-    return await axios.get(`/plan?${props}`);
+    return await axios.get(`/plan?${props.join('&')}`);
 
   } else if (typeof(planOpt) === 'string') {
-    return await axios.get(`/plan/${planOpt}?${props}`);
+    return await axios.get(`/plan/${planOpt}?${props.join('&')}`);
 
   } else if (typeof(planOpt) === 'object') {
     const isNew = !planOpt._id || planOpt._id.length === 0;
 
-    const url = isNew ? '/plan' : `/plan/${planOpt._id}`;
+    const url = isNew ? `/plan?${props.join('&')}` : `/plan/${planOpt._id}?${props.join('&')}`;
     const method = isNew ? 'post' : 'put';
 
     return await axios[method](url, planOpt);

@@ -60,7 +60,7 @@ export default {
 
   data() {
     return {
-      depName: process.env.VUE_APP_DEPARTMENT_NAME,
+      depName: process.env.VUE_APP_CITY_NAME,
       form: { staff: "", pwd: "" }
     };
   },

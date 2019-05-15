@@ -285,7 +285,7 @@ export default {
       this.edit = planId === "new";
 
       this.depData = (await dep()).data;
-      this.cascadeDepData = (await dep(null, false, true)).data;
+      this.cascadeDepData = (await dep(null, "cascade=1")).data;
       this.staffData = (await staff()).data;
       this.templateData = (await template()).data;
 

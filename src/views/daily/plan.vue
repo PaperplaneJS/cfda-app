@@ -81,7 +81,7 @@
 
 <script>
 import { plan } from "@/api/plan.js";
-import { task } from "@/api/task.js";
+import { list } from "@/api/task.js";
 import { staff } from "@/api/staff.js";
 import { dep } from "@/api/dep.js";
 import { Promise } from "q";
@@ -121,7 +121,11 @@ export default {
       this.depData = (await dep()).data;
       this.staffData = (await staff()).data;
 
-      let planList = (await plan(null, `posttask=${currentDepId}`)).data;
+      let planList = (await plan(
+        null,
+        "kind=daily",
+        `posttask=${currentDepId}`
+      )).data;
       planList.forEach(plan => {
         plan.$recive = plan.recive.find(t => t.dep === currentDepId);
         plan.$staff = this.staffData.find(t => t._id === plan.staff);
@@ -129,7 +133,7 @@ export default {
       });
       await Promise.all(
         planList.map(async plan => {
-          plan.$task = (await task(plan._id)).data;
+          plan.$task = (await list(plan._id)).data;
         })
       );
       this.planData = planList;

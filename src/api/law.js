@@ -19,17 +19,17 @@ const emptyLaw = () => ({
   content: ''
 })
 
-const law = async (lawOpt) => {
+const law = async (lawOpt, ...props) => {
   if (!lawOpt) {
-    return await axios.get('/law');
+    return await axios.get(`/law?${props.join('&')}`);
 
   } else if (typeof(lawOpt) === 'string') {
-    return await axios.get(`/law/${lawOpt}`);
+    return await axios.get(`/law/${lawOpt}?${props.join('&')}`);
 
   } else if (typeof(lawOpt) === 'object') {
     const isNew = !lawOpt._id || lawOpt._id.length === 0;
 
-    const url = isNew ? '/law' : `/law/${lawOpt._id}`;
+    const url = isNew ? `/law?${props.join('&')}` : `/law/${lawOpt._id}?${props.join('&')}`;
     const method = isNew ? 'post' : 'put';
 
     return await axios[method](url, lawOpt);

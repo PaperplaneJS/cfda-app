@@ -362,8 +362,6 @@ export default {
   },
 
   methods: {
-    init() {},
-
     subEdit(mainIndex, subIndex) {
       let i = mainIndex;
       let j = subIndex;

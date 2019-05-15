@@ -195,7 +195,11 @@ export default {
       currentPlan.postdate = datetime();
       this.dep = (await dep(currentPlan.dep)).data;
 
-      this.cascadeDepData = (await dep(currentPlan.dep, true, true)).data;
+      this.cascadeDepData = (await dep(
+        currentPlan.dep,
+        "under=1",
+        "cascade=1"
+      )).data;
 
       this.current = currentPlan;
       this.title = this.current.title;
