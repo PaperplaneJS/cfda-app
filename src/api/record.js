@@ -30,8 +30,16 @@ const emptyRecord = () => ({
   report: null
 });
 
+const emptyRecordReport = () => ({
+  remark: "",
+  num: "",
+  count: 0,
+  bizopinion: "",
+  laweropinion: ""
+})
+
 const record = async (recordOpt, ...props) => {
-  if (typeof(recordOpt) === 'array') {
+  if (Array.isArray(recordOpt)) {
     return await axios.get(`/task/${recordOpt[0]}/record/${recordOpt[1]}?${props.join('&')}`);
 
   } else if (typeof(recordOpt) === 'string') {
@@ -46,4 +54,4 @@ const list = async (taskId) => {
   return await axios(`/task/${taskId}/record`);
 }
 
-export { recordResult, recordHandle, emptyRecord, record, list }
+export { recordResult, recordHandle, emptyRecord, emptyRecordReport, record, list }

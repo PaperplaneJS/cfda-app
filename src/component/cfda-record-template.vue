@@ -53,9 +53,9 @@
               </td>
 
               <!-- 评分操作区 -->
-              <td v-if="edit" class="result" style="min-width:200px;">
+              <td class="result" style="min-width:200px;">
                 <template v-if="mainItem.detail[index-1].type===1">
-                  <el-radio-group v-model="value[mainIndex][index-1]" size="small">
+                  <el-radio-group v-if="edit" v-model="value[mainIndex][index-1]" size="small">
                     <el-radio
                       :label="1"
                       size="mini"
@@ -67,10 +67,16 @@
                       border
                     >否 {{mainItem.detail[index-1].val?`[分值${mainItem.detail[index-1].val[1]}]`:''}}</el-radio>
                   </el-radio-group>
+                  <el-tag :type="['','success','danger'][value[mainIndex][index-1]]" v-else>
+                    {{['未知','是','否'][value[mainIndex][index-1]]}}
+                    <template
+                      v-if="mainItem.detail[index-1].val"
+                    >{{`[分值${mainItem.detail[index-1].val[value[mainIndex][index-1]-1]}]`}}</template>
+                  </el-tag>
                 </template>
 
                 <template v-if="mainItem.detail[index-1].type===2">
-                  <el-radio-group v-model="value[mainIndex][index-1]" size="small">
+                  <el-radio-group v-if="edit" v-model="value[mainIndex][index-1]" size="small">
                     <el-radio
                       :label="1"
                       size="mini"
@@ -87,29 +93,40 @@
                       border
                     >不符合 {{mainItem.detail[index-1].val?`[分值${mainItem.detail[index-1].val[2]}]`:''}}</el-radio>
                   </el-radio-group>
+                  <el-tag
+                    :type="['','success','warning','danger'][value[mainIndex][index-1]]"
+                    v-else
+                  >
+                    {{['未知','符合','基本符合','不符合'][value[mainIndex][index-1]]}}
+                    <template
+                      v-if="mainItem.detail[index-1].val"
+                    >{{`[分值${mainItem.detail[index-1].val[value[mainIndex][index-1]-1]}]`}}</template>
+                  </el-tag>
                 </template>
 
                 <template v-if="mainItem.detail[index-1].type===3">
-                  <span>输入评分[{{mainItem.detail[index-1].val[0]}}-{{mainItem.detail[index-1].val[1]}}]：</span>
-                  <el-input
-                    style="margin:5px;width:60px;"
-                    size="mini"
-                    v-model.number="value[mainIndex][index-1]"
-                    placeholder="评分"
-                  ></el-input>
+                  <template v-if="edit">
+                    <span>评分[{{mainItem.detail[index-1].val[0]}}-{{mainItem.detail[index-1].val[1]}}]：</span>
+                    <el-input
+                      style="margin:5px;width:60px;"
+                      size="mini"
+                      :readonly="!edit"
+                      v-model.number="value[mainIndex][index-1]"
+                      placeholder="评分"
+                    ></el-input>
+                  </template>
+                  <el-tag
+                    v-else
+                  >评分[{{mainItem.detail[index-1].val[0]}}-{{mainItem.detail[index-1].val[1]}}]： {{value[mainIndex][index-1]}}</el-tag>
                 </template>
 
                 <el-button
-                  v-if="!mainItem.detail[index-1].required"
+                  v-if="edit && !mainItem.detail[index-1].required"
                   size="mini"
                   @click="() => {$set(value[mainIndex], index-1, null)}"
                   type="text"
                 >为空</el-button>
               </td>
-
-              <!-- 展示模式 -->
-
-              <td v-else style="min-width:70px;"></td>
             </template>
 
             <!-- 没有内容时候的替代 -->
@@ -144,6 +161,11 @@ export default {
     this.init();
   },
 
+  beforeRouteUpdate(to, from, next) {
+    next();
+    this.init();
+  },
+
   watch: {
     value: function(newValue) {
       this.$emit("input", newValue);
@@ -158,6 +180,8 @@ export default {
           this.value[i].push(null);
         }
       }
+
+      this.$emit("init");
     }
   },
 
