@@ -7,6 +7,12 @@ const menu = [{
     promission: [1, 2]
   },
   {
+    label: '全局总览',
+    url: 'trace',
+    icon: 'el-icon-view',
+    promission: [2]
+  },
+  {
     label: '基础信息',
     url: 'base',
     icon: 'el-icon-tickets',
@@ -121,18 +127,12 @@ const menu = [{
     icon: 'el-icon-sort',
     promission: [1, 2]
   },
-  {
-    label: '行政处罚',
-    url: 'rectify',
-    icon: 'el-icon-bell',
-    promission: [1, 2]
-  },
-  {
-    label: '全局总览',
-    url: 'trace',
-    icon: 'el-icon-view',
-    promission: [2]
-  },
+  // {
+  //   label: '行政处罚',
+  //   url: 'rectify',
+  //   icon: 'el-icon-bell',
+  //   promission: [1, 2]
+  // },
   {
     label: '统计分析',
     url: 'count',

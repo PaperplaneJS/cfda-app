@@ -2,20 +2,26 @@
   <el-row id="special_singletask">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/special/monitor">专项检查</el-breadcrumb-item>
-      <el-breadcrumb-item to="/special/monitor">检查监督</el-breadcrumb-item>
-      <el-breadcrumb-item to="/special/monitor">{{plantitle}} (计划)</el-breadcrumb-item>
-      <el-breadcrumb-item>{{title}} (任务)</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special">专项检查</el-breadcrumb-item>
+      <el-breadcrumb-item :to="`/special/${plan._id}`">{{plan.title}}</el-breadcrumb-item>
+      <el-breadcrumb-item :to="`/special/${plan._id}/${task._id}`">{{task.title}}（任务）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">{{title}}</el-row>
+    <el-row class="title action">
+      {{task.title}}（当前任务
+      <span v-if="task.progress">，进度{{task.progress[0]}}/{{task.progress[1]}}</span>）
+    </el-row>
 
     <el-row type="flex" :gutter="15">
-      <el-col :span="3">
-        <el-checkbox size="small" v-model="search.onlychecked" label="只显示已检查的" border></el-checkbox>
+      <el-col :span="5">
+        <el-radio-group v-model="search.checked" size="small">
+          <el-radio-button :label="1">显示全部</el-radio-button>
+          <el-radio-button :label="2">仅已检查</el-radio-button>
+          <el-radio-button :label="3">仅未检查</el-radio-button>
+        </el-radio-group>
       </el-col>
 
-      <el-col :span="6">
+      <el-col :span="4">
         <el-input
           v-model="search.text"
           size="small"
@@ -25,13 +31,18 @@
         ></el-input>
       </el-col>
 
-      <el-select size="small" v-model="search.kind" clearable placeholder="按检查结果筛选">
-        <el-option value="符合">符合</el-option>
-        <el-option value="基本符合">基本符合</el-option>
-        <el-option value="不符合">不符合</el-option>
-      </el-select>
+      <el-col :span="4">
+        <el-select size="small" v-model="search.result" clearable placeholder="按检查结果筛选">
+          <el-option
+            v-for="(name,index) in recordResult()"
+            :key="index+1"
+            :label="name"
+            :value="index+1"
+          ></el-option>
+        </el-select>
+      </el-col>
 
-      <el-col :span="10">
+      <el-col :span="8">
         <el-date-picker
           v-model="search.daterange"
           size="small"
@@ -49,54 +60,65 @@
         <el-table
           :data="pageData"
           :row-class-name="tableRowClassName"
+          v-loading="loading"
           size="medium"
           style="width: 100%;margin-bottom:20px;"
         >
           <el-table-column label="单位名称" min-width="180px" sortable>
             <template slot-scope="scope">
-              {{scope.row.bizname}}
-              <el-tag v-if="!scope.row.result" type="warning" size="mini">尚未检查</el-tag>
+              <el-tag v-if="!scope.row.checked" type="warning" size="mini">
+                <strong>尚未检查</strong>
+              </el-tag>
+              {{scope.row.$biz.name}}
             </template>
           </el-table-column>
-          <el-table-column label="执法人员" sortable>
+          <el-table-column label="检查人员" sortable>
             <template slot-scope="scope">
-              <div v-if="scope.row.staffinfo">主检查人：
-                <el-tag size="mini">{{scope.row.staffinfo[0]}}</el-tag>
+              <div v-if="scope.row.$record.staff1">
+                主检查人：
+                <el-tag size="mini">{{scope.row.$record.$staff1.name}}</el-tag>
               </div>
-              <div v-if="scope.row.staffinfo">协同检查：
-                <el-tag size="mini">{{scope.row.staffinfo[1]}}</el-tag>
+              <div v-if="scope.row.$record.staff2">
+                协同检查：
+                <el-tag size="mini">{{scope.row.$record.$staff2.name}}</el-tag>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="date" label="检查日期" align="center" sortable></el-table-column>
+          <el-table-column prop="$record.date" label="检查日期" align="center" sortable></el-table-column>
           <el-table-column align="center" label="检查结果">
             <template slot-scope="scope">
               <el-tag
-                v-if="scope.row.result"
+                v-if="scope.row.checked"
                 size="small"
-                :type="getResultType(scope.row.result)"
-              >{{scope.row.result}}</el-tag>
+                :type="getResultType(scope.row.$record.result)"
+              >{{recordResult(scope.row.$record.result)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" label="处理方式">
             <template slot-scope="scope">
               <el-tag
-                v-if="scope.row.handle"
+                v-if="scope.row.checked"
                 size="small"
-                :type="getResultType(scope.row.handle)"
-              >{{scope.row.handle}}</el-tag>
+                :type="getResultType(scope.row.$record.handle)"
+              >{{recordHandle(scope.row.$record.handle)}}</el-tag>
             </template>
           </el-table-column>
 
           <el-table-column align="center" label="操作" min-width="100px">
             <template slot-scope="scope">
               <el-button
-                v-if="!scope.row.notchecked"
-                @click.native="$router.push($route.path+'/'+scope.row.id)"
+                v-if="scope.row.checked"
+                @click="$router.push(`/special/${plan._id}/${task._id}/${scope.row.$biz._id}`)"
                 size="mini"
                 type="primary"
               >查看记录</el-button>
-              <el-button v-if="!scope.row.notchecked" size="mini" type="danger">删除</el-button>
+              <el-button
+                v-else
+                @click="$router.push(`/special/${plan._id}/${task._id}/${scope.row.$biz._id}`)"
+                size="mini"
+                type="primary"
+                :disabled="![scope.row.$record.staff1,scope.row.$record.staff2].includes($store.state.currentUser._id)"
+              >录入记录</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -106,10 +128,10 @@
     <el-row>
       <el-pagination
         background
-        @size-change="t=>taskDetailTable.pageSize=t"
-        :current-page.sync="taskDetailTable.page"
-        :page-sizes="taskDetailTable.pageSizes"
-        :page-size="taskDetailTable.pageSize"
+        @size-change="t=>taskBizTable.pageSize=t"
+        :current-page.sync="taskBizTable.page"
+        :page-sizes="taskBizTable.pageSizes"
+        :page-size="taskBizTable.pageSize"
         layout="total, prev, pager, next, sizes"
         :total="tableData.length"
       ></el-pagination>
@@ -118,73 +140,116 @@
 </template>
 
 <script>
+import { record, list, recordResult, recordHandle } from "@/api/record.js";
+import { biz } from "@/api/biz.js";
+import { task } from "@/api/task.js";
+import { plan } from "@/api/plan.js";
+import { staff } from "@/api/staff.js";
+import { Promise } from "q";
+
 export default {
   name: "special_singletask",
 
   data() {
     return {
+      plan: {},
+      task: {},
+
       bizData: [],
-      title: null,
-      plantitle: null,
-      currentTask: null,
+      staffData: [],
+      recordData: [],
+
+      loading: true,
 
       search: {
         text: "",
         daterange: [],
-        kind: "",
-        onlychecked: true
+        result: "",
+        checked: 1
       },
-      taskDetailTable: {
+      taskBizTable: {
         page: 1,
         pageSize: 10,
         pageSizes: [10, 25, 50, 100]
-      }
+      },
+
+      recordResult,
+      recordHandle
     };
   },
 
-  beforeMount() {
-    this.init();
+  async beforeMount() {
+    await this.init();
+  },
+
+  async beforeRouteUpdate(to, from, next) {
+    next();
+    await this.init();
+  },
+
+  methods: {
+    async init() {
+      this.loading = true;
+
+      const planId = this.$route.params.planid;
+      const taskId = this.$route.params.taskid;
+      this.plan = (await plan(planId)).data;
+      this.task = (await task(taskId)).data;
+
+      this.staffData = (await staff()).data;
+      this.bizData = (await biz()).data;
+      let recordList = (await list(taskId)).data;
+
+      let records = [];
+      Object.keys(this.task.taskbiz).forEach(bizId => {
+        const isChecked = this.task.completebiz.includes(bizId);
+        let recordInfo = isChecked
+          ? recordList.find(t => t._biz === bizId)
+          : {};
+        let bizInfo = this.bizData.find(t => t._id === bizId);
+
+        recordInfo.staff1 = this.task.taskbiz[bizId][0];
+        recordInfo.staff2 = this.task.taskbiz[bizId][1];
+
+        recordInfo.$staff1 = this.staffData.find(
+          t => t._id === this.task.taskbiz[bizId][0]
+        );
+        recordInfo.$staff2 = this.staffData.find(
+          t => t._id === this.task.taskbiz[bizId][1]
+        );
+
+        records.push({
+          $biz: bizInfo,
+          $record: recordInfo,
+          checked: isChecked
+        });
+      });
+      this.recordData = records;
+
+      this.loading = false;
+    },
+
+    tableRowClassName({ row }) {
+      return row.checked ? "" : "notchecked";
+    },
+
+    getResultType(type) {
+      return ["info", "success", "warning", "danger"][type];
+    }
   },
 
   computed: {
     tableData() {
-      let tableData = copy(this.currentTask.detail);
+      let tableData = this.recordData;
 
-      tableData.forEach(t => {
-        t.bizname = this.bizData.find(biz => biz.com_id == t.bizid).com_name;
-        t.staffinfo = [
-          getStaffByID(t.staff[0].id).name,
-          getStaffByID(t.staff[1].id).name
-        ];
-      });
-
-      if (!this.search.onlychecked) {
-        this.currentTask.checklist.forEach(t => {
-          tableData.push({
-            id: uuid(6, 16),
-            bizname: this.bizData.find(biz => biz.com_id == t).com_name,
-            notchecked: true
-          });
-        });
-      }
-
-      if (
-        this.search.text &&
-        this.search.text.trim().length > 0
-      ) {
-        let searchText = this.search.text;
+      if (this.search.checked !== 1) {
         tableData = tableData.filter(
-          t =>
-            t.bizname.includes(searchText) ||
-            t.staffinfo[0].includes(searchText) ||
-            t.staffinfo[1].includes(searchText) ||
-            t.handle.includes(searchText) ||
-            t.result.includes(searchText)
+          t => t.checked === (this.search.checked === 2)
         );
       }
 
-      if (this.search.kind && this.search.kind != "") {
-        tableData = tableData.filter(t => t.result === this.search.kind);
+      if (this.search.result && this.search.result !== "") {
+        tableData = tableData.filter(t => t.result === this.search.result);
       }
 
       if (
@@ -205,56 +270,16 @@ export default {
 
     pageData() {
       return this.tableData.slice(
-        (this.taskDetailTable.page - 1) * this.taskDetailTable.pageSize,
-        this.taskDetailTable.page * this.taskDetailTable.pageSize
+        (this.taskBizTable.page - 1) * this.taskBizTable.pageSize,
+        this.taskBizTable.page * this.taskBizTable.pageSize
       );
-    }
-  },
-
-  methods: {
-    init() {
-      this.bizData = getAllBizs();
-      let taskid = this.$route.params.taskid;
-
-      getTaskItems().forEach(t => {
-        let taskItem = t.tasklist.find(ti => ti.id == taskid);
-        if (taskItem) {
-          this.currentTask = copy(taskItem);
-          this.plantitle = getPlanByID(t.planid).title;
-          return false;
-        }
-      });
-      this.title = this.currentTask.title;
-    },
-
-    tableRowClassName({ row }) {
-      if (row.notchecked) {
-        return "notchecked";
-      }
-      return "";
-    },
-
-    getResultType(text) {
-      switch (text) {
-        case "符合":
-        case "通过":
-          return "success";
-
-        case "基本符合":
-        case "通知整改":
-          return "warning";
-
-        case "不符合":
-        case "停业整顿":
-          return "danger";
-      }
     }
   }
 };
 </script>
 
 <style lang="scss">
-#special_monitorlist {
+#special_singletask {
   .notchecked {
     background: #f0f9eb !important;
   }

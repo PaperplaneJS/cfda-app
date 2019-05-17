@@ -19,32 +19,25 @@
         ></el-input>
       </el-col>
 
-      <el-col :span="4">
-        <el-select size="small" v-model="search.state" clearable placeholder="按状态筛选">
-          <el-option label="未分派任务" :value="2"></el-option>
-          <el-option label="已分派任务" :value="3"></el-option>
-        </el-select>
-      </el-col>
-
       <el-col :span="8">
         <el-date-picker
           size="small"
           v-model="search.daterange"
           type="daterange"
           range-separator="至"
-          start-placeholder="起始日期"
-          end-placeholder="截止日期"
+          start-placeholder="接收起始"
+          end-placeholder="接收截止"
         ></el-date-picker>
       </el-col>
     </el-row>
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="pageData" size="medium" style="width: 100%">
+        <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%">
           <el-table-column prop="title" label="标题" min-width="160px" sortable></el-table-column>
-          <el-table-column prop="stf" label="制定人" sortable></el-table-column>
-          <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="post.date" label="接收日期" align="center" sortable></el-table-column>
+          <el-table-column prop="$staff.name" label="制定人" sortable></el-table-column>
+          <el-table-column prop="$dep.name" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="$recive.date" label="接收日期" sortable align="center"></el-table-column>
           <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
@@ -53,18 +46,21 @@
           </el-table-column>
           <el-table-column label="状态" sortable>
             <template slot-scope="scope">
-              <el-tag size="small">{{originTask(scope.row)?`已分派${originTask(scope.row)}任务`:'待分派'}}</el-tag>
+              <el-tag
+                size="mini"
+              >{{scope.row.$task.length>0?`已分派${scope.row.$task.length}项任务`:'待分派'}}</el-tag>
+              <el-tag size="mini">覆盖率：{{coverPercent(scope.row)}}%</el-tag>
             </template>
           </el-table-column>
           <el-table-column align="right" label="操作" min-width="120px">
             <template slot-scope="scope">
               <el-button
-                v-if="originTask(scope.row)"
-                @click.native="$router.push('/special/monitor')"
+                v-if="scope.row.$task.length>0"
+                @click.native="$router.push(`/special/${scope.row._id}`)"
                 size="mini"
               >查看已分派任务</el-button>
               <el-button
-                @click.native="$router.push('post/'+scope.row.id)"
+                @click.native="$router.push(`/special/post/${scope.row._id}`)"
                 size="mini"
                 type="primary"
               >分派任务</el-button>
@@ -89,15 +85,26 @@
 </template>
 
 <script>
+import { plan } from "@/api/plan.js";
+import { list } from "@/api/task.js";
+import { staff } from "@/api/staff.js";
+import { dep } from "@/api/dep.js";
+import { Promise } from "q";
+
 export default {
   name: "special_post",
 
   data() {
     return {
+      loading: true,
+
+      planData: [],
+      staffData: [],
+      depData: [],
+
       search: {
         text: "",
-        daterange: [],
-        state: null
+        daterange: []
       },
       planTable: {
         page: 1,
@@ -107,18 +114,49 @@ export default {
     };
   },
 
-  filters: {},
+  async beforeMount() {
+    await this.init();
+  },
+
+  methods: {
+    async init() {
+      this.loading = true;
+
+      const currentDepId = this.$store.state.currentUser.dep;
+      this.depData = (await dep()).data;
+      this.staffData = (await staff()).data;
+
+      let planList = (await plan(
+        null,
+        "kind=special",
+        `posttask=${currentDepId}`,
+        `action=post`
+      )).data;
+      planList.forEach(plan => {
+        plan.$recive = plan.recive.find(t => t.dep === currentDepId);
+        plan.$staff = this.staffData.find(t => t._id === plan.staff);
+        plan.$dep = this.depData.find(t => t._id === plan.dep);
+      });
+      await Promise.all(
+        planList.map(async plan => {
+          plan.$task = (await list(plan._id)).data;
+        })
+      );
+      this.planData = planList;
+
+      this.loading = false;
+    },
+
+    coverPercent(plan) {
+      let bizSum = 0;
+      plan.$task.forEach(t => (bizSum += Object.keys(t.taskbiz).length));
+      return ((bizSum / plan.$recive.biz.length) * 100).toFixed(2);
+    }
+  },
 
   computed: {
     tableData() {
-      let tableData = getPlans().filter(
-        t => t.kind == "special" && (t.state == 2 || t.state == 3)
-      );
-
-      tableData.forEach(t => {
-        t.dep = department.getAreaByID(t.department).name;
-        t.stf = getStaffByID(t.staff).name;
-      });
+      let tableData = this.planData;
 
       if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;
@@ -130,16 +168,12 @@ export default {
         );
       }
 
-      if (this.search.state && this.search.state != "") {
-        tableData = tableData.filter(t => t.state === this.search.state);
-      }
-
       if (
         this.search.daterange &&
         (this.search.daterange[0] || this.search.daterange[1])
       ) {
         tableData = tableData.filter(t => {
-          let dt = new Date(t.post);
+          let dt = new Date(t.$recive.date);
           return (
             dt.getTime() >= this.search.daterange[0].getTime() &&
             dt.getTime() <= this.search.daterange[1].getTime()
@@ -155,23 +189,6 @@ export default {
         (this.planTable.page - 1) * this.planTable.pageSize,
         this.planTable.page * this.planTable.pageSize
       );
-    }
-  },
-
-  methods: {
-    originTask(plan) {
-      let taskItem = getTaskItems().find(
-        t =>
-          t.planid == plan.id &&
-          department
-            .getAreaIDArray(t.department)
-            .includes(this.$store.state.currentUser.area)
-      );
-
-      if (taskItem) {
-        return taskItem.tasklist ? taskItem.tasklist.length : 0;
-      }
-      return 0;
     }
   }
 };

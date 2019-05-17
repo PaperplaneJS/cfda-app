@@ -2,11 +2,11 @@
   <el-row id="special_plan">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/special/monitor">专项检查</el-breadcrumb-item>
-      <el-breadcrumb-item>检查监督</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special">专项检查</el-breadcrumb-item>
+      <el-breadcrumb-item>检查进度（计划）</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title action">专项检查监督</el-row>
+    <el-row class="title action">检查进度（所有进行中的计划）</el-row>
 
     <el-row type="flex" :gutter="15">
       <el-col :span="6">
@@ -14,12 +14,12 @@
           v-model="search.text"
           clearable
           size="small"
-          placeholder="搜索检查计划标题/类型等"
+          placeholder="搜索检查计划标题/类型/制定人等"
           prefix-icon="el-icon-search"
         ></el-input>
       </el-col>
 
-      <el-col :span="6">
+      <el-col :span="10">
         <el-date-picker
           v-model="search.daterange"
           clearable
@@ -34,46 +34,31 @@
 
     <el-row style="margin-top: -10px;">
       <el-col :span="24">
-        <el-table :data="pageData" size="medium" style="width: 100%">
-          <el-table-column prop="title" label="计划标题" min-width="140px" sortable></el-table-column>
-          <el-table-column prop="stf" label="制定人" sortable></el-table-column>
-          <el-table-column prop="dep" label="制定单位" sortable></el-table-column>
-          <el-table-column prop="task.recive" label="接收日期" align="center" sortable></el-table-column>
-          <el-table-column label="执行期限" align="center" width="140px">
+        <el-table :data="pageData" v-loading="loading" size="medium" style="width: 100%">
+          <el-table-column prop="title" label="标题" min-width="160px" sortable></el-table-column>
+          <el-table-column prop="$staff.name" label="制定人" sortable></el-table-column>
+          <el-table-column prop="$dep.name" label="制定单位" sortable></el-table-column>
+          <el-table-column prop="$recive.date" label="接收日期" sortable align="center"></el-table-column>
+          <el-table-column label="执行期限" align="center">
             <template slot-scope="scope">
               <el-tag size="mini">{{scope.row.limit[0]}}</el-tag>
               <el-tag size="mini">{{scope.row.limit[1]}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="状态与进度">
+          <el-table-column label="状态" sortable>
             <template slot-scope="scope">
-              <div>检查单位：
-                <el-tag
-                  size="mini"
-                >{{progress(scope.row.task.tasklist)[0]}} / {{progress(scope.row.task.tasklist)[1]}}</el-tag>
-              </div>
-              <div style="margin-top:1px;">任务完成：
-                <el-tag
-                  size="mini"
-                >{{taskProgress(scope.row.task)[0]}} / {{taskProgress(scope.row.task)[1]}}</el-tag>
-              </div>
+              <el-tag
+                size="small"
+              >{{scope.row.$task.length>0?`已分派${scope.row.$task.length}项任务`:'待分派'}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="操作" min-width="60px">
+          <el-table-column align="right" label="操作" min-width="120px">
             <template slot-scope="scope">
-              <el-dropdown>
-                <el-button size="mini" type="primary">
-                  选择任务
-                  <i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item
-                    v-for="item of scope.row.task.tasklist"
-                    :key="item.id"
-                    @click.native="$router.push('monitor/'+item.id)"
-                  >{{item.title}} [{{item.progress[0]}}/{{item.progress[1]}}]</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+              <el-button
+                @click.native="$router.push(`/special/${scope.row._id}`)"
+                size="mini"
+                type="primary"
+              >查看任务</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -95,11 +80,23 @@
 </template>
 
 <script>
+import { plan } from "@/api/plan.js";
+import { list } from "@/api/task.js";
+import { staff } from "@/api/staff.js";
+import { dep } from "@/api/dep.js";
+import { Promise } from "q";
+
 export default {
   name: "special_plan",
 
   data() {
     return {
+      loading: true,
+
+      depData: [],
+      staffData: [],
+      planData: [],
+
       search: {
         text: "",
         daterange: []
@@ -112,25 +109,42 @@ export default {
     };
   },
 
+  async beforeMount() {
+    await this.init();
+  },
+
+  methods: {
+    async init() {
+      this.loading = true;
+
+      const currentDepId = this.$store.state.currentUser.dep;
+      this.depData = (await dep()).data;
+      this.staffData = (await staff()).data;
+
+      let planList = (await plan(
+        null,
+        "kind=special",
+        `posttask=${currentDepId}`
+      )).data;
+      planList.forEach(plan => {
+        plan.$recive = plan.recive.find(t => t.dep === currentDepId);
+        plan.$staff = this.staffData.find(t => t._id === plan.staff);
+        plan.$dep = this.depData.find(t => t._id === plan.dep);
+      });
+      await Promise.all(
+        planList.map(async plan => {
+          plan.$task = (await list(plan._id)).data;
+        })
+      );
+      this.planData = planList;
+
+      this.loading = false;
+    }
+  },
+
   computed: {
     tableData() {
-      let tableData = [];
-
-      getTaskItems().forEach(t => {
-        if (
-          getAreaIDArray(t.department).includes(
-            this.$store.state.currentUser.area
-          ) &&
-          t.tasklist.length > 0
-        ) {
-          let taskItem = copy(t);
-          let planItem = copy(getPlanByID(t.planid));
-          if (planItem.kind === "special") {
-            planItem.task = taskItem;
-            tableData.push(planItem);
-          }
-        }
-      });
+      let tableData = this.planData;
 
       if (this.search.text && this.search.text.trim().length > 0) {
         let searchText = this.search.text;
@@ -163,27 +177,6 @@ export default {
         (this.planTable.page - 1) * this.planTable.pageSize,
         this.planTable.page * this.planTable.pageSize
       );
-    }
-  },
-
-  methods: {
-    progress(taskList) {
-      let sum = [0, 0];
-      taskList.forEach(t => {
-        sum[0] += t.progress[0];
-        sum[1] += t.progress[1];
-      });
-
-      return sum;
-    },
-
-    taskProgress(taskItem) {
-      let sum = 0;
-      taskItem.tasklist.forEach(
-        t => (sum += t.progress[0] >= t.progress[1] ? 1 : 0)
-      );
-
-      return [sum, taskItem.tasklist.length];
     }
   }
 };

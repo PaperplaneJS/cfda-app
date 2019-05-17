@@ -129,7 +129,8 @@ export default {
       let planList = (await plan(
         null,
         "kind=daily",
-        `posttask=${currentDepId}`
+        `posttask=${currentDepId}`,
+        `action=post`
       )).data;
       planList.forEach(plan => {
         plan.$recive = plan.recive.find(t => t.dep === currentDepId);

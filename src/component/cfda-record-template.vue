@@ -67,8 +67,8 @@
                       border
                     >否 {{mainItem.detail[index-1].val?`[分值${mainItem.detail[index-1].val[1]}]`:''}}</el-radio>
                   </el-radio-group>
-                  <el-tag :type="['','success','danger'][value[mainIndex][index-1]]" v-else>
-                    {{['未知','是','否'][value[mainIndex][index-1]]}}
+                  <el-tag :type="['info','success','danger'][value[mainIndex][index-1]||0]" v-else>
+                    {{['留空','是','否'][value[mainIndex][index-1]||0]}}
                     <template
                       v-if="mainItem.detail[index-1].val"
                     >{{`[分值${mainItem.detail[index-1].val[value[mainIndex][index-1]-1]}]`}}</template>
@@ -94,10 +94,10 @@
                     >不符合 {{mainItem.detail[index-1].val?`[分值${mainItem.detail[index-1].val[2]}]`:''}}</el-radio>
                   </el-radio-group>
                   <el-tag
-                    :type="['','success','warning','danger'][value[mainIndex][index-1]]"
+                    :type="['info','success','warning','danger'][value[mainIndex][index-1]||0]"
                     v-else
                   >
-                    {{['未知','符合','基本符合','不符合'][value[mainIndex][index-1]]}}
+                    {{['留空','符合','基本符合','不符合'][value[mainIndex][index-1]||0]}}
                     <template
                       v-if="mainItem.detail[index-1].val"
                     >{{`[分值${mainItem.detail[index-1].val[value[mainIndex][index-1]-1]}]`}}</template>
@@ -105,7 +105,7 @@
                 </template>
 
                 <template v-if="mainItem.detail[index-1].type===3">
-                  <template v-if="edit">
+                  <template v-if="edit&&value[mainIndex][index-1]">
                     <span>评分[{{mainItem.detail[index-1].val[0]}}-{{mainItem.detail[index-1].val[1]}}]：</span>
                     <el-input
                       style="margin:5px;width:60px;"
@@ -115,6 +115,7 @@
                       placeholder="评分"
                     ></el-input>
                   </template>
+                  <el-tag type="info" v-else-if="edit&&!value[mainIndex][index-1]">留空</el-tag>
                   <el-tag
                     v-else
                   >评分[{{mainItem.detail[index-1].val[0]}}-{{mainItem.detail[index-1].val[1]}}]： {{value[mainIndex][index-1]}}</el-tag>
@@ -143,18 +144,11 @@
 </template>
 
 <script>
-import { uuid, copy } from "@/utils/utils.js";
-
 export default {
   name: "cfda-record-template",
   props: ["value", "edit", "template"],
   data() {
-    return {
-      subPopup: null,
-
-      uuid,
-      copy
-    };
+    return {};
   },
 
   beforeMount() {
@@ -183,9 +177,7 @@ export default {
 
       this.$emit("init");
     }
-  },
-
-  computed: {}
+  }
 };
 </script>
 

@@ -2,81 +2,26 @@
   <el-row id="special_record">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/special/monitor">专项检查</el-breadcrumb-item>
-      <el-breadcrumb-item to="/special/monitor">检查监督</el-breadcrumb-item>
-      <el-breadcrumb-item to="/special/monitor">{{currentPlan.title}} (计划)</el-breadcrumb-item>
-      <el-breadcrumb-item :to="`/special/monitor/${currentTask.id}`">{{currentTask.title}} (任务)</el-breadcrumb-item>
-      <el-breadcrumb-item>{{currentDetail.biz.name}} (详情)</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special">专项检查</el-breadcrumb-item>
+      <el-breadcrumb-item to="/special">检查监督</el-breadcrumb-item>
+      <el-breadcrumb-item :to="`/special/${plan._id}`">{{plan.title}} (计划)</el-breadcrumb-item>
+      <el-breadcrumb-item :to="`/special/${plan._id}/${task._id}`">{{task.title}} (任务)</el-breadcrumb-item>
+      <el-breadcrumb-item>{{biz.name}} (详情)</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <el-row class="title">{{currentDetail.biz.name}} (检查详情)</el-row>
+    <el-row class="title">{{biz.name}} (检查详情)</el-row>
 
     <el-tabs style="margin-top:30px;" v-model="tab">
       <el-tab-pane label="检查计划与任务" name="info">
         <el-form label-position="left" style="margin-top:20px;" label-width="100px">
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">现场检查结果</el-row>
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item label="主检查人：">
-                <el-input v-model="currentDetail.staffinfo[0]" disabled></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="8">
-              <el-form-item label="所属科室：">
-                <el-input v-model="currentDetail.departmentinfo[0]" disabled></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item label="协同检查：">
-                <el-input v-model="currentDetail.staffinfo[1]" disabled></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="8">
-              <el-form-item label="所属科室：">
-                <el-input v-model="currentDetail.departmentinfo[0]" disabled></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="16">
-              <el-form-item label="检查时间：">
-                <el-date-picker
-                  style="width:100%;"
-                  disabled
-                  v-model="currentDetail.date"
-                  type="datetime"
-                ></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item label="检查结果：">
-                <el-tag size="medium">{{currentDetail.result}}</el-tag>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="8">
-              <el-form-item label="处理方式：">
-                <el-tag size="medium">{{currentDetail.handle}}</el-tag>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">检查计划相关信息
-            <el-button @click="$router.push('/special/monitor')" type="text" size="mini">查看计划</el-button>
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">
+            检查计划相关信息
+            <el-button @click="$router.push(`/special/${plan._id}`)" type="text" size="mini">查看计划</el-button>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="检查计划：">
-                <el-input v-model="currentPlan.title" disabled></el-input>
+                <el-input :value="plan.title" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -84,17 +29,13 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="计划类别：">
-                <el-select style="width:100%;" disabled v-model="currentPlan.kind">
-                  <el-option label="专项检查" value="special"></el-option>
-                  <el-option label="专项检查" value="special"></el-option>
-                  <el-option label="全量检查(风险评级)" value="risk"></el-option>
-                </el-select>
+                <el-input v-if="plan.kind" :value="planKind(plan.kind)" readonly></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
               <el-form-item label="制定人员：">
-                <el-input v-model="currentPlan.staff" disabled></el-input>
+                <el-input v-if="plan.__staff" :value="plan.__staff.name" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -104,9 +45,11 @@
               <el-form-item label="计划期限：">
                 <el-date-picker
                   style="width:100%;"
-                  v-model="currentPlan.limit"
-                  disabled
+                  :value="plan.limit"
+                  readonly
                   type="daterange"
+                  format="yyyy-MM-dd"
+                  value-format="yyyy-MM-dd"
                   range-separator="至"
                 ></el-date-picker>
               </el-form-item>
@@ -115,9 +58,12 @@
             <el-col :span="8">
               <el-form-item label="接收日期：">
                 <el-date-picker
+                  v-if="plan.$recive"
                   style="width:100%;"
-                  disabled
-                  v-model="currentTask.recive"
+                  readonly
+                  :value="plan.$recive.date"
+                  format="yyyy-MM-dd HH:mm"
+                  value-format="yyyy-MM-dd HH:mm"
                   type="datetime"
                 ></el-date-picker>
               </el-form-item>
@@ -127,40 +73,31 @@
           <el-row :gutter="15">
             <el-col :span="8">
               <el-form-item label="使用模板：">
-                <el-select disabled style="width:100%;" v-model="currentTemplate.id">
-                  <el-option
-                    v-for="item of getTemplates().map(t=>({id:t.id,name:t.name}))"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  ></el-option>
-                </el-select>
+                <el-input v-if="plan.template" :value="plan.template.name" readonly></el-input>
               </el-form-item>
-            </el-col>
-
-            <el-col :span="8">
-              <el-button
-                @click="$router.push('/base/template/'+currentTemplate.id)"
-                type="text"
-              >查看模板</el-button>
             </el-col>
           </el-row>
 
           <el-row>
             <el-col :span="16">
               <el-form-item label="计划备注：">
-                <el-input v-model="currentPlan.remark" :rows="4" disabled type="textarea"></el-input>
+                <el-input :value="plan.remark" :rows="4" readonly type="textarea"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">分派任务详情
-            <el-button @click="$router.push('/special/monitor')" type="text" size="mini">查看任务</el-button>
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">
+            分派任务详情
+            <el-button
+              @click="$router.push(`/special/${plan._id}/${task._id}`)"
+              type="text"
+              size="mini"
+            >查看任务</el-button>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="任务标题：">
-                <el-input v-model="currentTask.title" disabled></el-input>
+                <el-input :value="task.title" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -168,12 +105,7 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="分派日期：">
-                <el-date-picker
-                  style="width:100%;"
-                  disabled
-                  v-model="currentTask.date"
-                  type="datetime"
-                ></el-date-picker>
+                <el-date-picker style="width:100%;" readonly :value="task.date" type="datetime"></el-date-picker>
               </el-form-item>
             </el-col>
 
@@ -181,9 +113,11 @@
               <el-form-item label="任务期限：">
                 <el-date-picker
                   style="width:100%;"
-                  v-model="currentTask.limit"
-                  disabled
+                  :value="task.limit"
+                  readonly
                   type="daterange"
+                  format="yyyy-MM-dd"
+                  value-format="yyyy-MM-dd"
                   range-separator="至"
                 ></el-date-picker>
               </el-form-item>
@@ -193,44 +127,41 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="任务描述:">
-                <el-input v-model="currentTask.desc" :rows="4" type="textarea" disabled></el-input>
+                <el-input :value="task.desc" :rows="6" type="textarea" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row style="font-size:18px;margin-bottom:15px;" class="section">被检查单位信息
-            <el-button
-              @click="$router.push('/base/biz/'+currentDetail.biz.id)"
-              type="text"
-              size="mini"
-            >查看单位</el-button>
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">
+            被检查单位信息
+            <el-button @click="$router.push(`/base/biz/${biz._id}`)" type="text" size="mini">查看单位</el-button>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="检查单位名：">
-                <el-input v-model="currentDetail.biz.com_name" disabled></el-input>
+                <el-input :value="biz.name" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item label="负责人：">
-                <el-input v-model="currentDetail.biz.com_contact" disabled></el-input>
+              <el-form-item label="联系人：">
+                <el-input :value="biz.contact" readonly></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
               <el-form-item label="联系电话：">
-                <el-input v-model="currentDetail.biz.com_contactphone" disabled></el-input>
+                <el-input :value="biz.phone" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row :gutter="20" v-if="currentDetail.biz.lic_code">
+          <el-row :gutter="20" v-if="biz.lic">
             <el-col :span="8">
               <el-form-item label="许可证号：">
-                <el-input v-model="currentDetail.biz.lic_code" disabled></el-input>
+                <el-input :value="biz.lic.code" readonly></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -238,12 +169,7 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="单位地址：">
-                <el-input
-                  v-model="currentDetail.biz.com_address"
-                  :rows="4"
-                  disabled
-                  type="textarea"
-                ></el-input>
+                <el-input :value="biz.address" :rows="4" readonly type="textarea"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -251,298 +177,416 @@
       </el-tab-pane>
 
       <el-tab-pane label="详细结果" name="detail">
-        <el-row>
-          <el-col :span="24">
-            <el-table
-              :data="checkResult"
-              :span-method="resultSpan"
-              size="medium"
-              style="width: 100%;margin-bottom:20px;"
-              border
-            >
-              <el-table-column label="检查内容" width="200px">
-                <template slot-scope="scope">
-                  <el-tag style="margin-bottom:5px;margin-right:8px;" size="mini">{{scope.row.i+1}}</el-tag>
-                  {{scope.row.item}}
-                </template>
-              </el-table-column>
-              <el-table-column prop="detail" label="检查项目">
-                <template slot-scope="scope">
-                  <el-tag
-                    style="margin-bottom:5px;margin-right:8px;"
-                    size="mini"
-                  >{{scope.row.i+1}}.{{scope.row.j+1}}</el-tag>
-                  <el-tag
-                    style="margin-bottom:5px;margin-right:8px;"
-                    v-if="scope.row.important"
-                    size="mini"
-                    type="danger"
-                  >重点项</el-tag>
-                  {{scope.row.detail}}
-                </template>
-              </el-table-column>
-              <el-table-column label="结果" width="120px">
-                <template slot-scope="scope">
-                  <el-tag
-                    v-if="scope.row.result"
-                    :type="getResultType(scope.row.result)"
-                    size="mini"
-                  >
-                    {{scope.row.result.check}}
-                    <strong
-                      v-if="scope.row.result.point"
-                    >[分值:{{scope.row.result.point}}]</strong>
-                  </el-tag>
-                  <el-tag v-else size="small" type="info">留空项</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="备注" width="90px">
-                <template slot-scope="scope">
-                  <el-popover
-                    v-if="scope.row.result&&scope.row.result.remark"
-                    placement="top-start"
-                    title="备注"
-                    width="400"
-                    trigger="hover"
-                    :content="scope.row.result.remark"
-                  >
-                    <el-button style="margin:0 5px;" size="mini" slot="reference">备注</el-button>
-                  </el-popover>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
-        </el-row>
-      </el-tab-pane>
-      <el-tab-pane label="查看报告" name="report">
-        <div id="main">
-          <div class="title">
-            <h3>江苏省苏州市常熟市{{getAreaByID(currentDetail.biz.area).name}}食品药品监督管理局</h3>
-            <h1>食品生产经营专项监督检查结果记录表</h1>
-            <p>编号:{{currentDetail.num}}</p>
-          </div>
+        <el-form label-position="left" style="margin-top:20px;" label-width="100px">
+          <el-row style="font-size:18px;margin-bottom:15px;" class="section">现场检查结果</el-row>
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="主检查人：">
+                <el-input v-if="current.$staff1" :value="current.$staff1.name" readonly></el-input>
+              </el-form-item>
+            </el-col>
 
-          <table>
-            <tr class="info">
-              <td class="label">名称:</td>
-              <td>{{currentDetail.biz.com_name}}</td>
-              <td class="label">地址:</td>
-              <td>{{currentDetail.biz.com_address}}</td>
-            </tr>
-            <tr class="info">
-              <td class="label">联系人:</td>
-              <td>{{currentDetail.biz.com_contact}}</td>
-              <td class="label">联系方式:</td>
-              <td>{{currentDetail.biz.com_contactphone}}</td>
-            </tr>
-            <tr class="info">
-              <td class="label">许可证编号:</td>
-              <td>{{currentDetail.biz.lic_code?currentDetail.biz.lic_code:""}}</td>
-              <td class="label">检查次数:</td>
-              <td>本年度第{{currentDetail.yearcount}}次检查</td>
-            </tr>
-            <tr>
-              <td class="content" colspan="4">
-                <p>检查内容：</p>
-                <p>江苏省苏州市常熟市{{departmentName}}食品药品监督管理局检查人员{{staffName[0]}}、{{staffName[1]}}根据《中华人民共和国食品安全法》及其实施条例、《{{currentTemplate.name}}》的规定，于{{currentDetail.date}}对你单位进行了监督检查。本次监督检查按照表《{{currentTemplate.name}}》开展，共检查了{{currentDetail.content.length}}项内容。其中:</p>
-                <p>重点项{{checkItems[0].length}}项，项目序号分别是：{{checkItems[0].map(t=>t.num).join(", ")}} ；发现问题{{checkItems[0].filter(t=>!t.checked).length}}项，项目序号分别是：{{checkItems[0].filter(t=>!t.checked).map(t=>t.num).join(", ")}} 。</p>
-                <p>一般项{{checkItems[1].length}}项，项目序号分别是：{{checkItems[1].map(t=>t.num).join(", ")}} ；发现问题{{checkItems[1].filter(t=>!t.checked).length}}项，项目序号分别是：{{checkItems[1].filter(t=>!t.checked).map(t=>t.num).join(", ")}} 。</p>
-              </td>
-            </tr>
-            <tr>
-              <td class="result" colspan="4">
-                <p>
-                  检查结果：
-                  <span class="resultselected">
-                    <span :class="{'checked':currentDetail.result=='符合'}"></span>
-                    符合
-                  </span>
-                  <span class="resultselected">
-                    <span :class="{'checked':currentDetail.result=='基本符合'}"></span>
-                    基本符合
-                  </span>
-                  <span class="resultselected">
-                    <span :class="{'checked':currentDetail.result=='不符合'}"></span>
-                    不符合
-                  </span>
-                </p>
-                <p>
-                  结果处理：
-                  <span class="resultselected">
-                    <span :class="{'checked':currentDetail.handle=='通过'}"></span>
-                    通过
-                  </span>
-                  <span class="resultselected">
-                    <span :class="{'checked':currentDetail.handle=='通知整改'}"></span>
-                    书面限期整改
-                  </span>
-                  <span class="resultselected">
-                    <span :class="{'checked':currentDetail.handle=='停业整顿'}"></span>
-                    食品生产经营者立即停止食品生产经营活动
-                  </span>
-                </p>
-                <p style="margin-top:10px;">说明：</p>
-                <p class="desc"></p>
-              </td>
-            </tr>
-            <tr class="sign">
-              <td colspan="2">
-                <p>执法人员(签名)：</p>
-                <p
-                  style="text-align:right;margin-top:90px;"
-                >年&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;日</p>
-              </td>
-              <td colspan="2">
-                <p>被检查单位意见：</p>
-                <p style="margin-top:40px;">法人或责任人意见：</p>
-                <p
-                  style="text-align:right;margin-top:30px;"
-                >年&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;日</p>
-              </td>
-            </tr>
-          </table>
-        </div>
+            <el-col :span="8">
+              <el-form-item label="协同检查：">
+                <el-input v-if="current.$staff2" :value="current.$staff2.name" readonly></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="检查时间：">
+                <el-date-picker
+                  style="width:100%;"
+                  :value="current.date"
+                  format="yyyy-MM-dd HH:mm"
+                  value-format="yyyy-MM-dd HH:mm"
+                  type="datetime"
+                  readonly
+                ></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <cfda-record-template
+          v-if="current.detail&&plan.template"
+          v-model="current.detail"
+          :template="plan.template.content"
+          :edit="edit"
+          @init="loading=false"
+          ref="templateComponent"
+        ></cfda-record-template>
+
+        <el-form label-position="left" style="margin-top:20px;" label-width="100px">
+          <el-row style="margin-bottom:35px;" :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="检查结果：">
+                <template v-if="edit">
+                  <el-select
+                    :readonly="!edit"
+                    size="medium"
+                    v-model="current.result"
+                    clearable
+                    placeholder="选择结果"
+                  >
+                    <el-option
+                      v-for="(name,index) in recordResult()"
+                      :key="index+1"
+                      :label="name"
+                      :value="index+1"
+                    ></el-option>
+                  </el-select>
+                </template>
+                <template v-else>
+                  <el-tag :type="getStateType(current.result)">
+                    <strong>{{recordResult(current.result)}}</strong>
+                  </el-tag>
+                </template>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="处理方式：">
+                <template v-if="edit">
+                  <el-select
+                    :readonly="!edit"
+                    size="medium"
+                    v-model="current.handle"
+                    clearable
+                    placeholder="选择处理方式"
+                  >
+                    <el-option
+                      v-for="(name,index) in recordHandle()"
+                      :key="index+1"
+                      :label="name"
+                      :value="index+1"
+                    ></el-option>
+                  </el-select>
+                </template>
+                <template v-else>
+                  <el-tag :type="getStateType(current.handle)">
+                    <strong>{{recordHandle(current.handle)}}</strong>
+                  </el-tag>
+                </template>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col v-if="!loading" :span="16">
+              <el-form-item label="结果统计：">
+                <el-tag style="margin:5px;" v-for="(v,k) in resultInfo" :key="k">
+                  {{k}}：
+                  <strong>{{v}}</strong>
+                </el-tag>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col v-if="!loading" :span="16">
+              <el-form-item label="分值统计：">
+                <el-tag v-if="pointInfo" style="margin:5px;">
+                  实得分/应得分：
+                  <strong>{{pointInfo[0]}}/{{pointInfo[1]}}</strong>
+                </el-tag>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row v-if="!loading">
+            <el-col :span="16">
+              <el-form-item label="检查说明：">
+                <el-input
+                  :readonly="!edit"
+                  v-model="current.report.remark"
+                  :rows="4"
+                  type="textarea"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="15" v-if="!loading">
+            <el-col :span="8">
+              <el-form-item label="检查编号：">
+                <el-input :readonly="!edit" v-model="current.report.num"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="检查次数：">
+                <el-input :readonly="!edit" v-model.number="current.report.count"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row v-if="!loading">
+            <el-col :span="16">
+              <el-form-item :readonly="!edit" label="单位意见：">
+                <el-input v-model="current.report.bizopinion" :rows="2" type="textarea"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row v-if="!loading">
+            <el-col :span="16">
+              <el-form-item :readonly="!edit" label="法人意见：">
+                <el-input v-model="current.report.laweropinion" :rows="2" type="textarea"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row v-if="edit">
+            <el-col :span="16">
+              <el-form-item label="提交结果：">
+                <el-button type="primary" size="small" @click="submit()">提交检查结果</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-tab-pane>
+
+      <el-tab-pane v-if="!edit" label="检查报告" name="report">
+        <cfda-record-report v-if="!loading" :current="current" :biz="biz" :task="task" :plan="plan"></cfda-record-report>
       </el-tab-pane>
     </el-tabs>
   </el-row>
 </template>
 
 <script>
+import {
+  record,
+  emptyRecord,
+  emptyRecordReport,
+  recordResult,
+  recordHandle
+} from "@/api/record.js";
+import { plan, planKind } from "@/api/plan.js";
+import { task } from "@/api/task.js";
+import { staff } from "@/api/staff.js";
+import { biz } from "@/api/biz.js";
+import { datetime } from "@/utils/utils.js";
+
 export default {
   name: "special_record",
 
   data() {
     return {
-      getTemplates,
-      getAreaByID,
-
       tab: "info",
-      currentPlan: null,
-      currentTask: null,
-      currentDetail: null,
-      currentTemplate: null
+      loading: true,
+
+      edit: null,
+      plan: {},
+      task: {},
+      biz: {},
+      current: {},
+
+      recordResult,
+      recordHandle,
+      planKind
     };
   },
 
-  beforeMount() {
-    this.init();
+  async beforeMount() {
+    await this.init();
   },
 
-  computed: {
-    checkResult() {
-      let result = [];
-      let template = this.currentTemplate.content;
-      for (let i = 0; i < template.length; i++) {
-        for (let j = 0; j < template[i].children.length; j++) {
-          let templateItem = template[i].children[j];
+  async beforeRouteUpdate(to, from, next) {
+    next();
+    await this.init();
+  },
 
-          let item = {
-            i,
-            j,
-            detail: templateItem.content,
-            important: templateItem.important,
-            result: this.currentDetail.content[`${i + 1}.${j + 1}`]
-          };
+  methods: {
+    async init() {
+      this.loading = true;
 
-          if (j === 0) {
-            item.item = template[i].title;
-            item.rowspan = template[i].children.length;
-          }
+      const planId = this.$route.params.planid;
+      const taskId = this.$route.params.taskid;
+      const bizId = this.$route.params.bizid;
 
-          result.push(item);
-        }
+      this.plan = (await plan(planId, "ref=dep+staff")).data;
+      this.task = (await task(taskId)).data;
+      this.biz = (await biz(bizId)).data;
+
+      this.edit = !this.task.completebiz.includes(bizId);
+      this.current = this.edit
+        ? emptyRecord()
+        : (await record([taskId, bizId])).data;
+
+      this.plan.$recive = this.plan.recive.find(
+        t => t.dep === this.$store.state.currentUser.dep
+      );
+
+      if (this.edit) {
+        this.current._task = taskId;
+        this.current._biz = bizId;
+        this.current.date = datetime();
+        this.current.report = emptyRecordReport();
       }
 
-      return result;
+      this.current.staff1 = this.task.taskbiz[bizId][0];
+      this.current.staff2 = this.task.taskbiz[bizId][1];
+
+      this.$set(
+        this.current,
+        "$staff1",
+        (await staff(this.current.staff1)).data
+      );
+
+      this.$set(
+        this.current,
+        "$staff2",
+        (await staff(this.current.staff2)).data
+      );
     },
 
-    checkItems() {
-      let result = [[], []];
-      let template = this.currentTemplate.content;
-      for (let i = 0; i < template.length; i++) {
-        for (let j = 0; j < template[i].children.length; j++) {
-          let templateItem = template[i].children[j];
-          let checkItem = this.currentDetail.content[`${i + 1}.${j + 1}`];
-          if (checkItem) {
-            let r = {
-              num: `${i + 1}.${j + 1}`,
-              checked: checkItem.checked
-            };
+    check() {
+      let t = this.plan.template.content;
+      let r = this.current.detail;
 
-            if (templateItem.important) {
-              result[0].push(r);
-            } else {
-              result[1].push(r);
+      for (let i = 0; i < t.length; i++) {
+        for (let j = 0; j < t[i].detail.length; j++) {
+          let item = t[i].detail[j];
+          let result = r[i][j];
+
+          if (item.required) {
+            if (
+              (item.type === 1 && ![1, 2].includes(result)) ||
+              (item.type === 2 && ![1, 2, 3].includes(result)) ||
+              (item.type === 3 &&
+                (result > item.val[1] || result < item.val[0]))
+            ) {
+              this.$alert(
+                "未通过校验！请确保所有必填项已填写检查结果，确保主观评分在正确范围内。",
+                "出现错误",
+                {
+                  confirmButtonText: "确定"
+                }
+              );
+              return false;
             }
           }
         }
       }
-      return result;
+
+      if (
+        ![1, 2, 3].includes(this.current.result) ||
+        ![1, 2, 3].includes(this.current.handle)
+      ) {
+        this.$alert(
+          "未通过校验！检查项录入完毕后，请在页面顶部输入检查结果/处理方式。",
+          "未提供检查结果/处理方式",
+          {
+            confirmButtonText: "确定"
+          }
+        );
+        return false;
+      }
+
+      return true;
     },
 
-    staffName() {
-      return [
-        getStaffByID(this.currentDetail.staff[0].id).name,
-        getStaffByID(this.currentDetail.staff[1].id).name
-      ];
-    },
-
-    departmentName() {
-      return getAreaByID(this.currentDetail.biz.area).name;
-    }
-  },
-
-  methods: {
-    init() {
-      let taskid = this.$route.params.taskid;
-      let taskrecordid = this.$route.params.taskrecordid;
-
-      getTaskItems().forEach(t => {
-        let taskItem = t.tasklist.find(ti => ti.id == taskid);
-        if (taskItem) {
-          let task = copy(taskItem);
-          task.recive = t.recive;
-          this.currentTask = task;
-          this.currentPlan = getPlanByID(t.planid);
-          this.currentTemplate = getTemplates().find(
-            t => t.id == this.currentPlan.template
-          );
-
-          return false;
-        }
-      });
-      let detail = this.currentTask.detail.find(d => d.id == taskrecordid);
-
-      detail.biz = getBizByID(detail.bizid);
-      detail.staffinfo = [
-        getStaffByID(detail.staff[0].id).name,
-        getStaffByID(detail.staff[1].id).name
-      ];
-      detail.departmentinfo = [
-        getAreaByID(detail.staff[0].department).name,
-        getAreaByID(detail.staff[1].department).name
-      ];
-
-      this.currentDetail = detail;
-    },
-
-    resultSpan({ row, columnIndex }) {
-      if (columnIndex !== 0) {
+    async submit() {
+      if (!this.check()) {
         return;
       }
 
-      return {
-        colspan: row.rowspan ? 1 : 0,
-        rowspan: row.rowspan || 0
-      };
+      let result = this.current;
+      delete result["$staff1"];
+      delete result["$staff2"];
+
+      this.current = (await record(result)).data;
+      this.edit = false;
+      this.loading = true;
+      window.history.go();
     },
 
-    getResultType(result) {
-      if (result.checked === null || result.checked === undefined) {
-        return "";
+    getStateType: state => ["info", "success", "warning", "danger"][state]
+  },
+
+  computed: {
+    resultInfo() {
+      if (this.loading) {
+        return null;
       }
 
-      return result.checked ? "success" : "danger";
+      let t = this.plan.template.content;
+      let r = this.current.detail;
+      let record = {};
+
+      for (let i = 0; i < t.length; i++) {
+        for (let j = 0; j < t[i].detail.length; j++) {
+          let item = t[i].detail[j];
+          let result = r[i][j];
+          if (!result) {
+            continue;
+          }
+
+          if (item.type === 1) {
+            record["是"] = record["是"] ? record["是"] : 0;
+            record["否"] = record["否"] ? record["否"] : 0;
+
+            record["是"] += result == 1 ? 1 : 0;
+            record["否"] += result == 2 ? 1 : 0;
+          }
+          if (item.type === 2) {
+            record["符合"] = record["符合"] ? record["符合"] : 0;
+            record["基本符合"] = record["基本符合"] ? record["基本符合"] : 0;
+            record["不符合"] = record["不符合"] ? record["不符合"] : 0;
+
+            record["符合"] += result == 1 ? 1 : 0;
+            record["基本符合"] += result == 2 ? 1 : 0;
+            record["不符合"] += result == 3 ? 1 : 0;
+          }
+          if (item.type === 3) {
+            record["主观评分"] = record["主观评分"] ? record["主观评分"] : 0;
+
+            record["主观评分"] += !isNaN(result) ? 1 : 0;
+          }
+        }
+      }
+
+      return record;
+    },
+
+    pointInfo() {
+      if (this.loading) {
+        return null;
+      }
+
+      let t = this.plan.template.content;
+      let r = this.current.detail;
+      let point = 0,
+        all = 0;
+
+      for (let i = 0; i < t.length; i++) {
+        for (let j = 0; j < t[i].detail.length; j++) {
+          let item = t[i].detail[j];
+          let result = r[i][j];
+          if (!result) {
+            continue;
+          }
+
+          if (item.type === 1 && item.val) {
+            all += Math.max(...item.val);
+            point += [0, ...item.val][result];
+          }
+          if (item.type === 2 && item.val) {
+            all += Math.max(...item.val);
+            point += [0, ...item.val][result];
+          }
+          if (item.type === 3 && !isNaN(result)) {
+            all += Math.max(...item.val);
+            point += result;
+          }
+        }
+      }
+
+      if (all === 0) {
+        return null;
+      }
+      return [point, all];
     }
   }
 };
@@ -551,93 +595,5 @@ export default {
 <style lang="scss" scoped>
 .el-row {
   margin-bottom: 0;
-}
-
-#main {
-  width: 700px;
-  margin-top: 20px;
-
-  .title {
-    h3 {
-      font-size: 22px;
-      text-align: center;
-      font-weight: normal;
-      margin: 5px 0;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
-    p {
-      text-align: right;
-      margin: 5px 0;
-      font-size: 15px;
-    }
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th,
-    td {
-      border-collapse: collapse;
-      border: 1.5px solid #000;
-      padding: 5px 8px;
-    }
-
-    tr.info {
-      td {
-        width: 34%;
-      }
-
-      .label {
-        width: 16%;
-      }
-    }
-
-    .content {
-      p {
-        margin: 0 0 8px;
-        text-indent: 30px;
-
-        &:first-child {
-          text-indent: 0;
-        }
-      }
-    }
-
-    .result {
-      p {
-        margin: 0;
-      }
-      .resultselected {
-        margin-right: 10px;
-
-        span {
-          width: 8px;
-          height: 8px;
-          border: 1px solid #000;
-          display: inline-block;
-        }
-
-        .checked {
-          background-color: #000;
-        }
-      }
-
-      .desc {
-        text-indent: 30px;
-        min-height: 140px;
-      }
-    }
-
-    .sign {
-      p {
-        margin: 0;
-      }
-    }
-  }
 }
 </style>

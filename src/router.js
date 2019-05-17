@@ -49,8 +49,8 @@ import SpecialRecord from '@/views/special/record.vue';
 import RiskRisk from '@/views/risk/risk.vue';
 import RiskSingleRisk from '@/views/risk/singlerisk.vue';
 
-import RectifyRectify from '@/views/rectify/rectify.vue';
-import RectifySingleRectify from '@/views/rectify/singlerectify.vue';
+// import RectifyRectify from '@/views/rectify/rectify.vue';
+// import RectifySingleRectify from '@/views/rectify/singlerectify.vue';
 
 import TraceTrace from '@/views/trace/trace.vue';
 
@@ -189,7 +189,7 @@ let routes = [{
         path: '/special/:planid/:taskid',
         component: SpecialSingleTask
       },{
-        path: '/special/:planid/:taskid/:recordid',
+        path: '/special/:planid/:taskid/:bizid',
         component: SpecialRecord
       },
 
@@ -199,19 +199,19 @@ let routes = [{
         path: '/risk',
         component: RiskRisk
       }, {
-        path: '/risk/:riskid',
+        path: '/risk/:bizid/:planid/:year',
         component: RiskSingleRisk
       },
 
-      //整改管理
+      //行政处罚
 
-      {
-        path: '/rectify',
-        component: RectifyRectify
-      }, {
-        path: '/rectify/:rectifyid',
-        component: RectifySingleRectify
-      },
+      // {
+      //   path: '/rectify',
+      //   component: RectifyRectify
+      // }, {
+      //   path: '/rectify/:rectifyid',
+      //   component: RectifySingleRectify
+      // },
 
       //跟踪监督
 

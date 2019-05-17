@@ -208,6 +208,7 @@
             </el-col>
           </el-row>
         </el-form>
+
         <cfda-record-template
           v-if="current.detail&&plan.template"
           v-model="current.detail"
@@ -452,8 +453,7 @@ export default {
                 "未通过校验！请确保所有必填项已填写检查结果，确保主观评分在正确范围内。",
                 "出现错误",
                 {
-                  confirmButtonText: "确定",
-                  callback: action => {}
+                  confirmButtonText: "确定"
                 }
               );
               return false;
@@ -470,8 +470,7 @@ export default {
           "未通过校验！检查项录入完毕后，请在页面顶部输入检查结果/处理方式。",
           "未提供检查结果/处理方式",
           {
-            confirmButtonText: "确定",
-            callback: action => {}
+            confirmButtonText: "确定"
           }
         );
         return false;
