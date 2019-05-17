@@ -95,7 +95,7 @@
               >查看结果</el-button>
               <el-button
                 v-else-if="currentYear>=new Date().getFullYear()"
-                @click.native="$router.push(`/risk/${scope.row.$biz._id}/${scope.row.$risk._plan}/${currentYear}`)"
+                @click.native="$router.push(`/risk/${scope.row.$biz._id}/${scope.row.$currentPlan}/${currentYear}`)"
                 size="mini"
                 type="primary"
                 :disabled="!currentPlan"

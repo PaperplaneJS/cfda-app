@@ -321,7 +321,7 @@
         </el-row>
       </el-tab-pane>
 
-      <el-tab-pane v-if="!isNew" label="行政处罚记录" name="refity">
+      <!-- <el-tab-pane v-if="!isNew" label="行政处罚记录" name="refity">
         <el-row>
           <el-col :span="24">
             <el-table
@@ -341,7 +341,7 @@
             </el-table>
           </el-col>
         </el-row>
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
 
     <el-row>
