@@ -234,12 +234,6 @@ export default {
   computed: {
     planDetail() {
       return this.$refs.depTree.getCheckedNodes().map(t => "" + t.id);
-    },
-
-    taskTemplate() {
-      return getTemplates().map(t => {
-        return { id: t.id, name: t.name };
-      });
     }
   }
 };
