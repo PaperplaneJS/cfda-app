@@ -26,7 +26,7 @@ pipeline {
               
                 echo "构建完成."
                 
-                sh 'tar zcvf dist.tar.gz dist'
+                sh 'tar -zcvf dist.tar.gz dist'
                 archiveArtifacts artifacts: 'dist.tar.gz', fingerprint: true
             }
         }
