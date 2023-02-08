@@ -21,8 +21,8 @@ const store = new Vuex.Store({
       state.currentUser = null;
     },
 
-    addNotice(notice) {
-      state.notice.push(notice);
+    addNotice(state, notice) {
+      state.notice = [...state.notice, notice];
     }
   }
 });
