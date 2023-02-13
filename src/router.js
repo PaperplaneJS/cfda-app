@@ -233,7 +233,8 @@ let routes = [{
 Vue.use(Router);
 
 let router = new Router({
-  routes
+  routes,
+  base: '/cfda/',
 });
 
 router.beforeEach((to, from, next) => {
