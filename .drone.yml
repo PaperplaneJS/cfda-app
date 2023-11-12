@@ -24,7 +24,7 @@ steps:
         path: /webroot
     commands:
       - mkdir -p /webroot/cfda-fe/
-      - rm -rf /webroot/cfda-fe/**/*.*
+      - rm -rf /webroot/cfda-fe/*
       - cp -rf ./dist/* /webroot/cfda-fe/
 
 volumes:
