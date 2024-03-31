@@ -1,6 +1,6 @@
 ### 食药监局CFDA项目Web端
 
-本项目必须和食药监局[后台API](https://github.com/s1n1an/cfda-server)配套使用  
+本项目必须和食药监局[后台API](https://git.paperplane.cc/jia-niang/cfda-api)配套使用  
 Github克隆或下载本项目后，使用前必须修改项目根目录下的`.env`配置文件  
 
 本系统依赖百度地图API，需要[申请](http://lbsyun.baidu.com/apiconsole/key)百度地图Key  
