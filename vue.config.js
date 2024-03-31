@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: '/cfda/',
+  publicPath: '/',
   runtimeCompiler: true,
   configureWebpack: {
     externals: {
