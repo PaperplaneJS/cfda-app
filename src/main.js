@@ -2,6 +2,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import store from '@/state.js';
 import router from '@/router.js';
+import Entry from '@/entry';
 
 import '@/assets/style/public.scss';
 
@@ -18,7 +19,7 @@ axios.defaults.baseURL = process.env.VUE_APP_API_HOST;
 axios.defaults.withCredentials = true;
 
 new Vue({
-  el: '#app',
+  render: (h) => h(Entry),
   router,
   store
-});
+}).$mount('#entry');

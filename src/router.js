@@ -234,7 +234,8 @@ Vue.use(Router);
 
 let router = new Router({
   routes,
-  base: '/cfda/',
+  base: '/',
+  mode: 'history'
 });
 
 router.beforeEach((to, from, next) => {
